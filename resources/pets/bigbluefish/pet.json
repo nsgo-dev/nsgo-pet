@@ -2,7 +2,12 @@
   "name": "大蓝鱼",
   "width": 320,
   "height": 180,
-  "body": { "left": 33, "top": 15, "width": 34, "height": 80 },
+  "body": {
+    "left": 33,
+    "top": 15,
+    "width": 34,
+    "height": 80
+  },
   "eventSeconds": 40,
   "clips": {
     "greeting": "女仆屈膝礼仪",
@@ -12,6 +17,6 @@
     "daily": "晨间刷牙",
     "dailyHour": 23
   },
-  "source": "https://github.com/Bai-Cute/big-blue-fish-desktop-pet",
-  "license": "MIT, Copyright (c) 2026 PC2005-cloud"
+  "source": "https://github.com/PC2005-cloud/dsh-pet",
+  "license": "Character CC BY-NC-SA 4.0 (non-commercial); see NOTICE.md"
 }
