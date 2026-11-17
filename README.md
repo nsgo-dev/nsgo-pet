@@ -110,3 +110,7 @@ ffmpeg -c:v libvpx-vp9 -i webm/idle.webm -an -c:v hevc_videotoolbox -alpha_quali
 - Lunar festivals (Spring Festival, Lantern, Dragon Boat, Qixi, Mid-Autumn, Laba): their clips keep their plain weight.
 - Taking the pointer by the clip's alpha instead of a body rectangle ([nsgo#599](https://github.com/nsgo-dev/nsgo/issues/599)).
 - Speech bubbles, weather and the AI agent of the original Big Blue Fish.
+
+## License
+
+The code is MIT, Copyright (c) 2026 nsgo-dev: see [LICENSE](LICENSE). Each pet's clips keep their own license, listed under [Pets](#pets) and in the pet's `LICENSE.txt`.
