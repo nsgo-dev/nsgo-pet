@@ -1,4 +1,4 @@
-// Command bluefish is Big Blue Fish, a desktop pet, on NSGo: the fish lives in a transparent window above the other windows and plays its clips by Big Blue Fish's own rules.
+// Command nsgo-pet is a desktop pet on NSGo whose pet can be switched: each pet in resources/pets lives in a transparent window above the other windows and plays its clips by its own rules, in Big Blue Fish's format.
 package main
 
 import (
@@ -12,53 +12,86 @@ import (
 	"github.com/nsgo-dev/nsgo/desktop"
 )
 
-// The window is half the clips' 640 by 360 pixels.
-const (
-	petWidth  core.Points = 320
-	petHeight core.Points = 180
-)
-
 func main() {
-	nsgo.Run(Root, nsgo.WindowSize(petWidth, petHeight), nsgo.WindowTransparent(), nsgo.WindowNoShadow(), nsgo.SkipTaskbar(), nsgo.HideDock())
-}
-
-// Root is the pet's window.
-func Root(cx *core.Scope) core.Node {
-	policy, err := LoadPolicy()
+	packs, err := LoadPacks()
 	if err != nil {
 		log.Fatal(err)
 	}
-	p := newPet(cx, policy, rand.New(rand.NewPCG(uint64(time.Now().UnixNano()), 0x6669736821)))
-	// Once the window is up: Post runs after this first render.
-	cx.Post(func() {
-		desktop.SetWindowLevel(cx, desktop.WindowLevelFloating)
-		desktop.SetWindowWorkspaces(cx, desktop.WindowWorkspacesAll)
-		desktop.SetWindowPointerEvents(cx, desktop.WindowPointerPainted)
-		p.placeAtCorner()
-		p.greet()
-	})
-	desktop.NewTray(cx, desktop.TrayOptions{Title: "🐟", Tooltip: "Big Blue Fish", Menu: p.menu})
+	nsgo.Run(App(packs), nsgo.WindowSize(packs[0].Width, packs[0].Height), nsgo.WindowTransparent(), nsgo.WindowNoShadow(), nsgo.SkipTaskbar(), nsgo.HideDock())
+}
+
+// petKey is the storage key of the pet the user chose last.
+const petKey = "pet"
+
+// App is the pet's window, showing the pet the user chose last, the first of packs at first.
+func App(packs []*Pack) func(cx *core.Scope) core.Node {
+	return func(cx *core.Scope) core.Node {
+		find := func(id string) *Pack {
+			for _, p := range packs {
+				if p.ID == id {
+					return p
+				}
+			}
+			return packs[0]
+		}
+		saved, _ := cx.Storage().GetItem(petKey)
+		chosen := core.NewSignal(cx, find(saved).ID)
+		var current *pet
+		choose := func(id string) {
+			if id == chosen.GetUntracked() {
+				return
+			}
+			if err := cx.Storage().SetItem(petKey, id); err != nil {
+				log.Printf("saving the pet: %v", err)
+			}
+			chosen.Set(id)
+		}
+		menu := func() []core.MenuItem {
+			pets := make([]core.MenuItem, len(packs))
+			for i, pk := range packs {
+				pets[i] = core.MenuItem{Label: pk.Name, Radio: true, Checked: pk.ID == chosen.GetUntracked(), OnSelect: func() { choose(pk.ID) }}
+			}
+			items := []core.MenuItem{{Label: "切换桌宠", Items: pets}, {Separator: true}}
+			if current != nil {
+				items = append(items, current.menu()...)
+			}
+			return items
+		}
+		cx.Post(func() {
+			desktop.SetWindowLevel(cx, desktop.WindowLevelFloating)
+			desktop.SetWindowWorkspaces(cx, desktop.WindowWorkspacesAll)
+			desktop.SetWindowPointerEvents(cx, desktop.WindowPointerPainted)
+		})
+		desktop.NewTray(cx, desktop.TrayOptions{Title: "🐾", Tooltip: "nsgo-pet", Menu: menu})
+		return core.Dynamic(func(cx *core.Scope) core.Node {
+			pack := find(chosen.Get())
+			p := newPet(cx, pack, rand.New(rand.NewPCG(uint64(time.Now().UnixNano()), 0x706574)))
+			current = p
+			cx.Post(func() {
+				p.placeAtCorner()
+				p.greet()
+			})
+			return p.view(menu)
+		})
+	}
+}
+
+// view is the pet: two players under a body that takes the pointer.
+func (p *pet) view(menu func() []core.MenuItem) core.Node {
+	b := p.pack.Body
 	return core.View{Style: core.Style{FlexGrow: 1}, Children: []core.Node{
-		// The players take no pointer: a video counts as drawn over its whole box, where the fish fills only its middle.
+		// The players take no pointer: a video counts as drawn over its whole box, where the pet fills only part of it.
 		core.View{PointerEvents: core.PointerEventsNone, Style: fill(), Children: []core.Node{p.slots[0].view(p, 0), p.slots[1].view(p, 1)}},
-		// The fish's body takes the presses, the drags and the right clicks; the rest of the window lets the pointer through.
+		// The pet's body takes the presses, the drags and the right clicks; the rest of the window lets the pointer through. Pointer hit testing by the clip's alpha is NSGo's #599.
 		core.View{
-			TestID:        "fish",
-			Style:         core.Style{Position: core.Absolute, Left: core.Pct(bodyLeft), Top: core.Pct(bodyTop), Width: core.Pct(bodyWidth), Height: core.Pct(bodyHeight)},
+			TestID:        "body",
+			Style:         core.Style{Position: core.Absolute, Left: core.Pct(b.Left), Top: core.Pct(b.Top), Width: core.Pct(b.Width), Height: core.Pct(b.Height)},
 			OnPress:       func(core.PressEvent) { p.click() },
-			OnContextMenu: func(e core.ContextMenuEvent) { desktop.PopupMenu(cx, p.menu(), e.Position, nil) },
+			OnContextMenu: func(e core.ContextMenuEvent) { desktop.PopupMenu(p.cx, menu(), e.Position, nil) },
 			OnPan:         p.pan,
 		},
 	}}
 }
-
-// The fish's body in the clips, in percent of the frame: about the middle third, from her ears to her feet.
-const (
-	bodyLeft   = 33
-	bodyTop    = 15
-	bodyWidth  = 34
-	bodyHeight = 80
-)
 
 // fill is a style that covers the parent.
 func fill() core.Style {
@@ -66,16 +99,16 @@ func fill() core.Style {
 }
 
 // clipSource is where this platform's clips are: HEVC with alpha on Apple platforms, whose player opens no WebM, VP9 with alpha in WebM elsewhere.
-func clipSource(cx *core.Scope, r Rule) string {
+func clipSource(cx *core.Scope, pack *Pack, r Rule) string {
 	name := strings.TrimSuffix(r.File, ".webm")
 	switch cx.Env().OS() {
 	case core.OSMacOS, core.OSIOS:
-		return "asset:fish/mov/" + name + ".mov"
+		return "asset:pets/" + pack.ID + "/mov/" + name + ".mov"
 	}
-	return "asset:fish/webm/" + name + ".webm"
+	return "asset:pets/" + pack.ID + "/webm/" + name + ".webm"
 }
 
-// slot is one of two players: the next clip loads in the hidden one and shows once it has a picture, so the fish never blinks out between clips.
+// slot is one of two players: the next clip loads in the hidden one and shows once it has a picture, so the pet never blinks out between clips.
 type slot struct {
 	src      *core.Signal[string]
 	mirrored *core.Signal[bool]
@@ -118,7 +151,7 @@ func (s *slot) view(p *pet, i int) core.Node {
 			}
 		},
 		OnError: func(err error) { log.Printf("clip %s: %v", s.src.GetUntracked(), err) },
-		Label:   "Big Blue Fish",
+		Label:   p.pack.Name,
 		TestID:  slotIDs[i],
 	}
 }
@@ -126,7 +159,7 @@ func (s *slot) view(p *pet, i int) core.Node {
 // slotIDs name the two players for tests.
 var slotIDs = [2]string{"slot0", "slot1"}
 
-// Phases of what the fish is doing, as Big Blue Fish names them.
+// Phases of what the pet is doing, as Big Blue Fish names them.
 const (
 	phaseStartup      = "Startup"
 	phaseIdle         = "Idle"
@@ -140,11 +173,9 @@ const (
 	phaseExit         = "Exit"
 )
 
-// eventInterval is the time between events, Big Blue Fish's default.
-const eventInterval = 40 * time.Second
-
 type pet struct {
 	cx     *core.Scope
+	pack   *Pack
 	policy *Policy
 	rnd    *rand.Rand
 	slots  [2]*slot
@@ -153,11 +184,11 @@ type pet struct {
 
 	phase     string
 	nextEvent time.Time
-	lastBrush string
+	lastDaily string
 
 	// move is the walk of a clip with a MoveKind, nil without one.
 	move *movement
-	// dragging is whether the user holds the fish.
+	// dragging is whether the user holds the pet.
 	dragging bool
 }
 
@@ -169,8 +200,8 @@ type movement struct {
 	mirrored   bool
 }
 
-func newPet(cx *core.Scope, policy *Policy, rnd *rand.Rand) *pet {
-	p := &pet{cx: cx, policy: policy, rnd: rnd, front: core.NewSignal(cx, 0), pending: core.NewSignal(cx, -1)}
+func newPet(cx *core.Scope, pack *Pack, rnd *rand.Rand) *pet {
+	p := &pet{cx: cx, pack: pack, policy: pack.Policy, rnd: rnd, front: core.NewSignal(cx, 0), pending: core.NewSignal(cx, -1)}
 	for i := range p.slots {
 		p.slots[i] = &slot{src: core.NewSignal(cx, ""), mirrored: core.NewSignal(cx, false), ref: &core.Ref{}}
 	}
@@ -205,7 +236,7 @@ func isCodingApp(id string) bool {
 func (p *pet) play(r Rule, phase string, mirrored bool) {
 	log.Printf("play %s (%s)", r.ID, phase)
 	p.phase = phase
-	src := clipSource(p.cx, r)
+	src := clipSource(p.cx, p.pack, r)
 	front := p.front.GetUntracked()
 	back := 1 - front
 	s := p.slots[back]
@@ -229,7 +260,15 @@ func (p *pet) playIdle() {
 	}
 }
 
-func (p *pet) greet() { p.play(p.policy.Find("女仆屈膝礼仪"), phaseStartup, false) }
+func (p *pet) greet() { p.play(p.policy.Find(p.pack.Clips.Greeting), phaseStartup, false) }
+
+// eventInterval is the time between events, 40 seconds unless the pet says otherwise.
+func (p *pet) eventInterval() time.Duration {
+	if s := p.pack.EventSeconds; s > 0 {
+		return time.Duration(s) * time.Second
+	}
+	return 40 * time.Second
+}
 
 // finished runs as the front clip ends, and picks what follows, as Big Blue Fish's AnimationFinished.
 func (p *pet) finished() {
@@ -238,7 +277,7 @@ func (p *pet) finished() {
 		p.cx.Quit()
 		return
 	case phaseDrag:
-		// Hold the last pose until the fish is let go.
+		// Hold the last pose until the pet is let go.
 		return
 	case phaseOutbound:
 		if m := p.move; m != nil {
@@ -258,7 +297,7 @@ func (p *pet) finished() {
 			p.move = nil
 		}
 	case phaseStartup:
-		p.nextEvent = time.Now().Add(eventInterval)
+		p.nextEvent = time.Now().Add(p.eventInterval())
 	}
 	p.boundary()
 }
@@ -266,7 +305,7 @@ func (p *pet) finished() {
 func (p *pet) mustChoose(pool string) Rule {
 	r, ok := p.choose(pool)
 	if !ok {
-		return p.policy.Find("待机呼吸休闲")
+		return p.policy.Find(p.pack.Clips.Idle)
 	}
 	return r
 }
@@ -278,13 +317,15 @@ func (p *pet) boundary() {
 		return
 	}
 	now := time.Now()
-	if day := now.Format(time.DateOnly); now.Hour() == 23 && p.lastBrush != day {
-		p.lastBrush = day
-		p.play(p.policy.Find("晨间刷牙"), phaseDaily, false)
-		return
+	if c := p.pack.Clips; c.Daily != "" {
+		if day := now.Format(time.DateOnly); now.Hour() == c.DailyHour && p.lastDaily != day {
+			p.lastDaily = day
+			p.play(p.policy.Find(c.Daily), phaseDaily, false)
+			return
+		}
 	}
 	if !now.Before(p.nextEvent) {
-		p.nextEvent = now.Add(eventInterval)
+		p.nextEvent = now.Add(p.eventInterval())
 		if r, ok := p.choose("Event"); ok {
 			p.startEvent(r)
 			return
@@ -351,18 +392,18 @@ func (p *pet) clampX(x core.Points) core.Points {
 	if s.Size.Width == 0 {
 		return x
 	}
-	return min(max(x, s.Origin.X), s.Origin.X+s.Size.Width-petWidth)
+	return min(max(x, s.Origin.X), s.Origin.X+s.Size.Width-p.pack.Width)
 }
 
-// placeAtCorner puts the fish on the bottom right of the screen, above the Dock or the taskbar.
+// placeAtCorner sizes the window for the pet and puts it on the bottom right of the screen, above the Dock or the taskbar.
 func (p *pet) placeAtCorner() {
 	s := p.screen()
 	if s.Size.Width == 0 {
 		return
 	}
 	desktop.SetWindowFrame(p.cx, desktop.WindowFrame{
-		X: s.Origin.X + s.Size.Width - petWidth - 24, Y: s.Origin.Y + s.Size.Height - petHeight,
-		Move: true, Width: petWidth, Height: petHeight,
+		X: s.Origin.X + s.Size.Width - p.pack.Width - 24, Y: s.Origin.Y + s.Size.Height - p.pack.Height,
+		Move: true, Width: p.pack.Width, Height: p.pack.Height,
 	})
 }
 
@@ -376,13 +417,13 @@ func (p *pet) click() {
 	}
 }
 
-// pan drags the fish: the pointer's place in the window is where it was pressed plus the translation, so moving the window by the translation keeps the fish under the pointer.
+// pan drags the pet: the pointer's place in the window is where it was pressed plus the translation, so moving the window by the translation keeps the pet under the pointer.
 func (p *pet) pan(e core.PanEvent) {
 	switch e.Phase {
 	case core.GestureBegan:
 		p.dragging = true
 		p.move = nil
-		p.play(p.policy.Find("被鼠标拖拽悬空反馈"), phaseDrag, false)
+		p.play(p.policy.Find(p.pack.Clips.Drag), phaseDrag, false)
 	case core.GestureChanged:
 		f := desktop.Frame(p.cx)
 		desktop.SetWindowFrame(p.cx, desktop.WindowFrame{X: f.X + e.Translation.X, Y: f.Y + e.Translation.Y, Move: true})
@@ -397,7 +438,7 @@ func (p *pet) quit() {
 		return
 	}
 	p.move = nil
-	p.play(p.policy.Find("女仆屈膝礼仪"), phaseExit, false)
+	p.play(p.policy.Find(p.pack.Clips.Exit), phaseExit, false)
 	// Leave even if the clip never ends.
 	p.cx.AfterFunc(8*time.Second, p.cx.Quit)
 }
@@ -406,7 +447,7 @@ func (p *pet) menu() []core.MenuItem {
 	return []core.MenuItem{
 		{Label: "来点动作", OnSelect: func() {
 			if r, ok := p.choose("Event"); ok {
-				p.nextEvent = time.Now().Add(eventInterval)
+				p.nextEvent = time.Now().Add(p.eventInterval())
 				p.startEvent(r)
 			}
 		}},

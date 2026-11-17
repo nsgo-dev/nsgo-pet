@@ -1,18 +1,12 @@
 package main
 
 import (
-	_ "embed"
 	"encoding/json"
 	"fmt"
 	"math"
 	"math/rand/v2"
 	"time"
 )
-
-// animationsJSON is the clip catalog from Big Blue Fish, the same file that ships in resources, so the policy and its tests read the rules the clips ship with.
-//
-//go:embed resources/fish/animations.json
-var animationsJSON []byte
 
 // Rule is one clip and when it plays, as Big Blue Fish's animations.json describes it.
 type Rule struct {
@@ -44,16 +38,16 @@ type Context struct {
 	Working bool
 }
 
-// Policy chooses clips by pool and weight, a port of Big Blue Fish's CompanionAnimationPolicy.
+// Policy chooses a pet's clips by pool and weight, a port of Big Blue Fish's CompanionAnimationPolicy.
 type Policy struct {
 	Rules []Rule
 	byID  map[string]Rule
 }
 
-// LoadPolicy reads the embedded catalog.
-func LoadPolicy() (*Policy, error) {
+// NewPolicy reads a pet's animations.json.
+func NewPolicy(data []byte) (*Policy, error) {
 	var rules []Rule
-	if err := json.Unmarshal(animationsJSON, &rules); err != nil {
+	if err := json.Unmarshal(data, &rules); err != nil {
 		return nil, fmt.Errorf("animations.json: %w", err)
 	}
 	p := &Policy{Rules: rules, byID: make(map[string]Rule, len(rules))}
@@ -66,7 +60,7 @@ func LoadPolicy() (*Policy, error) {
 	return p, nil
 }
 
-// Find returns the rule named id; a test checks that every name the pet plays by name is in the catalog.
+// Find returns the rule named id, the zero Rule when there is none.
 func (p *Policy) Find(id string) Rule { return p.byID[id] }
 
 // Season is the northern season of t's month.

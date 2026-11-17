@@ -1,4 +1,4 @@
-module bluefish
+module nsgo-pet
 
 go 1.27.3
 

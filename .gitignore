@@ -1,4 +1,4 @@
-# Clips are fetched and transcoded by tools/fetch-assets.sh.
-resources/fish/mov/
-resources/fish/webm/
+# Clips are fetched and transcoded by tools/fetch-bigbluefish.sh.
+resources/pets/*/mov/
+resources/pets/*/webm/
 dist/

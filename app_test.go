@@ -17,59 +17,82 @@ func TestMain(m *testing.M) { nsgotest.Main(m) }
 
 var macOS = nsgotest.Environment(core.Environment{OS: core.OSMacOS, Idiom: core.IdiomDesktop})
 
+func packs(t *testing.T) []*Pack {
+	t.Helper()
+	ps, err := LoadPacks()
+	if err != nil {
+		t.Fatal(err)
+	}
+	return ps
+}
+
+func fish(t *testing.T) *Pack {
+	t.Helper()
+	for _, p := range packs(t) {
+		if p.ID == "bigbluefish" {
+			return p
+		}
+	}
+	t.Fatal("no bigbluefish pet")
+	return nil
+}
+
 func source(app *nsgotest.App, id string) string { return app.FindMounted("id:" + id).Video.Source }
 
 // The fish greets the user first, then goes on with an idle clip in the other player, which shows once it has a picture.
 func TestGreetsThenIdles(t *testing.T) {
-	app := nsgotest.Start(t, Root, macOS)
-	if got := source(app, "slot1"); got != "asset:fish/mov/女仆屈膝礼仪.mov" {
+	app := nsgotest.Start(t, App(packs(t)), macOS)
+	if got := source(app, "slot1"); got != "asset:pets/bigbluefish/mov/女仆屈膝礼仪.mov" {
 		t.Fatalf("first clip = %q, want the greeting", got)
 	}
 	app.Play("id:slot1", core.VideoInfo{Duration: 5 * time.Second})
 	app.Progress("id:slot1", 5*time.Second, 5*time.Second)
 	idle := source(app, "slot0")
-	if !strings.HasPrefix(idle, "asset:fish/mov/") {
+	if !strings.HasPrefix(idle, "asset:pets/bigbluefish/mov/") {
 		t.Fatalf("after the greeting the other player has %q", idle)
 	}
-	policy, _ := LoadPolicy()
-	name := strings.TrimSuffix(strings.TrimPrefix(idle, "asset:fish/mov/"), ".mov")
-	if r := policy.Find(name); r.Pool != "Idle" {
+	name := strings.TrimSuffix(strings.TrimPrefix(idle, "asset:pets/bigbluefish/mov/"), ".mov")
+	if r := fish(t).Policy.Find(name); r.Pool != "Idle" {
 		t.Fatalf("after the greeting the fish plays %q from pool %q, want an idle clip", name, r.Pool)
 	}
 }
 
 // Linux and Windows play the WebM clips.
 func TestOtherPlatformsPlayWebM(t *testing.T) {
-	app := nsgotest.Start(t, Root, nsgotest.Environment(core.Environment{OS: core.OSLinux, Idiom: core.IdiomDesktop}))
-	if got := source(app, "slot1"); got != "asset:fish/webm/女仆屈膝礼仪.webm" {
+	app := nsgotest.Start(t, App(packs(t)), nsgotest.Environment(core.Environment{OS: core.OSLinux, Idiom: core.IdiomDesktop}))
+	if got := source(app, "slot1"); got != "asset:pets/bigbluefish/webm/女仆屈膝礼仪.webm" {
 		t.Fatalf("first clip = %q", got)
 	}
 }
 
-// Every clip the catalog names ships in both forms.
+// Every pet's clips ship in both forms.
 func TestEveryClipShips(t *testing.T) {
-	policy, err := LoadPolicy()
-	if err != nil {
-		t.Fatal(err)
+	if p := fish(t); len(p.Policy.Rules) != 106 {
+		t.Fatalf("%d rules, want 106", len(p.Policy.Rules))
 	}
-	if len(policy.Rules) != 106 {
-		t.Fatalf("%d rules, want 106", len(policy.Rules))
-	}
-	for _, id := range []string{"女仆屈膝礼仪", "待机呼吸休闲", "晨间刷牙", "被鼠标拖拽悬空反馈"} {
-		if policy.Find(id).ID != id {
-			t.Errorf("the pet plays %q by name, which the catalog lacks", id)
+	for _, pk := range packs(t) {
+		dir := filepath.Join("resources/pets", pk.ID)
+		if _, err := os.Stat(filepath.Join(dir, "mov")); err != nil {
+			t.Logf("%s: clips not fetched", pk.ID)
+			continue
 		}
-	}
-	if _, err := os.Stat("resources/fish/mov"); err != nil {
-		t.Skip("clips not fetched: run tools/fetch-assets.sh")
-	}
-	for _, r := range policy.Rules {
-		name := strings.TrimSuffix(r.File, ".webm")
-		for _, f := range []string{filepath.Join("resources/fish/webm", r.File), filepath.Join("resources/fish/mov", name+".mov")} {
-			if _, err := os.Stat(f); err != nil {
-				t.Errorf("%s: %v", r.ID, err)
+		for _, r := range pk.Policy.Rules {
+			name := strings.TrimSuffix(r.File, ".webm")
+			for _, f := range []string{filepath.Join(dir, "webm", r.File), filepath.Join(dir, "mov", name+".mov")} {
+				if _, err := os.Stat(f); err != nil {
+					t.Errorf("%s %s: %v", pk.ID, r.ID, err)
+				}
 			}
 		}
+	}
+}
+
+// A manifest naming a clip its rules lack is refused.
+func TestPackNamesOnlyItsClips(t *testing.T) {
+	p := *fish(t)
+	p.Clips.Drag = "nothing"
+	if err := p.check(); err == nil {
+		t.Fatal("a manifest naming a missing drag clip passed")
 	}
 }
 
@@ -82,10 +105,7 @@ func at(s string) time.Time {
 }
 
 func TestWeights(t *testing.T) {
-	p, err := LoadPolicy()
-	if err != nil {
-		t.Fatal(err)
-	}
+	p := fish(t).Policy
 	for _, c := range []struct {
 		name string
 		id   string
@@ -112,7 +132,7 @@ func TestWeights(t *testing.T) {
 
 // A clip of a Gregorian festival grows toward its festival weight as the day nears.
 func TestFestivalWeightPeaksOnTheDay(t *testing.T) {
-	p, _ := LoadPolicy()
+	p := fish(t).Policy
 	var rule Rule
 	for _, r := range p.Rules {
 		if r.Festival == "Christmas" {
@@ -132,7 +152,7 @@ func TestFestivalWeightPeaksOnTheDay(t *testing.T) {
 }
 
 func TestChooseKeepsToItsPool(t *testing.T) {
-	p, _ := LoadPolicy()
+	p := fish(t).Policy
 	rnd := rand.New(rand.NewPCG(1, 2))
 	ctx := Context{Now: at("2026-11-17 15:00")}
 	for range 200 {
@@ -157,13 +177,13 @@ func TestCodingApps(t *testing.T) {
 	}
 }
 
-// A press on the fish's body plays a click reaction once the greeting is over.
+// A press on the pet's body plays a click reaction once the greeting is over.
 func TestPressPlaysAClickReaction(t *testing.T) {
-	app := nsgotest.Start(t, Root, macOS)
+	app := nsgotest.Start(t, App(packs(t)), macOS)
 	app.Play("id:slot1", core.VideoInfo{Duration: 5 * time.Second})
 	app.Progress("id:slot1", 5*time.Second, 5*time.Second)
 	app.Play("id:slot0", core.VideoInfo{Duration: 5 * time.Second})
-	app.Press("id:fish")
+	app.Press("id:body")
 	got := source(app, "slot1")
 	if !strings.Contains(got, "点击回应-") {
 		t.Fatalf("after a press the other player has %q, want a click reaction", got)
