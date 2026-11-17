@@ -1,39 +1,116 @@
 # nsgo-pet
 
-A desktop pet built with [NSGo](https://github.com/nsgo-dev/nsgo), whose pet can be switched from the tray icon or its right-click menu.
+A desktop pet built with [NSGo](https://github.com/nsgo-dev/nsgo). Pets are folders of clips and rules, and you switch between them from the tray icon or the pet's right-click menu.
 
-The pet lives in a transparent, borderless window that floats above other windows on every Space, stays off the Dock and the taskbar, and lets clicks through everywhere except its body. It greets you, idles, plays an event every so often chosen by its clips' weights (time of day, season, meals, Gregorian festivals, coding in the app in front), reacts to clicks, dangles while dragged, and walks along the bottom of the screen.
+<img src="docs/bigbluefish.png" alt="Big Blue Fish in a transparent window" width="320">
+
+## What it does
+
+- Lives in a transparent, borderless window without a shadow, floating above other windows on every Space and over full-screen apps.
+- Stays off the Dock and the taskbar; a tray icon holds its menu.
+- Takes the pointer only on the pet's body: clicks anywhere else in the window reach the window below.
+- Greets you, idles, and plays an event every 40 seconds, chosen by each clip's weight and conditions: time of day, season, meals, Gregorian festivals, and whether an editor or a terminal is the app in front.
+- Reacts to clicks, dangles while dragged, and walks along the bottom of the screen.
+- Remembers the pet you chose.
+
+Clips play in two players, the next one loading out of sight, so the pet never blinks out between clips.
 
 ## Run
 
+Needs Go 1.27.3 or later. On macOS:
+
 ```sh
-go tool nsgo dev
-go tool nsgo test .
+go tool nsgo dev       # build and open the pet
+go tool nsgo test .    # the headless tests
 ```
 
-## Pets
-
-Each pet is a directory under `resources/pets/<id>/`:
-
-| File | What it is |
-| --- | --- |
-| `pet.json` | Its name, window size, body rectangle in percent of the frame, event interval and the clips it plays by name (greeting, exit, drag, idle, daily) |
-| `animations.json` | Its clips and when they play, in [Big Blue Fish's format](https://github.com/Bai-Cute/big-blue-fish-desktop-pet): pools `Idle`, `Event`, `Click`, `Greeting`, `Daily`, `Drag`, `Disabled`, with weights and their conditions |
-| `webm/` | The clips as VP9 with alpha, for Linux |
-| `mov/` | The same clips as HEVC with alpha, for macOS, whose player opens no WebM |
-
-The clips are in git. Each pet has a script in `tools/` that fetches its clips from their source again and transcodes the MOV files.
-
-| Pet | Source | License |
-| --- | --- | --- |
-| 大蓝鱼 (`bigbluefish`) | [Big Blue Fish](https://github.com/Bai-Cute/big-blue-fish-desktop-pet) | MIT, PC2005-cloud (`resources/pets/bigbluefish/LICENSE.txt`) |
+Right-click the pet, or use the tray icon, to play an event, move it back to the corner, switch pets or quit.
 
 ## Platforms
 
-- macOS: runs.
-- Linux: plays the WebM clips; needs GStreamer's `gstreamer1.0-plugins-bad` (codecalpha).
-- Windows: not yet. NSGo's Windows player refuses clips with alpha, so the clips need the app's own decoder feeding `ImageSource.Pixels`.
+| Platform | State |
+| --- | --- |
+| macOS | Runs. Plays the HEVC-with-alpha clips in `mov/`. |
+| Linux | Plays the WebM clips; needs GStreamer's `gstreamer1.0-plugins-bad` (codecalpha). The window floats on X11; on Wayland it cannot float or move itself. |
+| Windows | Not yet. NSGo's Windows player refuses clips with alpha, so the clips need the app's own decoder feeding `ImageSource.Pixels`. |
+
+## Pets
+
+| Pet | ID | Clips | Source | License |
+| --- | --- | --- | --- | --- |
+| 大蓝鱼 Big Blue Fish | `bigbluefish` | 106 | [Bai-Cute/big-blue-fish-desktop-pet](https://github.com/Bai-Cute/big-blue-fish-desktop-pet) | MIT, Copyright (c) 2026 PC2005-cloud ([LICENSE.txt](resources/pets/bigbluefish/LICENSE.txt)) |
+
+### Adding a pet
+
+A pet is a folder `resources/pets/<id>/`:
+
+| Path | What it is |
+| --- | --- |
+| `pet.json` | The pet's name, window size, body and the clips it plays by name |
+| `animations.json` | Every clip and when it plays |
+| `webm/<clip>.webm` | Each clip as VP9 with alpha, for Linux |
+| `mov/<clip>.mov` | The same clip as HEVC with alpha, for macOS, whose player opens no WebM |
+| `LICENSE.txt` | The clips' license |
+
+`pet.json`:
+
+```json
+{
+  "name": "大蓝鱼",
+  "width": 320,
+  "height": 180,
+  "body": { "left": 33, "top": 15, "width": 34, "height": 80 },
+  "eventSeconds": 40,
+  "clips": {
+    "greeting": "女仆屈膝礼仪",
+    "exit": "女仆屈膝礼仪",
+    "drag": "被鼠标拖拽悬空反馈",
+    "idle": "待机呼吸休闲",
+    "daily": "晨间刷牙",
+    "dailyHour": 23
+  },
+  "source": "https://github.com/Bai-Cute/big-blue-fish-desktop-pet",
+  "license": "MIT, Copyright (c) 2026 PC2005-cloud"
+}
+```
+
+| Field | Meaning |
+| --- | --- |
+| `width`, `height` | The window in points; clips are fitted into it |
+| `body` | Where the pet's body is in the frame, in percent; only there does the window take the pointer |
+| `eventSeconds` | Time between events, 40 when left out |
+| `clips` | Clip IDs from `animations.json` played by name: on start, on quit, while dragged, as the fallback idle, and once a day at `dailyHour` |
+
+`animations.json` is a list of clips in [Big Blue Fish's format](https://github.com/Bai-Cute/big-blue-fish-desktop-pet/blob/75cd217568e713a7de8812f65dad7072798a8b70/code/BigBlueFish.Windows/assets/fish/animations.json):
+
+| Field | Meaning |
+| --- | --- |
+| `Id`, `File` | The clip's ID and its WebM file name; the MOV file has the same name |
+| `Pool` | `Idle` between events, `Event` every `eventSeconds`, `Click` on a click, `Greeting`, `Daily`, `Drag`, or `Disabled` |
+| `Weight` | How likely it is against the others of its pool; 0 never plays unless a condition raises it |
+| `NightOnly` | Only from 23:00 to 8:00 |
+| `SeasonOnly`, `SummerWeight`, `WinterWeight`, `MorningWeight` | Only in a season, or another weight in summer, in winter or from 8:00 to 11:00 |
+| `Meal`, `MealBoost` | `Breakfast`, `Lunch`, `Dinner` or `Any`: the boost is added within an hour of 8:00, 12:00 or 18:00 |
+| `Festival`, `RadiusDays`, `FestivalMode`, `FestivalWeight` | Near a festival the weight moves toward `FestivalWeight` (`Triangle`), or is it within `RadiusDays` |
+| `WorkKind`, `WorkWeight` | `Coding`: `WorkWeight` while an editor or a terminal is in front |
+| `MoveKind`, `HourParity` | `Run` or `Crab`: the pet walks 70 points and back, in the hours whose parity matches, away from the hour's edges |
+
+Clips need a transparent background. From PNG frames with alpha, make both forms with ffmpeg:
+
+```sh
+ffmpeg -framerate 24 -i frames/%04d.png -c:v libvpx-vp9 -pix_fmt yuva420p -b:v 0 -crf 32 webm/idle.webm
+ffmpeg -c:v libvpx-vp9 -i webm/idle.webm -an -c:v hevc_videotoolbox -alpha_quality 0.75 -q:v 60 -tag:v hvc1 -pix_fmt bgra mov/idle.mov
+```
+
+`tools/fetch-bigbluefish.sh` fetches Big Blue Fish's clips from their source again and transcodes the MOV files; a new pet with a source of its own gets a script beside it. `go tool nsgo test .` checks every pet: its `pet.json` names only clips its `animations.json` has, and every clip ships in both forms.
 
 ## Not yet
 
-Lunar festivals (their clips keep their plain weight), speech bubbles, and taking the pointer by the clip's alpha instead of a body rectangle ([nsgo#599](https://github.com/nsgo-dev/nsgo/issues/599)).
+- Windows playback.
+- Lunar festivals (Spring Festival, Lantern, Dragon Boat, Qixi, Mid-Autumn, Laba): their clips keep their plain weight.
+- Taking the pointer by the clip's alpha instead of a body rectangle ([nsgo#599](https://github.com/nsgo-dev/nsgo/issues/599)).
+- Speech bubbles, weather and the AI agent of the original Big Blue Fish.
+
+## License
+
+The code is MIT, Copyright (c) 2026 nsgo-dev: see [LICENSE](LICENSE). Each pet's clips keep their own license, listed under [Pets](#pets) and in the pet's `LICENSE.txt`.
