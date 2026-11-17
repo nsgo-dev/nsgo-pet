@@ -1,5 +1,5 @@
 name: nsgo-pet
-id: com.github.houko.nsgopet
+id: dev.nsgo.pet
 version: 0.1.0
 
 # macOS and iOS use assets/AppIcon.icon, or assets/AppIcon.icns on macOS; the
