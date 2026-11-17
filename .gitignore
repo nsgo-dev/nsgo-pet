@@ -2,3 +2,4 @@
 resources/pets/*/mov/
 resources/pets/*/webm/
 dist/
+.nsgo/
