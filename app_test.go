@@ -185,3 +185,46 @@ func TestPressPlaysAClickReaction(t *testing.T) {
 		t.Fatalf("after a press the other player has %q, want a click reaction", got)
 	}
 }
+
+// Pets of a group are listed in a submenu after the ungrouped ones.
+func TestPetMenuGroups(t *testing.T) {
+	ps := []*Pack{{ID: "a", Name: "A"}, {ID: "b", Name: "B", Group: "G"}, {ID: "c", Name: "C"}, {ID: "d", Name: "D", Group: "G"}}
+	m := petMenu(ps, "d", func(string) {})
+	if len(m) != 3 || m[0].Label != "A" || m[1].Label != "C" || m[2].Label != "G" || len(m[2].Items) != 2 || !m[2].Items[1].Checked {
+		t.Fatalf("menu = %+v", m)
+	}
+}
+
+// A pet with outfits idles in the summer outfit in summer and in the base one in spring.
+func TestOutfitsFollowTheSeason(t *testing.T) {
+	var pk *Pack
+	for _, p := range packs(t) {
+		if p.ID == "playpets-clover" {
+			pk = p
+		}
+	}
+	if pk == nil {
+		t.Fatal("no playpets-clover pet")
+	}
+	rnd := rand.New(rand.NewPCG(3, 4))
+	for _, c := range []struct {
+		when, file string
+	}{{"2026-07-10 15:00", "idle-summer.webm"}, {"2026-04-10 15:00", "idle.webm"}, {"2026-01-10 15:00", "idle-winter.webm"}} {
+		seen := map[string]bool{}
+		for range 200 {
+			r, ok := pk.Policy.Choose("Idle", Context{Now: at(c.when)}, rnd)
+			if !ok {
+				t.Fatalf("%s: no idle", c.when)
+			}
+			seen[r.File] = true
+		}
+		if !seen[c.file] {
+			t.Errorf("%s: idles %v, want %s among them", c.when, seen, c.file)
+		}
+		for f := range seen {
+			if c.file == "idle.webm" && strings.Contains(f, "-") || c.file != "idle.webm" && !strings.Contains(f, strings.TrimPrefix(strings.TrimSuffix(c.file, ".webm"), "idle")) && !strings.HasPrefix(f, "waiting") {
+				t.Errorf("%s: idles in %s", c.when, f)
+			}
+		}
+	}
+}

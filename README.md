@@ -11,7 +11,7 @@ A desktop pet built with [NSGo](https://github.com/nsgo-dev/nsgo). Pets are fold
 - Takes the pointer only on the pet's body: clicks anywhere else in the window reach the window below.
 - Greets you, idles, and plays an event every 40 seconds, chosen by each clip's weight and conditions: time of day, season, meals, Gregorian festivals, and whether an editor or a terminal is the app in front.
 - Reacts to clicks, dangles while dragged, and walks along the bottom of the screen.
-- Remembers the pet you chose.
+- Remembers the pet you chose; pets from one source share a submenu, and outfits change with the season.
 
 Clips play in two players, the next one loading out of sight, so the pet never blinks out between clips.
 
@@ -39,6 +39,10 @@ Right-click the pet, or use the tray icon, to play an event, move it back to the
 | Pet | ID | Clips | Source | License |
 | --- | --- | --- | --- | --- |
 | 大蓝鱼 Big Blue Fish | `bigbluefish` | 106 | [Bai-Cute/big-blue-fish-desktop-pet](https://github.com/Bai-Cute/big-blue-fish-desktop-pet) | MIT, Copyright (c) 2026 PC2005-cloud ([LICENSE.txt](resources/pets/bigbluefish/LICENSE.txt)) |
+| Clover | `playpets-clover` | 35 | [gaerae/playpets](https://github.com/gaerae/playpets), with its summer and winter outfits | MIT, gaerae ([NOTICE](resources/pets/playpets-clover/NOTICE.md)) |
+| Daisy | `playpets-daisy` | 35 | [gaerae/playpets](https://github.com/gaerae/playpets), with its summer and winter outfits | MIT, gaerae ([NOTICE](resources/pets/playpets-daisy/NOTICE.md)) |
+| Pip | `playpets-pip` | 35 | [gaerae/playpets](https://github.com/gaerae/playpets), with its summer and winter outfits | MIT, gaerae ([NOTICE](resources/pets/playpets-pip/NOTICE.md)) |
+| Miso | `playpets-miso` | 35 | [gaerae/playpets](https://github.com/gaerae/playpets), with its summer and winter outfits | MIT, gaerae ([NOTICE](resources/pets/playpets-miso/NOTICE.md)) |
 
 ### Adding a pet
 
@@ -101,6 +105,8 @@ Clips need a transparent background. From PNG frames with alpha, make both forms
 ffmpeg -framerate 24 -i frames/%04d.png -c:v libvpx-vp9 -pix_fmt yuva420p -b:v 0 -crf 32 webm/idle.webm
 ffmpeg -c:v libvpx-vp9 -i webm/idle.webm -an -c:v hevc_videotoolbox -alpha_quality 0.75 -q:v 60 -tag:v hvc1 -pix_fmt bgra mov/idle.mov
 ```
+
+A pet drawn as a Codex sprite sheet (eight columns of 192×208 cells: idle, running, waving, jumping, failed, waiting, working, done) converts in one step: `go run ./tools/codexpet -sheet spritesheet.png -out resources/pets/<id> -name <name> -license <license>` cuts each row into a clip in both forms and writes `pet.json` and `animations.json`; `-summer` and `-winter` add outfits that play in those seasons, and `-group` lists the pet in a submenu.
 
 `tools/fetch-bigbluefish.sh` fetches Big Blue Fish's clips from their source again and transcodes the MOV files; a new pet with a source of its own gets a script beside it. `go tool nsgo test .` checks every pet: its `pet.json` names only clips its `animations.json` has, and every clip ships in both forms.
 
