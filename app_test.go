@@ -156,3 +156,16 @@ func TestCodingApps(t *testing.T) {
 		}
 	}
 }
+
+// A press on the fish's body plays a click reaction once the greeting is over.
+func TestPressPlaysAClickReaction(t *testing.T) {
+	app := nsgotest.Start(t, Root, macOS)
+	app.Play("id:slot1", core.VideoInfo{Duration: 5 * time.Second})
+	app.Progress("id:slot1", 5*time.Second, 5*time.Second)
+	app.Play("id:slot0", core.VideoInfo{Duration: 5 * time.Second})
+	app.Press("id:fish")
+	got := source(app, "slot1")
+	if !strings.Contains(got, "点击回应-") {
+		t.Fatalf("after a press the other player has %q, want a click reaction", got)
+	}
+}

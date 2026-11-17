@@ -38,13 +38,31 @@ func Root(cx *core.Scope) core.Node {
 		p.greet()
 	})
 	desktop.NewTray(cx, desktop.TrayOptions{Title: "🐟", Tooltip: "Big Blue Fish", Menu: p.menu})
-	return core.View{
-		Style:         core.Style{FlexGrow: 1},
-		OnPress:       func(core.PressEvent) { p.click() },
-		OnContextMenu: func(e core.ContextMenuEvent) { desktop.PopupMenu(cx, p.menu(), e.Position, nil) },
-		OnPan:         p.pan,
-		Children:      []core.Node{p.slots[0].view(p, 0), p.slots[1].view(p, 1)},
-	}
+	return core.View{Style: core.Style{FlexGrow: 1}, Children: []core.Node{
+		// The players take no pointer: a video counts as drawn over its whole box, where the fish fills only its middle.
+		core.View{PointerEvents: core.PointerEventsNone, Style: fill(), Children: []core.Node{p.slots[0].view(p, 0), p.slots[1].view(p, 1)}},
+		// The fish's body takes the presses, the drags and the right clicks; the rest of the window lets the pointer through.
+		core.View{
+			TestID:        "fish",
+			Style:         core.Style{Position: core.Absolute, Left: core.Pct(bodyLeft), Top: core.Pct(bodyTop), Width: core.Pct(bodyWidth), Height: core.Pct(bodyHeight)},
+			OnPress:       func(core.PressEvent) { p.click() },
+			OnContextMenu: func(e core.ContextMenuEvent) { desktop.PopupMenu(cx, p.menu(), e.Position, nil) },
+			OnPan:         p.pan,
+		},
+	}}
+}
+
+// The fish's body in the clips, in percent of the frame: about the middle third, from her ears to her feet.
+const (
+	bodyLeft   = 33
+	bodyTop    = 15
+	bodyWidth  = 34
+	bodyHeight = 80
+)
+
+// fill is a style that covers the parent.
+func fill() core.Style {
+	return core.Style{Position: core.Absolute, Top: core.Pt(0), Right: core.Pt(0), Bottom: core.Pt(0), Left: core.Pt(0)}
 }
 
 // clipSource is where this platform's clips are: HEVC with alpha on Apple platforms, whose player opens no WebM, VP9 with alpha in WebM elsewhere.
@@ -72,7 +90,8 @@ func (s *slot) view(p *pet, i int) core.Node {
 		ResizeMode: core.Contain,
 		Ref:        s.ref,
 		StyleFunc: func() core.Style {
-			st := core.Style{Position: core.Absolute, Top: core.Pt(0), Right: core.Pt(0), Bottom: core.Pt(0), Left: core.Pt(0), Opacity: core.Alpha(0)}
+			st := fill()
+			st.Opacity = core.Alpha(0)
 			if p.front.Get() == i {
 				st.Opacity = core.Alpha(1)
 			}
@@ -184,6 +203,7 @@ func isCodingApp(id string) bool {
 
 // play shows rule's clip, mirrored when asked, for phase.
 func (p *pet) play(r Rule, phase string, mirrored bool) {
+	log.Printf("play %s (%s)", r.ID, phase)
 	p.phase = phase
 	src := clipSource(p.cx, r)
 	front := p.front.GetUntracked()
