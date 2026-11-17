@@ -1,0 +1,80 @@
+[
+  {
+    "Id": "hello-greeting",
+    "File": "hello.webm",
+    "Pool": "Greeting",
+    "Weight": 100
+  },
+  {
+    "Id": "bye",
+    "File": "bye.webm",
+    "Pool": "Disabled",
+    "Weight": 0
+  },
+  {
+    "Id": "stand-idle",
+    "File": "stand.webm",
+    "Pool": "Idle",
+    "Weight": 100
+  },
+  {
+    "Id": "look-idle",
+    "File": "look.webm",
+    "Pool": "Idle",
+    "Weight": 40
+  },
+  {
+    "Id": "look-event",
+    "File": "look.webm",
+    "Pool": "Event",
+    "Weight": 30
+  },
+  {
+    "Id": "hop-click",
+    "File": "hop.webm",
+    "Pool": "Click",
+    "Weight": 60
+  },
+  {
+    "Id": "hop-event",
+    "File": "hop.webm",
+    "Pool": "Event",
+    "Weight": 30
+  },
+  {
+    "Id": "wiggle-click",
+    "File": "wiggle.webm",
+    "Pool": "Click",
+    "Weight": 40
+  },
+  {
+    "Id": "wiggle-event",
+    "File": "wiggle.webm",
+    "Pool": "Event",
+    "Weight": 30
+  },
+  {
+    "Id": "fume-click",
+    "File": "fume.webm",
+    "Pool": "Click",
+    "Weight": 20
+  },
+  {
+    "Id": "fume-event",
+    "File": "fume.webm",
+    "Pool": "Event",
+    "Weight": 15
+  },
+  {
+    "Id": "tumble-event",
+    "File": "tumble.webm",
+    "Pool": "Event",
+    "Weight": 30
+  },
+  {
+    "Id": "dangle-drag",
+    "File": "dangle.webm",
+    "Pool": "Drag",
+    "Weight": 100
+  }
+]
