@@ -1,0 +1,130 @@
+[
+  {
+    "Id": "wave-greeting",
+    "File": "wave.webm",
+    "Pool": "Greeting",
+    "Weight": 100
+  },
+  {
+    "Id": "wave-click",
+    "File": "wave.webm",
+    "Pool": "Click",
+    "Weight": 30
+  },
+  {
+    "Id": "idle-idle",
+    "File": "idle.webm",
+    "Pool": "Idle",
+    "Weight": 100
+  },
+  {
+    "Id": "sway-idle",
+    "File": "sway.webm",
+    "Pool": "Idle",
+    "Weight": 30
+  },
+  {
+    "Id": "blink-idle",
+    "File": "blink.webm",
+    "Pool": "Idle",
+    "Weight": 30
+  },
+  {
+    "Id": "look-event",
+    "File": "look.webm",
+    "Pool": "Event",
+    "Weight": 30
+  },
+  {
+    "Id": "bounce-click",
+    "File": "bounce.webm",
+    "Pool": "Click",
+    "Weight": 60
+  },
+  {
+    "Id": "squish-click",
+    "File": "squish.webm",
+    "Pool": "Click",
+    "Weight": 60
+  },
+  {
+    "Id": "heart-click",
+    "File": "heart.webm",
+    "Pool": "Click",
+    "Weight": 30
+  },
+  {
+    "Id": "heart-event",
+    "File": "heart.webm",
+    "Pool": "Event",
+    "Weight": 15
+  },
+  {
+    "Id": "dance-event",
+    "File": "dance.webm",
+    "Pool": "Event",
+    "Weight": 30
+  },
+  {
+    "Id": "eat-event",
+    "File": "eat.webm",
+    "Pool": "Event",
+    "Weight": 5,
+    "Meal": "Any",
+    "MealBoost": 80
+  },
+  {
+    "Id": "coffee-event",
+    "File": "coffee.webm",
+    "Pool": "Event",
+    "Weight": 15,
+    "MorningWeight": 40
+  },
+  {
+    "Id": "nap-event",
+    "File": "nap.webm",
+    "Pool": "Event",
+    "Weight": 80,
+    "NightOnly": true
+  },
+  {
+    "Id": "typing-event",
+    "File": "typing.webm",
+    "Pool": "Event",
+    "Weight": 5,
+    "WorkKind": "Coding",
+    "WorkWeight": 100
+  },
+  {
+    "Id": "vs-code-event",
+    "File": "vs-code.webm",
+    "Pool": "Event",
+    "Weight": 5,
+    "WorkKind": "Coding",
+    "WorkWeight": 60
+  },
+  {
+    "Id": "side-eye-event",
+    "File": "side-eye.webm",
+    "Pool": "Event",
+    "Weight": 15
+  },
+  {
+    "Id": "this-is-fine-event",
+    "File": "this-is-fine.webm",
+    "Pool": "Event",
+    "Weight": 3
+  },
+  {
+    "Id": "table-flip-event",
+    "File": "table-flip.webm",
+    "Pool": "Event",
+    "Weight": 3
+  },
+  {
+    "Id": "held-drag",
+    "File": "held.webm",
+    "Pool": "Drag",
+    "Weight": 100
+  }
+]
