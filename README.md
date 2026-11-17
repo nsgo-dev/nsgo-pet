@@ -1,12 +1,10 @@
 # nsgo-pet
 
-A desktop pet built with [NSGo](https://github.com/nsgo-dev/nsgo), with 62 pets to switch between from the tray icon or the pet's right-click menu. Pets are folders of clips and rules, so adding one needs no code.
+A desktop pet built with [NSGo](https://github.com/nsgo-dev/nsgo), with pets to switch between from the tray icon or the pet's right-click menu. Pets are folders of clips and rules, so adding one needs no code.
 
 <img src="docs/bigbluefish.png" alt="Big Blue Fish in a transparent window" width="320">
 
 <img src="docs/playpets.png" alt="PlayPets' Clover, Daisy, Pip and Miso" width="640">
-
-<img src="docs/familiars.png" alt="Sixteen of the Familiars" width="760">
 
 ## What it does
 
@@ -47,7 +45,6 @@ Right-click the pet, or use the tray icon, to play an event, move it back to the
 | Daisy | `playpets-daisy` | 35 | [gaerae/playpets](https://github.com/gaerae/playpets), with its summer and winter outfits | MIT, gaerae ([NOTICE](resources/pets/playpets-daisy/NOTICE.md)) |
 | Pip | `playpets-pip` | 35 | [gaerae/playpets](https://github.com/gaerae/playpets), with its summer and winter outfits | MIT, gaerae ([NOTICE](resources/pets/playpets-pip/NOTICE.md)) |
 | Miso | `playpets-miso` | 35 | [gaerae/playpets](https://github.com/gaerae/playpets), with its summer and winter outfits | MIT, gaerae ([NOTICE](resources/pets/playpets-miso/NOTICE.md)) |
-| 57 Familiars (Merge Mammoth, CI Phoenix, Patch Panda…) | `familiars-*` | 7 each | [jalcantarab/agent-familiars](https://github.com/jalcantarab/agent-familiars), its original pets | MIT, Jorge Alcantara (each pet's `NOTICE.md`) |
 
 ### Adding a pet
 
@@ -119,7 +116,6 @@ Each source has a script in `tools/` that fetches its pets again from a pinned c
 | --- | --- |
 | `tools/fetch-bigbluefish.sh` | Big Blue Fish's 106 clips, transcoding the MOV files |
 | `tools/fetch-playpets.sh` | PlayPets' four pets with their summer and winter outfits |
-| `tools/fetch-familiars.sh` | Familiars' original pets, from its catalog |
 
 `go tool nsgo test .` checks every pet: its `pet.json` names only clips its `animations.json` has, and every clip ships in both forms.
 
