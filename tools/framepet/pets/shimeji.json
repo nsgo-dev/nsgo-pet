@@ -1,0 +1,258 @@
+{
+  "name": "Shimeji",
+  "source": "https://github.com/estenv/linux-shimeji",
+  "license": "zlib, Copyright (c) 2009-2011 Yuki Yamada; altered",
+  "canvas": [
+    128,
+    128
+  ],
+  "margin": 2,
+  "pixelScale": 2,
+  "height": 120,
+  "eventSeconds": 30,
+  "play": {
+    "greeting": "drop-in-greeting",
+    "exit": "jump",
+    "drag": "pinched-drag",
+    "idle": "stand-idle"
+  },
+  "clips": [
+    {
+      "name": "drop-in",
+      "frames": [
+        "shime4.png*30",
+        "shime18.png*4",
+        "shime19.png*4",
+        "shime1.png*50"
+      ],
+      "rules": [
+        {
+          "Pool": "Greeting",
+          "Weight": 100
+        }
+      ],
+      "fps": 50
+    },
+    {
+      "name": "jump",
+      "frames": [
+        "shime1.png*10",
+        "shime22.png*40"
+      ],
+      "rules": [
+        {
+          "Id": "jump",
+          "Pool": "Disabled",
+          "Weight": 0
+        }
+      ],
+      "fps": 50
+    },
+    {
+      "name": "stand",
+      "frames": [
+        "shime1.png*200"
+      ],
+      "rules": [
+        {
+          "Pool": "Idle",
+          "Weight": 100
+        }
+      ],
+      "fps": 50
+    },
+    {
+      "name": "sit",
+      "frames": [
+        "shime11.png*250"
+      ],
+      "rules": [
+        {
+          "Pool": "Idle",
+          "Weight": 20
+        },
+        {
+          "Pool": "Event",
+          "Weight": 30
+        }
+      ],
+      "fps": 50
+    },
+    {
+      "name": "look-up",
+      "frames": [
+        "shime26.png*250"
+      ],
+      "rules": [
+        {
+          "Pool": "Idle",
+          "Weight": 20
+        }
+      ],
+      "fps": 50
+    },
+    {
+      "name": "head-spin",
+      "frames": [
+        "shime26.png*5",
+        "shime15.png*5",
+        "shime27.png*5",
+        "shime16.png*5",
+        "shime28.png*5",
+        "shime17.png*5",
+        "shime29.png*5",
+        "shime11.png*5",
+        "shime26.png*5",
+        "shime15.png*5",
+        "shime27.png*5",
+        "shime16.png*5",
+        "shime28.png*5",
+        "shime17.png*5",
+        "shime29.png*5",
+        "shime11.png*5",
+        "shime26.png*5",
+        "shime15.png*5",
+        "shime27.png*5",
+        "shime16.png*5",
+        "shime28.png*5",
+        "shime17.png*5",
+        "shime29.png*5",
+        "shime11.png*5",
+        "shime11.png*25"
+      ],
+      "rules": [
+        {
+          "Pool": "Click",
+          "Weight": 40
+        },
+        {
+          "Pool": "Event",
+          "Weight": 15
+        }
+      ],
+      "fps": 50
+    },
+    {
+      "name": "sprawl",
+      "frames": [
+        "shime21.png*250"
+      ],
+      "rules": [
+        {
+          "Pool": "Event",
+          "Weight": 30
+        }
+      ],
+      "fps": 50
+    },
+    {
+      "name": "creep",
+      "frames": [
+        "shime20.png*28",
+        "shime20.png*4",
+        "shime21.png*4",
+        "shime21.png*4",
+        "shime21.png*24"
+      ],
+      "loops": 3,
+      "rules": [
+        {
+          "Pool": "Event",
+          "Weight": 20
+        }
+      ],
+      "fps": 50
+    },
+    {
+      "name": "trip",
+      "frames": [
+        "shime19.png*8",
+        "shime18.png*4",
+        "shime20.png*4",
+        "shime20.png*10"
+      ],
+      "rules": [
+        {
+          "Pool": "Click",
+          "Weight": 60
+        }
+      ],
+      "fps": 50
+    },
+    {
+      "name": "bounce",
+      "frames": [
+        "shime18.png*4",
+        "shime19.png*4",
+        "shime1.png*10"
+      ],
+      "rules": [
+        {
+          "Pool": "Click",
+          "Weight": 30
+        }
+      ],
+      "fps": 50
+    },
+    {
+      "name": "split",
+      "frames": [
+        "shime42.png*5",
+        "shime43.png*2",
+        "shime44.png*2",
+        "shime45.png*5",
+        "shime46.png*20"
+      ],
+      "rules": [
+        {
+          "Pool": "Event",
+          "Weight": 10
+        }
+      ],
+      "fps": 50
+    },
+    {
+      "name": "pinched",
+      "frames": [
+        "shime1.png*5",
+        "shime5.png*5",
+        "shime6.png*5",
+        "shime5.png*5",
+        "shime6.png*5",
+        "shime1.png*50",
+        "shime5.png*5",
+        "shime6.png*5",
+        "shime5.png*5",
+        "shime6.png*5",
+        "shime5.png*5",
+        "shime6.png*5",
+        "shime5.png*5",
+        "shime6.png*5",
+        "shime1.png*100",
+        "shime5.png*5",
+        "shime6.png*5",
+        "shime5.png*5",
+        "shime6.png*5",
+        "shime5.png*5",
+        "shime6.png*5",
+        "shime5.png*5",
+        "shime6.png*5",
+        "shime5.png*2",
+        "shime6.png*2",
+        "shime5.png*2",
+        "shime6.png*2",
+        "shime5.png*2",
+        "shime6.png*2",
+        "shime5.png*2",
+        "shime6.png*2"
+      ],
+      "rules": [
+        {
+          "Pool": "Drag",
+          "Weight": 100
+        }
+      ],
+      "fps": 50
+    }
+  ]
+}
