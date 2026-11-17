@@ -1,0 +1,4 @@
+# Clips are fetched and transcoded by tools/fetch-assets.sh.
+resources/fish/mov/
+resources/fish/webm/
+dist/
