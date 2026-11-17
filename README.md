@@ -1,8 +1,12 @@
 # nsgo-pet
 
-A desktop pet built with [NSGo](https://github.com/nsgo-dev/nsgo). Pets are folders of clips and rules, and you switch between them from the tray icon or the pet's right-click menu.
+A desktop pet built with [NSGo](https://github.com/nsgo-dev/nsgo), with 62 pets to switch between from the tray icon or the pet's right-click menu. Pets are folders of clips and rules, so adding one needs no code.
 
 <img src="docs/bigbluefish.png" alt="Big Blue Fish in a transparent window" width="320">
+
+<img src="docs/playpets.png" alt="PlayPets' Clover, Daisy, Pip and Miso" width="640">
+
+<img src="docs/familiars.png" alt="Sixteen of the Familiars" width="760">
 
 ## What it does
 
@@ -38,7 +42,7 @@ Right-click the pet, or use the tray icon, to play an event, move it back to the
 
 | Pet | ID | Clips | Source | License |
 | --- | --- | --- | --- | --- |
-| 大蓝鱼 Big Blue Fish | `bigbluefish` | 106 | [Bai-Cute/big-blue-fish-desktop-pet](https://github.com/Bai-Cute/big-blue-fish-desktop-pet) | MIT, Copyright (c) 2026 PC2005-cloud ([LICENSE.txt](resources/pets/bigbluefish/LICENSE.txt)) |
+| 大蓝鱼 Big Blue Fish | `bigbluefish` | 106 | [PC2005-cloud/dsh-pet](https://github.com/PC2005-cloud/dsh-pet), via [Bai-Cute/big-blue-fish-desktop-pet](https://github.com/Bai-Cute/big-blue-fish-desktop-pet) | Character [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/): **no commercial use** ([NOTICE](resources/pets/bigbluefish/NOTICE.md)) |
 | Clover | `playpets-clover` | 35 | [gaerae/playpets](https://github.com/gaerae/playpets), with its summer and winter outfits | MIT, gaerae ([NOTICE](resources/pets/playpets-clover/NOTICE.md)) |
 | Daisy | `playpets-daisy` | 35 | [gaerae/playpets](https://github.com/gaerae/playpets), with its summer and winter outfits | MIT, gaerae ([NOTICE](resources/pets/playpets-daisy/NOTICE.md)) |
 | Pip | `playpets-pip` | 35 | [gaerae/playpets](https://github.com/gaerae/playpets), with its summer and winter outfits | MIT, gaerae ([NOTICE](resources/pets/playpets-pip/NOTICE.md)) |
@@ -55,7 +59,7 @@ A pet is a folder `resources/pets/<id>/`:
 | `animations.json` | Every clip and when it plays |
 | `webm/<clip>.webm` | Each clip as VP9 with alpha, for Linux |
 | `mov/<clip>.mov` | The same clip as HEVC with alpha, for macOS, whose player opens no WebM |
-| `LICENSE.txt` | The clips' license |
+| `NOTICE.md` | Where the pet comes from, its authors and its license |
 
 `pet.json`:
 
@@ -74,8 +78,8 @@ A pet is a folder `resources/pets/<id>/`:
     "daily": "晨间刷牙",
     "dailyHour": 23
   },
-  "source": "https://github.com/Bai-Cute/big-blue-fish-desktop-pet",
-  "license": "MIT, Copyright (c) 2026 PC2005-cloud"
+  "source": "https://github.com/PC2005-cloud/dsh-pet",
+  "license": "Character CC BY-NC-SA 4.0 (non-commercial); see NOTICE.md"
 }
 ```
 
@@ -109,7 +113,15 @@ ffmpeg -c:v libvpx-vp9 -i webm/idle.webm -an -c:v hevc_videotoolbox -alpha_quali
 
 A pet drawn as a Codex sprite sheet (eight columns of 192×208 cells: idle, running, waving, jumping, failed, waiting, working, done) converts in one step: `go run ./tools/codexpet -sheet spritesheet.png -out resources/pets/<id> -name <name> -license <license>` cuts each row into a clip in both forms and writes `pet.json` and `animations.json`; `-summer` and `-winter` add outfits that play in those seasons, and `-group` lists the pet in a submenu.
 
-`tools/fetch-bigbluefish.sh` fetches Big Blue Fish's clips from their source again and transcodes the MOV files; a new pet with a source of its own gets a script beside it. `go tool nsgo test .` checks every pet: its `pet.json` names only clips its `animations.json` has, and every clip ships in both forms.
+Each source has a script in `tools/` that fetches its pets again from a pinned commit and converts them:
+
+| Script | Pets |
+| --- | --- |
+| `tools/fetch-bigbluefish.sh` | Big Blue Fish's 106 clips, transcoding the MOV files |
+| `tools/fetch-playpets.sh` | PlayPets' four pets with their summer and winter outfits |
+| `tools/fetch-familiars.sh` | Familiars' original pets, from its catalog |
+
+`go tool nsgo test .` checks every pet: its `pet.json` names only clips its `animations.json` has, and every clip ships in both forms.
 
 ## Not yet
 
@@ -120,4 +132,4 @@ A pet drawn as a Codex sprite sheet (eight columns of 192×208 cells: idle, runn
 
 ## License
 
-The code is MIT, Copyright (c) 2026 nsgo-dev: see [LICENSE](LICENSE). Each pet's clips keep their own license, listed under [Pets](#pets) and in the pet's `LICENSE.txt`.
+The code is MIT, Copyright (c) 2026 nsgo-dev: see [LICENSE](LICENSE). Each pet keeps its own license, listed under [Pets](#pets) and in its `NOTICE.md`: Big Blue Fish's character is CC BY-NC-SA 4.0, so a build that includes it may not be used commercially.
