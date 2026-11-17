@@ -1,0 +1,494 @@
+{
+  "name": "Mochi",
+  "source": "https://github.com/miflow13/mochi-desktop",
+  "license": "MIT, Copyright (c) 2026 Mochi contributors",
+  "canvas": [
+    256,
+    256
+  ],
+  "margin": 2,
+  "pixelScale": 1,
+  "pixelArt": true,
+  "height": 110,
+  "eventSeconds": 30,
+  "play": {
+    "greeting": "wave-greeting",
+    "exit": "wave-greeting",
+    "drag": "held-drag",
+    "idle": "idle-idle"
+  },
+  "clips": [
+    {
+      "name": "wave",
+      "fps": 8.333333333333334,
+      "frames": [
+        "wave/wave.png#0",
+        "wave/wave.png#1",
+        "wave/wave.png#2",
+        "wave/wave.png#3",
+        "wave/wave.png#4",
+        "wave/wave.png#5",
+        "wave/wave.png#6",
+        "wave/wave.png#7"
+      ],
+      "rules": [
+        {
+          "Pool": "Greeting",
+          "Weight": 100
+        },
+        {
+          "Pool": "Click",
+          "Weight": 30
+        }
+      ]
+    },
+    {
+      "name": "idle",
+      "fps": 1.5,
+      "frames": [
+        "idle/idle_01.png",
+        "idle/idle_02.png",
+        "idle/idle_03.png",
+        "idle/idle_04.png",
+        "idle/idle_05.png",
+        "idle/idle_06.png"
+      ],
+      "rules": [
+        {
+          "Pool": "Idle",
+          "Weight": 100
+        }
+      ],
+      "loops": 2
+    },
+    {
+      "name": "sway",
+      "fps": 8.333333333333334,
+      "frames": [
+        "sway_idle/sway_idle_01.png",
+        "sway_idle/sway_idle_02.png",
+        "sway_idle/sway_idle_03.png",
+        "sway_idle/sway_idle_04.png",
+        "sway_idle/sway_idle_05.png",
+        "sway_idle/sway_idle_06.png",
+        "sway_idle/sway_idle_07.png",
+        "sway_idle/sway_idle_08.png",
+        "sway_idle/sway_idle_09.png",
+        "sway_idle/sway_idle_10.png"
+      ],
+      "rules": [
+        {
+          "Pool": "Idle",
+          "Weight": 30
+        }
+      ],
+      "loops": 2
+    },
+    {
+      "name": "blink",
+      "fps": 8,
+      "frames": [
+        "blink/blink_01.png",
+        "blink/blink_02.png",
+        "blink/blink_03.png",
+        "blink/blink_04.png",
+        "blink/blink_05.png",
+        "blink/blink_06.png",
+        "blink/blink_07.png"
+      ],
+      "rules": [
+        {
+          "Pool": "Idle",
+          "Weight": 30
+        }
+      ]
+    },
+    {
+      "name": "look",
+      "fps": 8.333333333333334,
+      "frames": [
+        "look/look_01.png",
+        "look/look_02.png",
+        "look/look_03.png",
+        "look/look_04.png",
+        "look/look_05.png",
+        "look/look_06.png",
+        "look/look_07.png",
+        "look/look_08.png",
+        "look/look_09.png",
+        "look/look_10.png"
+      ],
+      "rules": [
+        {
+          "Pool": "Event",
+          "Weight": 30
+        }
+      ]
+    },
+    {
+      "name": "bounce",
+      "fps": 8,
+      "frames": [
+        "bounce/bounce_01.png",
+        "bounce/bounce_02.png",
+        "bounce/bounce_03.png",
+        "bounce/bounce_04.png",
+        "bounce/bounce_05.png",
+        "bounce/bounce_06.png",
+        "bounce/bounce_07.png"
+      ],
+      "rules": [
+        {
+          "Pool": "Click",
+          "Weight": 60
+        }
+      ]
+    },
+    {
+      "name": "squish",
+      "fps": 8,
+      "frames": [
+        "squish/squish_01.png",
+        "squish/squish_02.png",
+        "squish/squish_03.png",
+        "squish/squish_04.png",
+        "squish/squish_05.png",
+        "squish/squish_06.png"
+      ],
+      "rules": [
+        {
+          "Pool": "Click",
+          "Weight": 60
+        }
+      ]
+    },
+    {
+      "name": "heart",
+      "fps": 8.333333333333334,
+      "frames": [
+        "heart/heart_01.png",
+        "heart/heart_02.png",
+        "heart/heart_03.png",
+        "heart/heart_04.png",
+        "heart/heart_05.png",
+        "heart/heart_06.png",
+        "heart/heart_07.png",
+        "heart/heart_08.png",
+        "heart/heart_09.png",
+        "heart/heart_10.png",
+        "heart/heart_11.png",
+        "heart/heart_12.png",
+        "heart/heart_13.png",
+        "heart/heart_14.png",
+        "heart/heart_15.png",
+        "heart/heart_16.png"
+      ],
+      "rules": [
+        {
+          "Pool": "Click",
+          "Weight": 30
+        },
+        {
+          "Pool": "Event",
+          "Weight": 15
+        }
+      ]
+    },
+    {
+      "name": "dance",
+      "fps": 6.666666666666667,
+      "frames": [
+        "dance/dance_01.png",
+        "dance/dance_02.png",
+        "dance/dance_03.png",
+        "dance/dance_04.png",
+        "dance/dance_05.png",
+        "dance/dance_06.png",
+        "dance/dance_07.png",
+        "dance/dance_08.png"
+      ],
+      "rules": [
+        {
+          "Pool": "Event",
+          "Weight": 30
+        }
+      ],
+      "loops": 3
+    },
+    {
+      "name": "eat",
+      "fps": 8.333333333333334,
+      "frames": [
+        "eat/mochi_eat_0001.png",
+        "eat/mochi_eat_0002.png",
+        "eat/mochi_eat_0003.png",
+        "eat/mochi_eat_0004.png",
+        "eat/mochi_eat_0005.png",
+        "eat/mochi_eat_0006.png",
+        "eat/mochi_eat_0007.png",
+        "eat/mochi_eat_0008.png",
+        "eat/mochi_eat_0009.png",
+        "eat/mochi_eat_0010.png",
+        "eat/mochi_eat_0011.png",
+        "eat/mochi_eat_0012.png",
+        "eat/mochi_eat_0013.png",
+        "eat/mochi_eat_0014.png",
+        "eat/mochi_eat_0015.png",
+        "eat/mochi_eat_0016.png"
+      ],
+      "rules": [
+        {
+          "Pool": "Event",
+          "Weight": 5,
+          "Meal": "Any",
+          "MealBoost": 80
+        }
+      ]
+    },
+    {
+      "name": "coffee",
+      "fps": 8.333333333333334,
+      "frames": [
+        "coffee/mochi_coffee_0001.png",
+        "coffee/mochi_coffee_0002.png",
+        "coffee/mochi_coffee_0003.png",
+        "coffee/mochi_coffee_0004.png",
+        "coffee/mochi_coffee_0005.png",
+        "coffee/mochi_coffee_0006.png",
+        "coffee/mochi_coffee_0007.png",
+        "coffee/mochi_coffee_0008.png",
+        "coffee/mochi_coffee_0009.png",
+        "coffee/mochi_coffee_0010.png",
+        "coffee/mochi_coffee_0011.png",
+        "coffee/mochi_coffee_0012.png",
+        "coffee/mochi_coffee_0013.png",
+        "coffee/mochi_coffee_0014.png",
+        "coffee/mochi_coffee_0015.png",
+        "coffee/mochi_coffee_0016.png",
+        "coffee/mochi_coffee_0017.png",
+        "coffee/mochi_coffee_0018.png",
+        "coffee/mochi_coffee_0019.png",
+        "coffee/mochi_coffee_0020.png",
+        "coffee/mochi_coffee_0021.png"
+      ],
+      "rules": [
+        {
+          "Pool": "Event",
+          "Weight": 15,
+          "MorningWeight": 40
+        }
+      ]
+    },
+    {
+      "name": "nap",
+      "fps": 60,
+      "frames": [
+        "sleep_transition/sleep_transition_01.png*15",
+        "sleep_transition/sleep_transition_02.png*15",
+        "sleep_transition/sleep_transition_03.png*15",
+        "sleep_transition/sleep_transition_04.png*15",
+        "sleep_transition/sleep_transition_05.png*15",
+        "sleep_transition/sleep_transition_06.png*15",
+        "sleeping/sleeping_01.png*40",
+        "sleeping/sleeping_02.png*40",
+        "sleeping/sleeping_03.png*40",
+        "sleeping/sleeping_01.png*40",
+        "sleeping/sleeping_02.png*40",
+        "sleeping/sleeping_03.png*40",
+        "sleeping/sleeping_01.png*40",
+        "sleeping/sleeping_02.png*40",
+        "sleeping/sleeping_03.png*40",
+        "sleeping/sleeping_01.png*40",
+        "sleeping/sleeping_02.png*40",
+        "sleeping/sleeping_03.png*40",
+        "wake/wake_01.png*12",
+        "wake/wake_02.png*12",
+        "wake/wake_03.png*12",
+        "wake/wake_04.png*12",
+        "wake/wake_05.png*12",
+        "wake/wake_06.png*12"
+      ],
+      "rules": [
+        {
+          "Pool": "Event",
+          "Weight": 80,
+          "NightOnly": true
+        }
+      ]
+    },
+    {
+      "name": "typing",
+      "fps": 30,
+      "frames": [
+        "typing_intro/typing_intro_01.png*3",
+        "typing_intro/typing_intro_02.png*3",
+        "typing_intro/typing_intro_03.png*3",
+        "typing_intro/typing_intro_04.png*3",
+        "typing_intro/typing_intro_05.png*3",
+        "typing/typing_loop_01.png*5",
+        "typing/typing_loop_02.png*5",
+        "typing/typing_loop_03.png*5",
+        "typing/typing_loop_04.png*5",
+        "typing/typing_loop_05.png*5",
+        "typing/typing_loop_06.png*5",
+        "typing/typing_loop_07.png*5",
+        "typing/typing_loop_08.png*5",
+        "typing/typing_loop_01.png*5",
+        "typing/typing_loop_02.png*5",
+        "typing/typing_loop_03.png*5",
+        "typing/typing_loop_04.png*5",
+        "typing/typing_loop_05.png*5",
+        "typing/typing_loop_06.png*5",
+        "typing/typing_loop_07.png*5",
+        "typing/typing_loop_08.png*5",
+        "typing/typing_loop_01.png*5",
+        "typing/typing_loop_02.png*5",
+        "typing/typing_loop_03.png*5",
+        "typing/typing_loop_04.png*5",
+        "typing/typing_loop_05.png*5",
+        "typing/typing_loop_06.png*5",
+        "typing/typing_loop_07.png*5",
+        "typing/typing_loop_08.png*5",
+        "typing_outro/typing_outro_01.png*3",
+        "typing_outro/typing_outro_02.png*3",
+        "typing_outro/typing_outro_03.png*3"
+      ],
+      "rules": [
+        {
+          "Pool": "Event",
+          "Weight": 5,
+          "WorkKind": "Coding",
+          "WorkWeight": 100
+        }
+      ]
+    },
+    {
+      "name": "vs-code",
+      "fps": 4.166666666666667,
+      "frames": [
+        "vs_code/vs_code.png#0",
+        "vs_code/vs_code.png#1",
+        "vs_code/vs_code.png#2",
+        "vs_code/vs_code.png#3",
+        "vs_code/vs_code.png#4",
+        "vs_code/vs_code.png#5",
+        "vs_code/vs_code.png#6",
+        "vs_code/vs_code.png#7",
+        "vs_code/vs_code.png#8",
+        "vs_code/vs_code.png#9",
+        "vs_code/vs_code.png#10",
+        "vs_code/vs_code.png#11",
+        "vs_code/vs_code.png#12",
+        "vs_code/vs_code.png#13"
+      ],
+      "rules": [
+        {
+          "Pool": "Event",
+          "Weight": 5,
+          "WorkKind": "Coding",
+          "WorkWeight": 60
+        }
+      ]
+    },
+    {
+      "name": "side-eye",
+      "fps": 8.333333333333334,
+      "frames": [
+        "side_eye/side_eye.png#0",
+        "side_eye/side_eye.png#1",
+        "side_eye/side_eye.png#2",
+        "side_eye/side_eye.png#3",
+        "side_eye/side_eye.png#4",
+        "side_eye/side_eye.png#5",
+        "side_eye/side_eye.png#6",
+        "side_eye/side_eye.png#7",
+        "side_eye/side_eye.png#8",
+        "side_eye/side_eye.png#9",
+        "side_eye/side_eye.png#10",
+        "side_eye/side_eye.png#11",
+        "side_eye/side_eye.png#12"
+      ],
+      "rules": [
+        {
+          "Pool": "Event",
+          "Weight": 15
+        }
+      ]
+    },
+    {
+      "name": "this-is-fine",
+      "fps": 8.333333333333334,
+      "frames": [
+        "this_is_fine/this_is_fine.png#0",
+        "this_is_fine/this_is_fine.png#1",
+        "this_is_fine/this_is_fine.png#2",
+        "this_is_fine/this_is_fine.png#3",
+        "this_is_fine/this_is_fine.png#4",
+        "this_is_fine/this_is_fine.png#5",
+        "this_is_fine/this_is_fine.png#6",
+        "this_is_fine/this_is_fine.png#7",
+        "this_is_fine/this_is_fine.png#8",
+        "this_is_fine/this_is_fine.png#9",
+        "this_is_fine/this_is_fine.png#10",
+        "this_is_fine/this_is_fine.png#11",
+        "this_is_fine/this_is_fine.png#12",
+        "this_is_fine/this_is_fine.png#13",
+        "this_is_fine/this_is_fine.png#14",
+        "this_is_fine/this_is_fine.png#15"
+      ],
+      "rules": [
+        {
+          "Pool": "Event",
+          "Weight": 3
+        }
+      ]
+    },
+    {
+      "name": "table-flip",
+      "fps": 8.333333333333334,
+      "frames": [
+        "table_flip/table_flip.png#0",
+        "table_flip/table_flip.png#1",
+        "table_flip/table_flip.png#2",
+        "table_flip/table_flip.png#3",
+        "table_flip/table_flip.png#4",
+        "table_flip/table_flip.png#5",
+        "table_flip/table_flip.png#6",
+        "table_flip/table_flip.png#7",
+        "table_flip/table_flip.png#8",
+        "table_flip/table_flip.png#9",
+        "table_flip/table_flip.png#10",
+        "table_flip/table_flip.png#11",
+        "table_flip/table_flip.png#12",
+        "table_flip/table_flip.png#13",
+        "table_flip/table_flip.png#14",
+        "table_flip/table_flip.png#15"
+      ],
+      "rules": [
+        {
+          "Pool": "Event",
+          "Weight": 3
+        }
+      ]
+    },
+    {
+      "name": "held",
+      "fps": 20,
+      "frames": [
+        "pickup/pickup_01.png",
+        "pickup/pickup_02.png",
+        "pickup/pickup_03.png",
+        "pickup/pickup_04.png",
+        "pickup/pickup_05.png",
+        "pickup/pickup_06.png",
+        "drag/drag_neutral.png"
+      ],
+      "rules": [
+        {
+          "Pool": "Drag",
+          "Weight": 100
+        }
+      ]
+    }
+  ]
+}

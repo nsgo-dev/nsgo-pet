@@ -1,0 +1,20 @@
+{
+  "name": "Mochi",
+  "width": 110,
+  "height": 110,
+  "body": {
+    "left": 6.3,
+    "top": 7.8,
+    "width": 85.9,
+    "height": 90.6
+  },
+  "eventSeconds": 30,
+  "clips": {
+    "greeting": "wave-greeting",
+    "exit": "wave-greeting",
+    "drag": "held-drag",
+    "idle": "idle-idle"
+  },
+  "source": "https://github.com/miflow13/mochi-desktop",
+  "license": "MIT, Copyright (c) 2026 Mochi contributors"
+}

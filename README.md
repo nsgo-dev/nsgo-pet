@@ -46,6 +46,7 @@ Right-click the pet, or use the tray icon, to play an event, move it back to the
 | Pip | `playpets-pip` | 35 | [gaerae/playpets](https://github.com/gaerae/playpets), with its summer and winter outfits | MIT, gaerae ([NOTICE](resources/pets/playpets-pip/NOTICE.md)) |
 | Miso | `playpets-miso` | 35 | [gaerae/playpets](https://github.com/gaerae/playpets), with its summer and winter outfits | MIT, gaerae ([NOTICE](resources/pets/playpets-miso/NOTICE.md)) |
 | Pip | `pip-mascot` | 13 | [TenzinDhonyoe/pip-mascot](https://github.com/TenzinDhonyoe/pip-mascot) | MIT, Copyright (c) 2026 Tenzin Dhonyoe ([NOTICE](resources/pets/pip-mascot/NOTICE.md)) |
+| Mochi | `mochi` | 20 | [miflow13/mochi-desktop](https://github.com/miflow13/mochi-desktop) | MIT, Copyright (c) 2026 Mochi contributors ([NOTICE](resources/pets/mochi/NOTICE.md)) |
 
 ### Adding a pet
 
@@ -118,6 +119,7 @@ Each source has a script in `tools/` that fetches its pets again from a pinned c
 | `tools/fetch-bigbluefish.sh` | Big Blue Fish's 106 clips, transcoding the MOV files |
 | `tools/fetch-playpets.sh` | PlayPets' four pets with their summer and winter outfits |
 | `tools/fetch-pip-mascot.sh` | Pip, built from its PNG frames |
+| `tools/fetch-mochi.sh` | Mochi, built from its PNG frames |
 
 A pet drawn as PNG frames builds from a JSON spec: `go run ./tools/framepet -spec tools/framepet/pets/<id>.json -frames <dir> -out resources/pets/<id>` plays each clip's frames in order at its frame rate (`"frame.png*4"` holds a frame for four ticks, `"sheet.png#3"` takes the fourth cell of a one-row sheet), crops every clip to the art, writes both forms, and writes `pet.json` and `animations.json` from the spec's rules; `-list` prints the frames a spec uses, which the fetch script downloads before building.
 
