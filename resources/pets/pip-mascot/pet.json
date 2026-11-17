@@ -1,0 +1,20 @@
+{
+  "name": "Pip",
+  "width": 128,
+  "height": 150,
+  "body": {
+    "left": 15.8,
+    "top": 7.2,
+    "width": 71.7,
+    "height": 81.4
+  },
+  "eventSeconds": 30,
+  "clips": {
+    "greeting": "hello-greeting",
+    "exit": "bye",
+    "drag": "dangle-drag",
+    "idle": "stand-idle"
+  },
+  "source": "https://github.com/TenzinDhonyoe/pip-mascot",
+  "license": "MIT, Copyright (c) 2026 Tenzin Dhonyoe"
+}

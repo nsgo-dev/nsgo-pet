@@ -1,0 +1,61 @@
+{
+  "name": "Pip",
+  "source": "https://github.com/TenzinDhonyoe/pip-mascot",
+  "license": "MIT, Copyright (c) 2026 Tenzin Dhonyoe",
+  "canvas": [640, 640],
+  "margin": 8,
+  "pixelScale": 0.6,
+  "height": 150,
+  "eventSeconds": 30,
+  "play": { "greeting": "hello-greeting", "exit": "bye", "drag": "dangle-drag", "idle": "stand-idle" },
+  "clips": [
+    {
+      "name": "hello", "fps": 12,
+      "frames": ["stable-0.png*6", "stable-1.png*3", "stable-2.png*3", "stable-3.png*3", "stable-4.png*3", "stable-5.png*2", "stable-6.png*2", "stable-7.png*2", "stable-8.png*2", "stable-9.png*2",
+        "pop-0.png", "pop-1.png", "pop-2.png", "pop-3.png", "pop-4.png", "pop-5.png", "pop-6.png", "pop-7.png", "pop-8.png", "pop-9.png", "pop-10.png", "pop-11.png*12"],
+      "rules": [{ "Pool": "Greeting", "Weight": 100 }]
+    },
+    {
+      "name": "bye", "fps": 12,
+      "frames": ["pop-11.png*4", "pop-10.png", "pop-9.png", "pop-8.png", "pop-7.png", "pop-6.png", "pop-5.png", "pop-4.png", "pop-3.png", "pop-2.png", "pop-1.png", "pop-0.png", "stable-0.png*6"],
+      "rules": [{ "Id": "bye", "Pool": "Disabled", "Weight": 0 }]
+    },
+    {
+      "name": "stand", "fps": 10,
+      "frames": ["turn-2.png*30"],
+      "rules": [{ "Pool": "Idle", "Weight": 100 }]
+    },
+    {
+      "name": "look", "fps": 8,
+      "frames": ["turn-2.png*4", "turn-1.png", "turn-0.png*8", "turn-1.png", "turn-2.png*2", "turn-3.png", "turn-4.png*8", "turn-3.png", "turn-2.png*4"],
+      "rules": [{ "Pool": "Idle", "Weight": 40 }, { "Pool": "Event", "Weight": 30 }]
+    },
+    {
+      "name": "hop", "fps": 10,
+      "frames": ["pickup-0.png", "pickup-1.png", "pickup-2.png", "pickup-3.png", "pickup-4.png", "pickup-5.png", "pickup-6.png", "pickup-7.png", "pickup-8.png", "pickup-9.png", "pickup-10.png", "pickup-11.png*4"],
+      "rules": [{ "Pool": "Click", "Weight": 60 }, { "Pool": "Event", "Weight": 30 }]
+    },
+    {
+      "name": "wiggle", "fps": 10,
+      "frames": ["air-0.png", "air-1.png", "air-2.png", "air-3.png", "air-4.png", "air-5.png", "air-6.png", "air-7.png", "air-8.png", "air-9.png", "air-10.png", "air-11.png*4"],
+      "rules": [{ "Pool": "Click", "Weight": 40 }, { "Pool": "Event", "Weight": 30 }]
+    },
+    {
+      "name": "fume", "fps": 8,
+      "frames": ["mad-0.png", "mad-1.png", "mad-2.png", "mad-3.png", "mad-0.png", "mad-1.png", "mad-2.png", "mad-3.png",
+        "mad-4.png", "mad-5.png", "mad-6.png", "mad-7.png", "mad-4.png", "mad-5.png", "mad-6.png", "mad-7.png",
+        "mad-8.png", "mad-9.png", "mad-10.png", "mad-11.png", "mad-8.png", "mad-9.png", "mad-10.png", "mad-11.png*4"],
+      "rules": [{ "Pool": "Click", "Weight": 20 }, { "Pool": "Event", "Weight": 15 }]
+    },
+    {
+      "name": "tumble", "fps": 10,
+      "frames": ["fall-0.png*3", "fall-1.png", "fall-2.png", "fall-3.png", "fall-4.png", "fall-5.png", "fall-6.png", "fall-7.png", "fall-8.png*2", "fall-9.png*2", "fall-10.png*8", "fall-11.png*4"],
+      "rules": [{ "Pool": "Event", "Weight": 30 }]
+    },
+    {
+      "name": "dangle", "fps": 10,
+      "frames": ["pickup-0.png", "pickup-1.png", "pickup-2.png", "pickup-3.png", "pickup-4.png", "pickup-5.png", "pickup-6.png", "air-1.png*2", "air-2.png*2", "air-0.png"],
+      "rules": [{ "Pool": "Drag", "Weight": 100 }]
+    }
+  ]
+}
