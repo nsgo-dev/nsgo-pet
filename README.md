@@ -43,6 +43,7 @@ Right-click the pet, or use the tray icon, to play an event, move it back to the
 | Daisy | `playpets-daisy` | 35 | [gaerae/playpets](https://github.com/gaerae/playpets), with its summer and winter outfits | MIT, gaerae ([NOTICE](resources/pets/playpets-daisy/NOTICE.md)) |
 | Pip | `playpets-pip` | 35 | [gaerae/playpets](https://github.com/gaerae/playpets), with its summer and winter outfits | MIT, gaerae ([NOTICE](resources/pets/playpets-pip/NOTICE.md)) |
 | Miso | `playpets-miso` | 35 | [gaerae/playpets](https://github.com/gaerae/playpets), with its summer and winter outfits | MIT, gaerae ([NOTICE](resources/pets/playpets-miso/NOTICE.md)) |
+| 57 Familiars (Merge Mammoth, CI Phoenix, Patch Panda…) | `familiars-*` | 7 each | [jalcantarab/agent-familiars](https://github.com/jalcantarab/agent-familiars), its original pets | MIT, Jorge Alcantara (each pet's `NOTICE.md`) |
 
 ### Adding a pet
 
