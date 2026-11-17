@@ -72,10 +72,6 @@ func TestEveryClipShips(t *testing.T) {
 	}
 	for _, pk := range packs(t) {
 		dir := filepath.Join("resources/pets", pk.ID)
-		if _, err := os.Stat(filepath.Join(dir, "mov")); err != nil {
-			t.Logf("%s: clips not fetched", pk.ID)
-			continue
-		}
 		for _, r := range pk.Policy.Rules {
 			name := strings.TrimSuffix(r.File, ".webm")
 			for _, f := range []string{filepath.Join(dir, "webm", r.File), filepath.Join(dir, "mov", name+".mov")} {
