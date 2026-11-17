@@ -1,0 +1,244 @@
+[
+  {
+    "Id": "idle-idle-spring",
+    "File": "idle.webm",
+    "Pool": "Idle",
+    "Weight": 100,
+    "SeasonOnly": "Spring"
+  },
+  {
+    "Id": "idle-idle-autumn",
+    "File": "idle.webm",
+    "Pool": "Idle",
+    "Weight": 100,
+    "SeasonOnly": "Autumn"
+  },
+  {
+    "Id": "idle-idle",
+    "File": "idle.webm",
+    "Pool": "Disabled",
+    "Weight": 0
+  },
+  {
+    "Id": "waiting-idle-spring",
+    "File": "waiting.webm",
+    "Pool": "Idle",
+    "Weight": 30,
+    "SeasonOnly": "Spring"
+  },
+  {
+    "Id": "waiting-idle-autumn",
+    "File": "waiting.webm",
+    "Pool": "Idle",
+    "Weight": 30,
+    "SeasonOnly": "Autumn"
+  },
+  {
+    "Id": "waiting-event-spring",
+    "File": "waiting.webm",
+    "Pool": "Event",
+    "Weight": 60,
+    "SeasonOnly": "Spring"
+  },
+  {
+    "Id": "waiting-event-autumn",
+    "File": "waiting.webm",
+    "Pool": "Event",
+    "Weight": 60,
+    "SeasonOnly": "Autumn"
+  },
+  {
+    "Id": "working-event-spring",
+    "File": "working.webm",
+    "Pool": "Event",
+    "Weight": 100,
+    "SeasonOnly": "Spring"
+  },
+  {
+    "Id": "working-event-autumn",
+    "File": "working.webm",
+    "Pool": "Event",
+    "Weight": 100,
+    "SeasonOnly": "Autumn"
+  },
+  {
+    "Id": "done-event-spring",
+    "File": "done.webm",
+    "Pool": "Event",
+    "Weight": 60,
+    "SeasonOnly": "Spring"
+  },
+  {
+    "Id": "done-event-autumn",
+    "File": "done.webm",
+    "Pool": "Event",
+    "Weight": 60,
+    "SeasonOnly": "Autumn"
+  },
+  {
+    "Id": "jump-event-spring",
+    "File": "jump.webm",
+    "Pool": "Event",
+    "Weight": 40,
+    "SeasonOnly": "Spring"
+  },
+  {
+    "Id": "jump-event-autumn",
+    "File": "jump.webm",
+    "Pool": "Event",
+    "Weight": 40,
+    "SeasonOnly": "Autumn"
+  },
+  {
+    "Id": "jump-click-spring",
+    "File": "jump.webm",
+    "Pool": "Click",
+    "Weight": 60,
+    "SeasonOnly": "Spring"
+  },
+  {
+    "Id": "jump-click-autumn",
+    "File": "jump.webm",
+    "Pool": "Click",
+    "Weight": 60,
+    "SeasonOnly": "Autumn"
+  },
+  {
+    "Id": "wave-click-spring",
+    "File": "wave.webm",
+    "Pool": "Click",
+    "Weight": 100,
+    "SeasonOnly": "Spring"
+  },
+  {
+    "Id": "wave-click-autumn",
+    "File": "wave.webm",
+    "Pool": "Click",
+    "Weight": 100,
+    "SeasonOnly": "Autumn"
+  },
+  {
+    "Id": "wave-greeting",
+    "File": "wave.webm",
+    "Pool": "Greeting",
+    "Weight": 100
+  },
+  {
+    "Id": "error-drag",
+    "File": "error.webm",
+    "Pool": "Drag",
+    "Weight": 100
+  },
+  {
+    "Id": "idle-summer-idle",
+    "File": "idle-summer.webm",
+    "Pool": "Idle",
+    "Weight": 100,
+    "SeasonOnly": "Summer"
+  },
+  {
+    "Id": "waiting-summer-idle",
+    "File": "waiting-summer.webm",
+    "Pool": "Idle",
+    "Weight": 30,
+    "SeasonOnly": "Summer"
+  },
+  {
+    "Id": "waiting-summer-event",
+    "File": "waiting-summer.webm",
+    "Pool": "Event",
+    "Weight": 60,
+    "SeasonOnly": "Summer"
+  },
+  {
+    "Id": "working-summer-event",
+    "File": "working-summer.webm",
+    "Pool": "Event",
+    "Weight": 100,
+    "SeasonOnly": "Summer"
+  },
+  {
+    "Id": "done-summer-event",
+    "File": "done-summer.webm",
+    "Pool": "Event",
+    "Weight": 60,
+    "SeasonOnly": "Summer"
+  },
+  {
+    "Id": "jump-summer-event",
+    "File": "jump-summer.webm",
+    "Pool": "Event",
+    "Weight": 40,
+    "SeasonOnly": "Summer"
+  },
+  {
+    "Id": "jump-summer-click",
+    "File": "jump-summer.webm",
+    "Pool": "Click",
+    "Weight": 60,
+    "SeasonOnly": "Summer"
+  },
+  {
+    "Id": "wave-summer-click",
+    "File": "wave-summer.webm",
+    "Pool": "Click",
+    "Weight": 100,
+    "SeasonOnly": "Summer"
+  },
+  {
+    "Id": "idle-winter-idle",
+    "File": "idle-winter.webm",
+    "Pool": "Idle",
+    "Weight": 100,
+    "SeasonOnly": "Winter"
+  },
+  {
+    "Id": "waiting-winter-idle",
+    "File": "waiting-winter.webm",
+    "Pool": "Idle",
+    "Weight": 30,
+    "SeasonOnly": "Winter"
+  },
+  {
+    "Id": "waiting-winter-event",
+    "File": "waiting-winter.webm",
+    "Pool": "Event",
+    "Weight": 60,
+    "SeasonOnly": "Winter"
+  },
+  {
+    "Id": "working-winter-event",
+    "File": "working-winter.webm",
+    "Pool": "Event",
+    "Weight": 100,
+    "SeasonOnly": "Winter"
+  },
+  {
+    "Id": "done-winter-event",
+    "File": "done-winter.webm",
+    "Pool": "Event",
+    "Weight": 60,
+    "SeasonOnly": "Winter"
+  },
+  {
+    "Id": "jump-winter-event",
+    "File": "jump-winter.webm",
+    "Pool": "Event",
+    "Weight": 40,
+    "SeasonOnly": "Winter"
+  },
+  {
+    "Id": "jump-winter-click",
+    "File": "jump-winter.webm",
+    "Pool": "Click",
+    "Weight": 60,
+    "SeasonOnly": "Winter"
+  },
+  {
+    "Id": "wave-winter-click",
+    "File": "wave-winter.webm",
+    "Pool": "Click",
+    "Weight": 100,
+    "SeasonOnly": "Winter"
+  }
+]

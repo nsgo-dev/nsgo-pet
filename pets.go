@@ -19,8 +19,10 @@ var petFiles embed.FS
 // Pack is one pet: its manifest (pet.json) and its clip rules (animations.json, in Big Blue Fish's format).
 type Pack struct {
 	// ID is the pet's directory under resources/pets.
-	ID     string      `json:"-"`
-	Name   string      `json:"name"`
+	ID   string `json:"-"`
+	Name string `json:"name"`
+	// Group is the submenu the pet is listed in, empty for the top of the list.
+	Group  string      `json:"group"`
 	Width  core.Points `json:"width"`
 	Height core.Points `json:"height"`
 	// Body is where the pet's body is in its clips, in percent of the frame: only there does the window take the pointer.

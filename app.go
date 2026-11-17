@@ -47,11 +47,7 @@ func App(packs []*Pack) func(cx *core.Scope) core.Node {
 			chosen.Set(id)
 		}
 		menu := func() []core.MenuItem {
-			pets := make([]core.MenuItem, len(packs))
-			for i, pk := range packs {
-				pets[i] = core.MenuItem{Label: pk.Name, Radio: true, Checked: pk.ID == chosen.GetUntracked(), OnSelect: func() { choose(pk.ID) }}
-			}
-			items := []core.MenuItem{{Label: "切换桌宠", Items: pets}, {Separator: true}}
+			items := []core.MenuItem{{Label: "切换桌宠", Items: petMenu(packs, chosen.GetUntracked(), choose)}, {Separator: true}}
 			if current != nil {
 				items = append(items, current.menu()...)
 			}
@@ -74,6 +70,28 @@ func App(packs []*Pack) func(cx *core.Scope) core.Node {
 			return p.view(menu)
 		})
 	}
+}
+
+// petMenu lists packs to choose from, those of a group in a submenu of its name after the ungrouped ones, each in the order packs has them.
+func petMenu(packs []*Pack, chosen string, choose func(id string)) []core.MenuItem {
+	var top []core.MenuItem
+	groups := map[string]int{}
+	var grouped []core.MenuItem
+	for _, pk := range packs {
+		item := core.MenuItem{Label: pk.Name, Radio: true, Checked: pk.ID == chosen, OnSelect: func() { choose(pk.ID) }}
+		if pk.Group == "" {
+			top = append(top, item)
+			continue
+		}
+		i, ok := groups[pk.Group]
+		if !ok {
+			i = len(grouped)
+			groups[pk.Group] = i
+			grouped = append(grouped, core.MenuItem{Label: pk.Group})
+		}
+		grouped[i].Items = append(grouped[i].Items, item)
+	}
+	return append(top, grouped...)
 }
 
 // view is the pet: two players under a body that takes the pointer.
