@@ -1,5 +1,5 @@
 #!/bin/bash
-# Fetches Big Blue Fish's 640x360 clips (VP9 with alpha in WebM) into resources/fish/webm, and transcodes each to HEVC with alpha in resources/fish/mov for Apple platforms, whose player opens no WebM. Needs gh, curl and an ffmpeg with libvpx-vp9 and hevc_videotoolbox (macOS).
+# Fetches Big Blue Fish's 640x360 clips again (VP9 with alpha in WebM) into resources/fish/webm, and transcodes each to HEVC with alpha in resources/fish/mov for Apple platforms, whose player opens no WebM. Needs gh, curl and an ffmpeg with libvpx-vp9 and hevc_videotoolbox (macOS).
 set -euo pipefail
 
 repo=Bai-Cute/big-blue-fish-desktop-pet

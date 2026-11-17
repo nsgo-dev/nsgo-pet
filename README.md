@@ -7,7 +7,6 @@ The pet lives in a transparent, borderless window that floats above other window
 ## Run
 
 ```sh
-tools/fetch-bigbluefish.sh   # Big Blue Fish's clips (about 150 MB)
 go tool nsgo dev
 go tool nsgo test .
 ```
@@ -23,7 +22,7 @@ Each pet is a directory under `resources/pets/<id>/`:
 | `webm/` | The clips as VP9 with alpha, for Linux |
 | `mov/` | The same clips as HEVC with alpha, for macOS, whose player opens no WebM |
 
-The clips are not in git; each pet has a script in `tools/` that fetches them.
+The clips are in git. Each pet has a script in `tools/` that fetches its clips from their source again and transcodes the MOV files.
 
 | Pet | Source | License |
 | --- | --- | --- |
