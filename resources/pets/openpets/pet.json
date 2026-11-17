@@ -1,0 +1,21 @@
+{
+  "name": "OpenPets",
+  "group": "OpenPets",
+  "width": 144,
+  "height": 156,
+  "body": {
+    "left": 22,
+    "top": 12,
+    "width": 56,
+    "height": 84
+  },
+  "eventSeconds": 30,
+  "clips": {
+    "greeting": "wave-greeting",
+    "exit": "wave-greeting",
+    "drag": "error-drag",
+    "idle": "idle-idle"
+  },
+  "source": "https://github.com/OpenPetsHQ/openpets",
+  "license": "MIT, Copyright (c) 2026 OpenPets"
+}
