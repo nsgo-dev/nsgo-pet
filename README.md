@@ -38,7 +38,7 @@ Right-click the pet, or use the tray icon, to play an event, move it back to the
 
 | Pet | ID | Clips | Source | License |
 | --- | --- | --- | --- | --- |
-| 大蓝鱼 Big Blue Fish | `bigbluefish` | 106 | [Bai-Cute/big-blue-fish-desktop-pet](https://github.com/Bai-Cute/big-blue-fish-desktop-pet) | MIT, Copyright (c) 2026 PC2005-cloud ([LICENSE.txt](resources/pets/bigbluefish/LICENSE.txt)) |
+| 大蓝鱼 Big Blue Fish | `bigbluefish` | 106 | [PC2005-cloud/dsh-pet](https://github.com/PC2005-cloud/dsh-pet), via [Bai-Cute/big-blue-fish-desktop-pet](https://github.com/Bai-Cute/big-blue-fish-desktop-pet) | Character [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/): **no commercial use** ([NOTICE](resources/pets/bigbluefish/NOTICE.md)) |
 
 ### Adding a pet
 
@@ -50,7 +50,7 @@ A pet is a folder `resources/pets/<id>/`:
 | `animations.json` | Every clip and when it plays |
 | `webm/<clip>.webm` | Each clip as VP9 with alpha, for Linux |
 | `mov/<clip>.mov` | The same clip as HEVC with alpha, for macOS, whose player opens no WebM |
-| `LICENSE.txt` | The clips' license |
+| `NOTICE.md` | Where the pet comes from, its authors and its license |
 
 `pet.json`:
 
@@ -69,8 +69,8 @@ A pet is a folder `resources/pets/<id>/`:
     "daily": "晨间刷牙",
     "dailyHour": 23
   },
-  "source": "https://github.com/Bai-Cute/big-blue-fish-desktop-pet",
-  "license": "MIT, Copyright (c) 2026 PC2005-cloud"
+  "source": "https://github.com/PC2005-cloud/dsh-pet",
+  "license": "Character CC BY-NC-SA 4.0 (non-commercial); see NOTICE.md"
 }
 ```
 
@@ -113,4 +113,4 @@ ffmpeg -c:v libvpx-vp9 -i webm/idle.webm -an -c:v hevc_videotoolbox -alpha_quali
 
 ## License
 
-The code is MIT, Copyright (c) 2026 nsgo-dev: see [LICENSE](LICENSE). Each pet's clips keep their own license, listed under [Pets](#pets) and in the pet's `LICENSE.txt`.
+The code is MIT, Copyright (c) 2026 nsgo-dev: see [LICENSE](LICENSE). Each pet keeps its own license, listed under [Pets](#pets) and in its `NOTICE.md`: Big Blue Fish's character is CC BY-NC-SA 4.0, so a build that includes it may not be used commercially.
