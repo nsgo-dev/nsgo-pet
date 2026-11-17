@@ -1,0 +1,86 @@
+[
+  {
+    "Id": "drop-in-greeting",
+    "File": "drop-in.webm",
+    "Pool": "Greeting",
+    "Weight": 100
+  },
+  {
+    "Id": "jump",
+    "File": "jump.webm",
+    "Pool": "Disabled",
+    "Weight": 0
+  },
+  {
+    "Id": "stand-idle",
+    "File": "stand.webm",
+    "Pool": "Idle",
+    "Weight": 100
+  },
+  {
+    "Id": "sit-idle",
+    "File": "sit.webm",
+    "Pool": "Idle",
+    "Weight": 20
+  },
+  {
+    "Id": "sit-event",
+    "File": "sit.webm",
+    "Pool": "Event",
+    "Weight": 30
+  },
+  {
+    "Id": "look-up-idle",
+    "File": "look-up.webm",
+    "Pool": "Idle",
+    "Weight": 20
+  },
+  {
+    "Id": "head-spin-click",
+    "File": "head-spin.webm",
+    "Pool": "Click",
+    "Weight": 40
+  },
+  {
+    "Id": "head-spin-event",
+    "File": "head-spin.webm",
+    "Pool": "Event",
+    "Weight": 15
+  },
+  {
+    "Id": "sprawl-event",
+    "File": "sprawl.webm",
+    "Pool": "Event",
+    "Weight": 30
+  },
+  {
+    "Id": "creep-event",
+    "File": "creep.webm",
+    "Pool": "Event",
+    "Weight": 20
+  },
+  {
+    "Id": "trip-click",
+    "File": "trip.webm",
+    "Pool": "Click",
+    "Weight": 60
+  },
+  {
+    "Id": "bounce-click",
+    "File": "bounce.webm",
+    "Pool": "Click",
+    "Weight": 30
+  },
+  {
+    "Id": "split-event",
+    "File": "split.webm",
+    "Pool": "Event",
+    "Weight": 10
+  },
+  {
+    "Id": "pinched-drag",
+    "File": "pinched.webm",
+    "Pool": "Drag",
+    "Weight": 100
+  }
+]

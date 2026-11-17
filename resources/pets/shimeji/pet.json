@@ -1,0 +1,20 @@
+{
+  "name": "Shimeji",
+  "width": 120,
+  "height": 120,
+  "body": {
+    "left": 15.6,
+    "top": 0.8,
+    "width": 71.1,
+    "height": 99.2
+  },
+  "eventSeconds": 30,
+  "clips": {
+    "greeting": "drop-in-greeting",
+    "exit": "jump",
+    "drag": "pinched-drag",
+    "idle": "stand-idle"
+  },
+  "source": "https://github.com/estenv/linux-shimeji",
+  "license": "zlib, Copyright (c) 2009-2011 Yuki Yamada; altered"
+}
