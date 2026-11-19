@@ -10,6 +10,7 @@ import (
 	"github.com/nsgo-dev/nsgo"
 	"github.com/nsgo-dev/nsgo/core"
 	"github.com/nsgo-dev/nsgo/desktop"
+	"github.com/nsgo-dev/nsgo/updater"
 )
 
 func main() {
@@ -47,7 +48,12 @@ func App(packs []*Pack) func(cx *core.Scope) core.Node {
 			chosen.Set(id)
 		}
 		menu := func() []core.MenuItem {
-			items := []core.MenuItem{{Label: "切换桌宠", Items: petMenu(packs, chosen.GetUntracked(), choose)}, {Separator: true}}
+			items := []core.MenuItem{
+				{Label: "切换桌宠", Items: petMenu(packs, chosen.GetUntracked(), choose)},
+				// Sparkle's windows on macOS, an alert that installs the signed package on Linux.
+				{Label: "检查更新…", OnSelect: func() { updater.Check(cx) }},
+				{Separator: true},
+			}
 			if current != nil {
 				items = append(items, current.menu()...)
 			}

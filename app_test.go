@@ -4,6 +4,7 @@ import (
 	"math/rand/v2"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 	"time"
@@ -193,6 +194,22 @@ func TestPetMenuGroups(t *testing.T) {
 	m := petMenu(ps, "d", func(string) {})
 	if len(m) != 3 || m[0].Label != "A" || m[1].Label != "C" || m[2].Label != "G" || len(m[2].Items) != 2 || !m[2].Items[1].Checked {
 		t.Fatalf("menu = %+v", m)
+	}
+}
+
+// The pet's menu checks for updates now and offers the newer version it finds.
+func TestMenuChecksForUpdates(t *testing.T) {
+	app := nsgotest.Start(t, App(packs(t)), macOS)
+	app.Update = func(bool) core.UpdateCheck {
+		return core.UpdateCheck{App: "nsgo-pet", Current: "0.1.0", Version: "0.2.0", URL: "https://github.com/nsgo-dev/nsgo-pet/releases/tag/v0.2.0"}
+	}
+	app.RightClick("id:body")
+	app.ChoosePopup("检查更新…")
+	if !slices.Equal(app.UpdateChecks, []bool{false}) {
+		t.Fatalf("checks %v, want one the user asked for", app.UpdateChecks)
+	}
+	if a := app.Alerts(); len(a) != 1 || !strings.Contains(a[0].Message, "0.2.0") {
+		t.Fatalf("alerts %+v, want 0.2.0 offered", a)
 	}
 }
 
