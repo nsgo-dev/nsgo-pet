@@ -9,6 +9,15 @@ version: 0.1.0
 #   png: assets/Icon.png        # a square PNG, 1024 pixels wide
 # nsgo dev uses the same names ending in -dev where they exist, or the files
 # dev.icon names.
+icon:
+  apple: assets/AppIcon.icon
+  png: assets/Icon.png
+
+# Updates: key is the public key nsgo keygen printed; its secret key never
+# goes in the repository, but in NSGO_UPDATES_KEY where releases build, the
+# repository's secret of that name in GitHub Actions.
+updates:
+  key: 8+lMn9ixDn7sbqoWxwRKQDGiZ6wwtfjRXos/4GQNURk=
 
 dev:
   # native: this machine's backend. The pet is desktop only: no web, iOS or Android.
@@ -19,7 +28,7 @@ dev:
 build:
   output: dist
   # true opens the output directory after building.
-  open: false
+  open: true
   # Desktop only, the targets the release publishes; Windows waits until the pet plays there (see the README).
   targets: [macos_arm64, macos_x64, linux_x64, linux_arm64]
 
