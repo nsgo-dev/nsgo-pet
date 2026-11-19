@@ -13,6 +13,7 @@ import (
 )
 
 // NSGo refuses alpha video on Windows (internal/platform/windows/video.go): whether Media Foundation keeps the alpha of VP9 in WebM was never checked there, so its player reports VideoErrorAlphaUnsupported and asks the app to decode such clips itself. clipPlayer does that for the pet on Windows: it demuxes the WebM clip, decodes its color and alpha streams with libvpx on a goroutine of its own, and shows each frame in a core.Image through ImageSource.Pixels at the frame's time. It gives slot.view what core.Video gives it elsewhere: a load once the first picture is up, progress, the end, pausing and restarting.
+// TODO(nsgo#862): once NSGo plays VP9-with-alpha WebM on Windows, go back to core.Video there and drop clipPlayer, libvpx and ebml-go https://github.com/nsgo-dev/nsgo/issues/862
 type clipPlayer struct {
 	cx *core.Scope
 	// version counts the frames shown, the image's Version of shown.
