@@ -14,6 +14,7 @@ A desktop pet built with [NSGo](https://github.com/nsgo-dev/nsgo), with pets to 
 - Greets you, idles, and plays an event every 40 seconds, chosen by each clip's weight and conditions: time of day, season, meals, Gregorian festivals, and whether an editor or a terminal is the app in front.
 - Reacts to clicks, dangles while dragged, and walks along the bottom of the screen.
 - Starts with NSGo 酱 and remembers the pet you choose; pets from one source share a submenu, and outfits change with the season.
+- Updates itself from this repository's releases, checking daily and when you choose 检查更新… in its menu: Sparkle installs the update on macOS, and on Linux the Debian package installs through dpkg. An install from the Arch package or the AppImage opens the release's page instead.
 
 Clips play in two players, the next one loading out of sight, so the pet never blinks out between clips.
 
@@ -26,7 +27,14 @@ go tool nsgo dev       # build and open the pet
 go tool nsgo test .    # the headless tests
 ```
 
-Right-click the pet, or use the tray icon, to play an event, move it back to the corner, switch pets or quit.
+Right-click the pet, or use the tray icon, to play an event, move it back to the corner, switch pets, check for updates or quit.
+
+## Release
+
+1. Move `CHANGELOG.md`'s `Unreleased` bullets under `## [<version>] - <date>` and set `version` in `nsgo.yaml` to the same version.
+2. Push a tag `v<version>`.
+
+[The release workflow](.github/workflows/release.yml) then builds, signs and notarizes the installers, signs them for updates with the `NSGO_UPDATES_KEY` secret, and publishes them with that version's changelog section as the notes. The secret is the one `go tool nsgo keygen` printed beside `updates.key` in `nsgo.yaml`; losing it means installed pets can no longer update.
 
 ## Platforms
 

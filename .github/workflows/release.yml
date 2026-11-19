@@ -2,11 +2,11 @@ name: Release
 
 # Builds the pet's installers with nsgo build (go tool nsgo, the version go.mod pins) and publishes them on the GitHub release of the tag: the macOS disk images on a macOS runner, signed with YLDM's Developer ID and notarized so Gatekeeper opens them without a warning, and the Linux packages and AppImages on Ubuntu, with nsgo build's install scripts. Windows is left out until the pet runs there (see the README).
 #
-# Push a tag v<version>, matching version in nsgo.yaml, to release. A pull request that changes this file, or a run by hand (Actions › Release › Run workflow), builds and signs the same packages without publishing them, keeping them as the run's artifacts.
+# Push a tag v<version>, matching version in nsgo.yaml, to release. The release's notes are CHANGELOG.md's section for the version (tools/release-notes.sh), followed by GitHub's list of the pull requests since the last release; a tag without that section fails before anything builds. A pull request that changes this file, or a run by hand (Actions › Release › Run workflow), builds and signs the same packages without publishing them, keeping them as the run's artifacts.
 #
 # Signing takes the organization's secrets: MACOS_CERTIFICATE, the Developer ID Application certificate and its key as a base64 PKCS#12, MACOS_CERTIFICATE_PASSWORD, and the App Store Connect API key that notarizes, APPSTORE_API_KEY_P8 (base64), APPSTORE_API_KEY_ID and APPSTORE_API_ISSUER_ID, which nsgo build reads as NSGO_NOTARY_KEY, NSGO_NOTARY_KEY_ID and NSGO_NOTARY_ISSUER. The identity is the organization's MACOS_SIGNING_IDENTITY variable. A pull request from a fork gets no secrets, so its macOS packages are signed ad hoc.
 #
-# Updates: NSGO_UPDATES_KEY, the secret key of nsgo.yaml's updates.key that nsgo keygen printed, signs the installers and their appcasts. Without it the release has no macOS appcast, and Linux apps open the release's page instead of installing.
+# Updates: NSGO_UPDATES_KEY, the secret key of nsgo.yaml's updates.key that nsgo keygen printed, signs the installers and their appcasts. Without it the release has no macOS appcast, and Linux apps open the release's page instead of installing, so a tag requires it. Installed pets read the appcasts of the latest release, so every release carries one for each target.
 on:
   push:
     tags: ["v*"]
@@ -40,15 +40,24 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      # A tag that does not match the version in nsgo.yaml would publish packages named for another version.
+      # A tag that does not match the version in nsgo.yaml would publish packages named for another version, one without notes a release that says nothing, and one without the updates key installers no pet updates to.
       - name: Check the version
         if: startsWith(github.ref, 'refs/tags/')
         env:
           TAG: ${{ github.ref_name }}
+          HAS_UPDATES_KEY: ${{ secrets.NSGO_UPDATES_KEY != '' }}
         run: |
           version=$(sed -nE 's/^version: *"?([0-9.]+)"? *$/\1/p' nsgo.yaml)
           if [ "$TAG" != "v$version" ]; then
             echo "::error::The tag $TAG does not match version $version in nsgo.yaml."
+            exit 1
+          fi
+          if ! tools/release-notes.sh "$version" >/dev/null; then
+            echo "::error::CHANGELOG.md has no section for $version."
+            exit 1
+          fi
+          if [ "$HAS_UPDATES_KEY" != true ]; then
+            echo "::error::NSGO_UPDATES_KEY is not set, so the installers cannot be signed for updates."
             exit 1
           fi
       - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
@@ -135,12 +144,13 @@ jobs:
             xcrun stapler validate "${dmgs[0]}"
             spctl --assess --type open --context context:primary-signature --verbose=2 "${dmgs[0]}"
           done
-      # The files of nsgo build's releases folder: each target's installers with their .sha256, and from the Linux row the install scripts. Every installer the row's targets should make must be there, once.
+      # The files of nsgo build's releases folder: each target's installers and appcast with their .sha256, and from the Linux row the install scripts. Every installer the row's targets should make must be there, once, and on a tag every appcast, signed.
       - name: Collect the packages
         env:
           TARGETS: ${{ matrix.targets }}
           INSTALLERS: ${{ matrix.installers }}
           SCRIPTS: ${{ matrix.scripts && 'true' || '' }}
+          TAGGED: ${{ startsWith(github.ref, 'refs/tags/') }}
         run: |
           cd "$RUNNER_TEMP/packages/releases"
           shopt -s nullglob
@@ -153,6 +163,11 @@ jobs:
                 exit 1
               fi
             done
+            appcast=appcast-$target.xml
+            if [ "$TAGGED" = true ] && { [ ! -f "$appcast" ] || [ ! -f "$appcast.sha256" ] || ! grep -q 'sparkle:edSignature=' "$appcast"; }; then
+              echo "::error::nsgo build made no signed $appcast with its .sha256"
+              exit 1
+            fi
           done
           if [ -n "$SCRIPTS" ] && { [ ! -f install.sh ] || [ ! -f install.ps1 ]; }; then
             echo "::error::nsgo build made no install.sh or install.ps1"
@@ -193,13 +208,16 @@ jobs:
     permissions:
       contents: write
     steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           pattern: nsgo-pet-*
-          path: packages
+          path: ${{ runner.temp }}/packages
           merge-multiple: true
       - name: Check the checksums
-        working-directory: packages
+        working-directory: ${{ runner.temp }}/packages
         run: |
           for sum in *.sha256; do
             expected=$(cut -d' ' -f1 "$sum")
@@ -209,8 +227,11 @@ jobs:
               exit 1
             fi
           done
+      # CHANGELOG.md's notes come first, GitHub's list of pull requests after them. The release is marked latest, whose appcasts installed pets read.
       - name: Publish the release
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ github.ref_name }}
-        run: gh release create "$TAG" packages/* --repo "$GITHUB_REPOSITORY" --title "$TAG" --verify-tag --generate-notes
+        run: |
+          tools/release-notes.sh "${TAG#v}" > "$RUNNER_TEMP/notes.md"
+          gh release create "$TAG" "$RUNNER_TEMP"/packages/* --repo "$GITHUB_REPOSITORY" --title "$TAG" --verify-tag --latest --notes-file "$RUNNER_TEMP/notes.md" --generate-notes
