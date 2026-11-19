@@ -2,9 +2,9 @@
 
 A desktop pet built with [NSGo](https://github.com/nsgo-dev/nsgo), with pets to switch between from the tray icon or the pet's right-click menu. Pets are folders of clips and rules, so adding one needs no code.
 
-<img src="docs/bigbluefish.png" alt="Big Blue Fish in a transparent window" width="320">
+<img src="docs/nsgo-chan.png" alt="NSGo 酱 and her Gopher greeting, coding, spawning goroutines, high-fiving, snacking and sleeping" width="768">
 
-<img src="docs/playpets.png" alt="PlayPets' Clover, Daisy, Pip and Miso" width="640">
+<img src="docs/nsgo-chan/nsgo-chan-turnaround.png" alt="NSGo 酱 from the front, side and back" width="380"> <img src="docs/nsgo-chan/gopher-turnaround.png" alt="Her Gopher from the front, side and back" width="380">
 
 ## What it does
 
