@@ -120,7 +120,7 @@ Your app owns the windows, menus and lifecycle. The engine opens no tray, checks
 | --- | --- |
 | macOS | Runs, playing the HEVC-with-alpha clips. |
 | Linux | Plays the WebM clips. The window floats on X11; on Wayland it cannot float or move itself. |
-| Windows | Not yet: NSGo's Windows player refuses clips with alpha. |
+| Windows | Runs on x64. NSGo's Windows player refuses clips with alpha, so the engine decodes the WebM clips itself with libvpx, which the app ships in `resources/windows` ([NOTICE](resources/windows/NOTICE.md)), and shows the frames in an image. |
 
 Lunar festivals, hit testing by the clip's alpha ([nsgo#599](https://github.com/nsgo-dev/nsgo/issues/599)), speech bubbles and weather are not done yet.
 
@@ -134,6 +134,8 @@ go tool nsgo test .        # the app's headless tests, which check every pet in 
 (cd pet && go test ./...)  # the engine's tests
 ```
 
+The tests of the Windows decoder run where libvpx loads: on macOS with Homebrew's (`brew install libvpx`), on Linux with the distribution's; elsewhere they are skipped.
+
 The website is in `website/` and its docs in `docs/public/`; with [Bun](https://bun.sh), `bun install && bun run dev` there serves them and `bun run build` builds them.
 
 To release, move `CHANGELOG.md`'s `Unreleased` bullets under `## [<version>] - <date>`, set `version` in `nsgo.yaml` to the same version and push the tag `v<version>`. [The release workflow](.github/workflows/release.yml) builds, signs and publishes the installers with that section as the notes.
@@ -142,4 +144,4 @@ Read [ARCHITECTURE.md](ARCHITECTURE.md) before changing code, and [AGENTS.md](AG
 
 ## License
 
-The code, the app and the engine, is MIT, Copyright (c) 2026 nsgo-dev: see [LICENSE](LICENSE). Each pet keeps its own license, listed under [Pets](#pets) and in its `NOTICE.md`. NSGo-chan's art is CC BY-NC 4.0 and Big Blue Fish's character CC BY-NC-SA 4.0, so a build that includes either may not be used commercially.
+The code, the app and the engine, is MIT, Copyright (c) 2026 nsgo-dev: see [LICENSE](LICENSE). Each pet keeps its own license, listed under [Pets](#pets) and in its `NOTICE.md`. NSGo-chan's art is CC BY-NC 4.0 and Big Blue Fish's character CC BY-NC-SA 4.0, so a build that includes either may not be used commercially. The libvpx and winpthreads libraries in `resources/windows` keep theirs, BSD-3-Clause and MIT, in [its NOTICE](resources/windows/NOTICE.md).

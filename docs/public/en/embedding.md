@@ -27,6 +27,8 @@ func loadPacks() ([]*pet.Pack, error) {
 }
 ```
 
+On Windows, whose NSGo player refuses clips with alpha, the engine decodes the WebM clips itself with libvpx, which your app ships: copy `libvpx-1.dll` and `libwinpthread-1.dll` from nsgo-pet's [`resources/windows/`](https://github.com/nsgo-dev/nsgo-pet/tree/main/resources/windows) into your app's `resources/windows/`, with their licenses.
+
 ## Show a pet
 
 As a view in your own layout:

@@ -9,6 +9,7 @@ require (
 
 require (
 	github.com/andybalholm/brotli v1.3.0 // indirect
+	github.com/at-wat/ebml-go v0.19.4 // indirect
 	github.com/dop251/goja v0.0.0-20261027234916-5f913d1693d9 // indirect
 	github.com/ebitengine/purego v0.11.3 // indirect
 	github.com/evanw/esbuild v0.28.2 // indirect
