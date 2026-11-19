@@ -29,8 +29,8 @@ build:
   output: dist
   # true opens the output directory after building.
   open: true
-  # Desktop only, the targets the release publishes; Windows waits until the pet plays there (see the README).
-  targets: [macos_arm64, macos_x64, linux_x64, linux_arm64]
+  # Desktop only, the targets the release publishes.
+  targets: [macos_arm64, macos_x64, linux_x64, linux_arm64, windows_x64]
 
 # The repository whose latest release holds the appcasts installed pets read.
 release:

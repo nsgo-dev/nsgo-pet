@@ -1,6 +1,6 @@
 name: Release
 
-# Builds the pet's installers with nsgo build (go tool nsgo, the version go.mod pins) and publishes them on the GitHub release of the tag: the macOS disk images on a macOS runner, signed with YLDM's Developer ID and notarized so Gatekeeper opens them without a warning, and the Linux packages and AppImages on Ubuntu, with nsgo build's install scripts. Windows is left out until the pet runs there (see the README).
+# Builds the pet's installers with nsgo build (go tool nsgo, the version go.mod pins) and publishes them on the GitHub release of the tag: the macOS disk images on a macOS runner, signed with YLDM's Developer ID and notarized so Gatekeeper opens them without a warning, the Linux packages and AppImages on Ubuntu, with nsgo build's install scripts, and the Windows installers on Ubuntu too, with NSIS, as NSGo's desktop builds need no cgo. The Windows installers carry no signature yet, for which SmartScreen warns; that needs a code signing certificate.
 #
 # Push a tag v<version>, matching version in nsgo.yaml, to release. The release's notes are CHANGELOG.md's section for the version (tools/release-notes.sh), followed by GitHub's list of the pull requests since the last release; a tag without that section fails before anything builds. A pull request that changes this file, or a run by hand (Actions › Release › Run workflow), builds and signs the same packages without publishing them, keeping them as the run's artifacts.
 #
@@ -34,12 +34,17 @@ jobs:
           # installers: what each target must make, after nsgo-pet-<version>-<target>, so that a package nsgo build leaves out fails the row rather than going missing from the release. scripts: install.sh and install.ps1, kept from one row.
           - { name: macOS, os: macos-latest, targets: "macos_arm64,macos_x64", installers: ".dmg" }
           - { name: Linux, os: ubuntu-latest, targets: "linux_x64,linux_arm64", installers: ".deb .pkg.tar.gz .AppImage", scripts: true }
+          - { name: Windows, os: ubuntu-latest, targets: "windows_x64", installers: "-setup.exe" }
     env:
       MACOS_SIGNING_IDENTITY: ${{ vars.MACOS_SIGNING_IDENTITY }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      # Without NSIS nsgo build leaves the Windows installer out, which Collect the packages then fails on.
+      - name: Install NSIS, for the Windows installers
+        if: matrix.name == 'Windows'
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends nsis
       # A tag that does not match the version in nsgo.yaml would publish packages named for another version, one without notes a release that says nothing, and one without the updates key installers no pet updates to.
       - name: Check the version
         if: startsWith(github.ref, 'refs/tags/')
