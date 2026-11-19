@@ -25,3 +25,9 @@ build:
   # true opens the output directory after building.
   open: false
   targets: [macos_arm64, windows_x64, ios_simulator, android_arm64, web]
+
+# The WebM clips have alpha, which GStreamer decodes with codecalpha from its bad plugins.
+linux:
+  depends:
+    deb: [gstreamer1.0-plugins-bad]
+    arch: [gst-plugins-bad]
