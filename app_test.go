@@ -246,3 +246,49 @@ func TestOutfitsFollowTheSeason(t *testing.T) {
 		}
 	}
 }
+
+// On Windows the clips play in the app's own decoder: the greeting's first picture shows in an image, and once the greeting ends an idle clip takes over in the other slot. It needs libvpx, as TestDecodeClip does.
+func TestWindowsPlaysClipsItself(t *testing.T) {
+	if err := loadVPX(); err != nil {
+		t.Skip(err)
+	}
+	app := nsgotest.Start(t, App(packs(t)), nsgotest.Environment(core.Environment{OS: core.OSWindows, Idiom: core.IdiomDesktop}))
+	showing := func(id string) bool {
+		v := app.FindMounted("id:" + id)
+		return v.Image.Source.Pixels != nil && v.Style.Opacity == 1
+	}
+	app.WaitUntil(10*time.Second, func() bool { return showing("slot1") })
+	if showing("slot0") {
+		t.Fatal("both slots show")
+	}
+	// The fake clock moves on while the decoder keeps up in real time.
+	deadline := time.Now().Add(30 * time.Second)
+	for !showing("slot0") {
+		if time.Now().After(deadline) {
+			t.Fatal("no idle clip after the greeting")
+		}
+		app.Advance(40 * time.Millisecond)
+	}
+	if showing("slot1") {
+		t.Fatal("the greeting still shows over the idle clip")
+	}
+}
+
+// Switching pets on Windows starts the new pet's own players, which show its greeting.
+func TestWindowsSwitchesPets(t *testing.T) {
+	if err := loadVPX(); err != nil {
+		t.Skip(err)
+	}
+	app := nsgotest.Start(t, App(packs(t)), nsgotest.Environment(core.Environment{OS: core.OSWindows, Idiom: core.IdiomDesktop}))
+	showing := func(id string) bool {
+		v := app.FindMounted("id:" + id)
+		return v.Image.Source.Pixels != nil && v.Style.Opacity == 1
+	}
+	app.WaitUntil(10*time.Second, func() bool { return showing("slot1") })
+	app.RightClick("id:body")
+	app.ChoosePopup("切换桌宠", "大蓝鱼")
+	app.WaitUntil(10*time.Second, func() bool {
+		v := app.FindMounted("id:slot1")
+		return v.Props.Label == "大蓝鱼" && showing("slot1") && v.Image.Source.Pixels.Rect.Dx() == 640
+	})
+}

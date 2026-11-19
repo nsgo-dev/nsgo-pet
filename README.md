@@ -27,6 +27,8 @@ go tool nsgo dev       # build and open the pet
 go tool nsgo test .    # the headless tests
 ```
 
+The tests of the Windows decoder run where libvpx loads: on macOS with Homebrew's (`brew install libvpx`), on Linux with the distribution's; elsewhere they are skipped.
+
 Right-click the pet, or use the tray icon, to play an event, move it back to the corner, switch pets, check for updates or quit.
 
 ## Release
@@ -44,7 +46,7 @@ The pet is desktop only; it is not built for iOS, Android or the web.
 | --- | --- |
 | macOS | Runs. Plays the HEVC-with-alpha clips in `mov/`. |
 | Linux | Plays the WebM clips; needs GStreamer's `gstreamer1.0-plugins-bad` (codecalpha). The window floats on X11; on Wayland it cannot float or move itself. |
-| Windows | Not yet. NSGo's Windows player refuses clips with alpha, so the clips need the app's own decoder feeding `ImageSource.Pixels`. |
+| Windows | Runs on x64. NSGo's Windows player refuses video with alpha, so the pet decodes the WebM clips itself with libvpx, which it ships in `resources/windows` ([NOTICE](resources/windows/NOTICE.md)), and shows the frames in an image. |
 
 ## Pets
 
@@ -70,7 +72,7 @@ A pet is a folder `resources/pets/<id>/`:
 | --- | --- |
 | `pet.json` | The pet's name, window size, body and the clips it plays by name |
 | `animations.json` | Every clip and when it plays |
-| `webm/<clip>.webm` | Each clip as VP9 with alpha, for Linux |
+| `webm/<clip>.webm` | Each clip as VP9 with alpha, for Linux and Windows |
 | `mov/<clip>.mov` | The same clip as HEVC with alpha, for macOS, whose player opens no WebM |
 | `NOTICE.md` | Where the pet comes from, its authors and its license |
 
@@ -143,11 +145,10 @@ A pet drawn as PNG frames builds from a JSON spec: `go run ./tools/framepet -spe
 
 ## Not yet
 
-- Windows playback.
 - Lunar festivals (Spring Festival, Lantern, Dragon Boat, Qixi, Mid-Autumn, Laba): their clips keep their plain weight.
 - Taking the pointer by the clip's alpha instead of a body rectangle ([nsgo#599](https://github.com/nsgo-dev/nsgo/issues/599)).
 - Speech bubbles, weather and the AI agent of the original Big Blue Fish.
 
 ## License
 
-The code is MIT, Copyright (c) 2026 nsgo-dev: see [LICENSE](LICENSE). Each pet keeps its own license, listed under [Pets](#pets) and in its `NOTICE.md`: Big Blue Fish's character is CC BY-NC-SA 4.0, so a build that includes it may not be used commercially.
+The code is MIT, Copyright (c) 2026 nsgo-dev: see [LICENSE](LICENSE). Each pet keeps its own license, listed under [Pets](#pets) and in its `NOTICE.md`: Big Blue Fish's character is CC BY-NC-SA 4.0, so a build that includes it may not be used commercially. The libvpx and winpthreads libraries in `resources/windows` keep theirs, BSD-3-Clause and MIT, in [its NOTICE](resources/windows/NOTICE.md).

@@ -122,7 +122,7 @@ func fill() core.Style {
 	return core.Style{Position: core.Absolute, Top: core.Pt(0), Right: core.Pt(0), Bottom: core.Pt(0), Left: core.Pt(0)}
 }
 
-// clipSource is where this platform's clips are: HEVC with alpha on macOS, whose player opens no WebM, VP9 with alpha in WebM elsewhere.
+// clipSource is where this platform's clips are: HEVC with alpha on macOS, whose player opens no WebM, VP9 with alpha in WebM elsewhere, which Windows decodes itself (clipPlayer).
 func clipSource(cx *core.Scope, pack *Pack, r Rule) string {
 	name := strings.TrimSuffix(r.File, ".webm")
 	switch cx.Env().OS() {
@@ -137,47 +137,67 @@ type slot struct {
 	src      *core.Signal[string]
 	mirrored *core.Signal[bool]
 	ref      *core.Ref
+	// player plays the clips on Windows instead of a video, nil elsewhere.
+	player *clipPlayer
 }
 
 func (s *slot) view(p *pet, i int) core.Node {
-	return core.Video{
-		SourceFunc: s.src.Get,
-		PausedFunc: func() bool { return p.front.Get() != i && p.pending.Get() != i },
-		Muted:      true,
-		ResizeMode: core.Contain,
-		Ref:        s.ref,
-		StyleFunc: func() core.Style {
-			st := fill()
-			st.Opacity = core.Alpha(0)
-			if p.front.Get() == i {
-				st.Opacity = core.Alpha(1)
-			}
-			if s.mirrored.Get() {
-				st.Transform = core.Transform{ScaleX: -1}
-			}
-			return st
-		},
-		OnLoad: func(core.VideoInfo) {
-			if p.pending.GetUntracked() == i {
-				p.front.Set(i)
-				p.pending.Set(-1)
-			}
-		},
-		OnProgress: func(position, _ time.Duration) {
-			if p.front.GetUntracked() == i {
-				p.progress(position)
-			}
-		},
-		ProgressInterval: 33 * time.Millisecond,
-		OnEnd: func() {
-			if p.front.GetUntracked() == i && p.pending.GetUntracked() < 0 {
-				p.finished()
-			}
-		},
-		OnError: func(err error) { log.Printf("clip %s: %v", s.src.GetUntracked(), err) },
-		Label:   p.pack.Name,
-		TestID:  slotIDs[i],
+	paused := func() bool { return p.front.Get() != i && p.pending.Get() != i }
+	style := func() core.Style {
+		st := fill()
+		st.Opacity = core.Alpha(0)
+		if p.front.Get() == i {
+			st.Opacity = core.Alpha(1)
+		}
+		if s.mirrored.Get() {
+			st.Transform = core.Transform{ScaleX: -1}
+		}
+		return st
 	}
+	loaded := func() {
+		if p.pending.GetUntracked() == i {
+			p.front.Set(i)
+			p.pending.Set(-1)
+		}
+	}
+	progress := func(position time.Duration) {
+		if p.front.GetUntracked() == i {
+			p.progress(position)
+		}
+	}
+	ended := func() {
+		if p.front.GetUntracked() == i && p.pending.GetUntracked() < 0 {
+			p.finished()
+		}
+	}
+	failed := func(err error) { log.Printf("clip %s: %v", s.src.GetUntracked(), err) }
+	if p.cx.Env().OS() == core.OSWindows {
+		return clipView{src: s.src.Get, paused: paused, style: style, onLoad: loaded, onProgress: progress, onEnd: ended, onError: failed, player: &s.player, label: p.pack.Name, testID: slotIDs[i]}
+	}
+	return core.Video{
+		SourceFunc:       s.src.Get,
+		PausedFunc:       paused,
+		Muted:            true,
+		ResizeMode:       core.Contain,
+		Ref:              s.ref,
+		StyleFunc:        style,
+		OnLoad:           func(core.VideoInfo) { loaded() },
+		OnProgress:       func(position, _ time.Duration) { progress(position) },
+		ProgressInterval: 33 * time.Millisecond,
+		OnEnd:            ended,
+		OnError:          failed,
+		Label:            p.pack.Name,
+		TestID:           slotIDs[i],
+	}
+}
+
+// rewind plays the slot's clip again from the start.
+func (s *slot) rewind() {
+	if s.player != nil {
+		s.player.restart()
+		return
+	}
+	s.ref.Seek(0)
 }
 
 // slotIDs name the two players for tests.
@@ -267,7 +287,7 @@ func (p *pet) play(r Rule, phase string, mirrored bool) {
 	s.mirrored.Set(mirrored)
 	if s.src.GetUntracked() == src {
 		// The hidden player has this clip already: play it again from the start and show it.
-		s.ref.Seek(0)
+		s.rewind()
 		p.pending.Set(-1)
 		p.front.Set(back)
 		return
