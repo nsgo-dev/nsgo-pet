@@ -5,6 +5,8 @@ name: Release
 # Push a tag v<version>, matching version in nsgo.yaml, to release. A pull request that changes this file, or a run by hand (Actions › Release › Run workflow), builds and signs the same packages without publishing them, keeping them as the run's artifacts.
 #
 # Signing takes the organization's secrets: MACOS_CERTIFICATE, the Developer ID Application certificate and its key as a base64 PKCS#12, MACOS_CERTIFICATE_PASSWORD, and the App Store Connect API key that notarizes, APPSTORE_API_KEY_P8 (base64), APPSTORE_API_KEY_ID and APPSTORE_API_ISSUER_ID, which nsgo build reads as NSGO_NOTARY_KEY, NSGO_NOTARY_KEY_ID and NSGO_NOTARY_ISSUER. The identity is the organization's MACOS_SIGNING_IDENTITY variable. A pull request from a fork gets no secrets, so its macOS packages are signed ad hoc.
+#
+# Updates: NSGO_UPDATES_KEY, the secret key of nsgo.yaml's updates.key that nsgo keygen printed, signs the installers and their appcasts. Without it the release has no macOS appcast, and Linux apps open the release's page instead of installing.
 on:
   push:
     tags: ["v*"]
@@ -102,13 +104,14 @@ jobs:
           NOTARY_KEY_ID: ${{ steps.signing.outputs.notary-key != '' && secrets.APPSTORE_API_KEY_ID || '' }}
           NOTARY_ISSUER: ${{ steps.signing.outputs.notary-key != '' && secrets.APPSTORE_API_ISSUER_ID || '' }}
           TARGETS: ${{ matrix.targets }}
+          NSGO_UPDATES_KEY: ${{ secrets.NSGO_UPDATES_KEY }}
         run: |
           sign=()
           if [ -n "$KEYCHAIN" ]; then
             sign=(-sign "$MACOS_SIGNING_IDENTITY")
             export NSGO_NOTARY_KEY=$NOTARY_KEY NSGO_NOTARY_KEY_ID=$NOTARY_KEY_ID NSGO_NOTARY_ISSUER=$NOTARY_ISSUER
           fi
-          go tool nsgo build -target "$TARGETS" -output "$RUNNER_TEMP/packages" "${sign[@]}" .
+          go tool nsgo build -open=false -target "$TARGETS" -output "$RUNNER_TEMP/packages" "${sign[@]}" .
       # Gatekeeper's own check of what users download: the app is signed with the Developer ID and the hardened runtime, and each disk image carries its notarization ticket.
       - name: Check the signatures
         if: steps.signing.outputs.keychain != ''
