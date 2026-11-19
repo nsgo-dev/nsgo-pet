@@ -45,13 +45,22 @@ type Pack struct {
 	Policy *Policy `json:"-"`
 }
 
-// LoadPacks reads every pet in resources/pets, by ID.
+// defaultPet is the pet shown until the user chooses another.
+const defaultPet = "nsgo-chan"
+
+// LoadPacks reads every pet in resources/pets, by ID, defaultPet first.
 func LoadPacks() ([]*Pack, error) {
 	dirs, err := fs.Glob(petFiles, "resources/pets/*/pet.json")
 	if err != nil {
 		return nil, err
 	}
-	sort.Strings(dirs)
+	sort.SliceStable(dirs, func(i, j int) bool {
+		di, dj := path.Base(path.Dir(dirs[i])) == defaultPet, path.Base(path.Dir(dirs[j])) == defaultPet
+		if di != dj {
+			return di
+		}
+		return dirs[i] < dirs[j]
+	})
 	var packs []*Pack
 	for _, manifest := range dirs {
 		dir := path.Dir(manifest)

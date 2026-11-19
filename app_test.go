@@ -39,28 +39,28 @@ func fish(t *testing.T) *Pack {
 
 func source(app *nsgotest.App, id string) string { return app.FindMounted("id:" + id).Video.Source }
 
-// The fish greets the user first, then goes on with an idle clip in the other player, which shows once it has a picture.
+// NSGo-chan, the default pet, greets the user first, then goes on with an idle clip in the other player, which shows once it has a picture.
 func TestGreetsThenIdles(t *testing.T) {
 	app := nsgotest.Start(t, App(packs(t)), macOS)
-	if got := source(app, "slot1"); got != "asset:pets/bigbluefish/mov/女仆屈膝礼仪.mov" {
+	if got := source(app, "slot1"); got != "asset:pets/nsgo-chan/mov/greeting.mov" {
 		t.Fatalf("first clip = %q, want the greeting", got)
 	}
 	app.Play("id:slot1", core.VideoInfo{Duration: 5 * time.Second})
 	app.Progress("id:slot1", 5*time.Second, 5*time.Second)
 	idle := source(app, "slot0")
-	if !strings.HasPrefix(idle, "asset:pets/bigbluefish/mov/") {
+	if !strings.HasPrefix(idle, "asset:pets/nsgo-chan/mov/") {
 		t.Fatalf("after the greeting the other player has %q", idle)
 	}
-	name := strings.TrimSuffix(strings.TrimPrefix(idle, "asset:pets/bigbluefish/mov/"), ".mov")
-	if r := fish(t).Policy.Find(name); r.Pool != "Idle" {
-		t.Fatalf("after the greeting the fish plays %q from pool %q, want an idle clip", name, r.Pool)
+	name := strings.TrimSuffix(strings.TrimPrefix(idle, "asset:pets/nsgo-chan/mov/"), ".mov")
+	if r := packs(t)[0].Policy.Find(name); r.Pool != "Idle" {
+		t.Fatalf("after the greeting NSGo-chan plays %q from pool %q, want an idle clip", name, r.Pool)
 	}
 }
 
 // Linux and Windows play the WebM clips.
 func TestOtherPlatformsPlayWebM(t *testing.T) {
 	app := nsgotest.Start(t, App(packs(t)), nsgotest.Environment(core.Environment{OS: core.OSLinux, Idiom: core.IdiomDesktop}))
-	if got := source(app, "slot1"); got != "asset:pets/bigbluefish/webm/女仆屈膝礼仪.webm" {
+	if got := source(app, "slot1"); got != "asset:pets/nsgo-chan/webm/greeting.webm" {
 		t.Fatalf("first clip = %q", got)
 	}
 }
@@ -181,7 +181,8 @@ func TestPressPlaysAClickReaction(t *testing.T) {
 	app.Play("id:slot0", core.VideoInfo{Duration: 5 * time.Second})
 	app.Press("id:body")
 	got := source(app, "slot1")
-	if !strings.Contains(got, "点击回应-") {
+	name := strings.TrimSuffix(strings.TrimPrefix(got, "asset:pets/nsgo-chan/mov/"), ".mov")
+	if r := packs(t)[0].Policy.Find(name); r.Pool != "Click" {
 		t.Fatalf("after a press the other player has %q, want a click reaction", got)
 	}
 }

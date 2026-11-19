@@ -13,7 +13,7 @@ A desktop pet built with [NSGo](https://github.com/nsgo-dev/nsgo), with pets to 
 - Takes the pointer only on the pet's body: clicks anywhere else in the window reach the window below.
 - Greets you, idles, and plays an event every 40 seconds, chosen by each clip's weight and conditions: time of day, season, meals, Gregorian festivals, and whether an editor or a terminal is the app in front.
 - Reacts to clicks, dangles while dragged, and walks along the bottom of the screen.
-- Remembers the pet you chose; pets from one source share a submenu, and outfits change with the season.
+- Starts with NSGo 酱 and remembers the pet you choose; pets from one source share a submenu, and outfits change with the season.
 
 Clips play in two players, the next one loading out of sight, so the pet never blinks out between clips.
 
