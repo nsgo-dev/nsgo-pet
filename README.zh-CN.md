@@ -120,7 +120,7 @@ desktop.OpenWindow(cx, pet.WindowOptions(pack), func(cx *core.Scope) core.Node {
 | --- | --- |
 | macOS | 可运行，播放带透明通道的 HEVC 动画。 |
 | Linux | 播放 WebM 动画。X11 下窗口可浮动；Wayland 下不能浮动，也不能自己移动。 |
-| Windows | 暂不支持：NSGo 的 Windows 播放器拒绝带透明通道的视频。 |
+| Windows | 可在 x64 上运行。NSGo 的 Windows 播放器拒绝带透明通道的视频，所以引擎用 libvpx 自己解码 WebM 动画并显示在图片里；libvpx 由应用放在 `resources/windows` 中分发（[NOTICE](resources/windows/NOTICE.md)）。 |
 
 农历节日、按动画透明度判定点击（[nsgo#599](https://github.com/nsgo-dev/nsgo/issues/599)）、对话气泡和天气还没做。
 
@@ -134,6 +134,8 @@ go tool nsgo test .        # the app's headless tests, which check every pet in 
 (cd pet && go test ./...)  # the engine's tests
 ```
 
+Windows 解码器的测试只在能加载 libvpx 的地方运行：macOS 上用 Homebrew 的（`brew install libvpx`），Linux 上用发行版的；其他情况下跳过。
+
 网站在 `website/`，文档在 `docs/public/`；装好 [Bun](https://bun.sh) 后，在那里运行 `bun install && bun run dev` 启动预览，`bun run build` 构建。
 
 发布时，把 `CHANGELOG.md` 里 `Unreleased` 下的条目移到 `## [<版本>] - <日期>` 下，把 `nsgo.yaml` 的 `version` 设为同一版本，然后推送标签 `v<版本>`。[发布工作流](.github/workflows/release.yml) 会构建、签名并发布安装包，以该节作为发布说明。
@@ -142,4 +144,4 @@ go tool nsgo test .        # the app's headless tests, which check every pet in 
 
 ## 许可证
 
-代码（应用和引擎）采用 MIT 许可，Copyright (c) 2026 nsgo-dev，见 [LICENSE](LICENSE)。每只宠物保留各自的许可，列在 [宠物](#宠物) 和各自的 `NOTICE.md` 中。NSGo 酱的美术采用 CC BY-NC 4.0，大蓝鱼的角色采用 CC BY-NC-SA 4.0，因此包含其中任一只的构建都不得商用。
+代码（应用和引擎）采用 MIT 许可，Copyright (c) 2026 nsgo-dev，见 [LICENSE](LICENSE)。每只宠物保留各自的许可，列在 [宠物](#宠物) 和各自的 `NOTICE.md` 中。NSGo 酱的美术采用 CC BY-NC 4.0，大蓝鱼的角色采用 CC BY-NC-SA 4.0，因此包含其中任一只的构建都不得商用。`resources/windows` 中的 libvpx 和 winpthreads 库保留各自的许可（BSD-3-Clause 和 MIT），见[其 NOTICE](resources/windows/NOTICE.md)。

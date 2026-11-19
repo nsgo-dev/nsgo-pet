@@ -27,6 +27,8 @@ func loadPacks() ([]*pet.Pack, error) {
 }
 ```
 
+Windows 上 NSGo 的播放器拒绝带透明通道的动画，引擎会用 libvpx 自己解码 WebM 动画，而 libvpx 由你的应用分发：把 nsgo-pet 的 [`resources/windows/`](https://github.com/nsgo-dev/nsgo-pet/tree/main/resources/windows) 里的 `libvpx-1.dll` 和 `libwinpthread-1.dll` 连同它们的许可复制到你的应用的 `resources/windows/`。
+
 ## 展示宠物
 
 作为一个视图放进你自己的布局：

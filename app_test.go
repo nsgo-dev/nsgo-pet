@@ -322,3 +322,39 @@ func TestStatsAgentNamesThePlatform(t *testing.T) {
 		t.Errorf("web agent = %q, want none", a)
 	}
 }
+
+var windows = nsgotest.Environment(core.Environment{OS: core.OSWindows, Idiom: core.IdiomDesktop})
+
+// On Windows a pet chosen in the settings' grid replaces the one playing, as the app's window does, and plays in the engine's own player, an image rather than a video; the engine's tests decode its frames.
+func TestWindowsSettingsSwitchPets(t *testing.T) {
+	ps := packs(t)
+	find := func(id string) *pet.Pack {
+		for _, p := range ps {
+			if p.ID == id {
+				return p
+			}
+		}
+		t.Fatalf("no %s pet", id)
+		return nil
+	}
+	app := nsgotest.Start(t, func(cx *core.Scope) core.Node {
+		chosen := core.NewSignal(cx, "nsgo-chan")
+		return core.View{Style: core.Style{Direction: core.Row}, Children: []core.Node{
+			core.View{Style: core.Style{Width: core.Pt(620), Height: core.Pt(500)}, Children: []core.Node{Settings(cx, prefs(t, cx, chosen, core.NewSignal(cx, true)))}},
+			core.Dynamic(func(cx *core.Scope) core.Node {
+				p := pet.New(cx, find(chosen.Get()), pet.Options{})
+				cx.Post(p.Start)
+				return p.View()
+			}),
+		}}
+	}, windows)
+	player := func(name string) bool {
+		v := app.FindMounted("id:slot1")
+		return v.Kind.String() == "image" && v.Props.Label == name
+	}
+	if !player(find("nsgo-chan").Name) {
+		t.Fatalf("NSGo-chan plays in a %s labeled %q, want the engine's image", app.FindMounted("id:slot1").Kind, app.FindMounted("id:slot1").Props.Label)
+	}
+	app.Press("id:pet-bigbluefish")
+	app.WaitUntil(10*time.Second, func() bool { return player(find("bigbluefish").Name) })
+}

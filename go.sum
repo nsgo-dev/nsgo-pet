@@ -1,5 +1,7 @@
 github.com/andybalholm/brotli v1.3.0 h1:IdkhjSe/+34U+fP7FSR2Q6Poj1hnHUa2GoWmzXJd6qY=
 github.com/andybalholm/brotli v1.3.0/go.mod h1:rzTDkvFWvIrjDXZHkuS16NPggd91W3kUSvPlQ1pLaKY=
+github.com/at-wat/ebml-go v0.19.4 h1:6F767ThzH/JqNUsF79PwRFP0pwUF5ALXWJ6pXuiolI8=
+github.com/at-wat/ebml-go v0.19.4/go.mod h1:wu3fQj+DWo6SOOl9c4yDi+gFs9Oa96Z2B5qxo1OxFYY=
 github.com/dlclark/regexp2/v2 v2.11.0 h1:z5uRPHav+eTVpoffDSuUP2KPS4f1ONZaPDK73S8HA0w=
 github.com/dlclark/regexp2/v2 v2.11.0/go.mod h1:avUrQvPaLz2DrFNHJF0taWAFFX2C1GMSSoeiqFjcBmU=
 github.com/dop251/goja v0.0.0-20261027234916-5f913d1693d9 h1:K1R7adPxJGLfojyUBe6TuuqcvS6YqQAdg2HujQ9Il+Y=
