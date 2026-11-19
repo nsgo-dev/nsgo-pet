@@ -1,0 +1,22 @@
+{
+  "name": "NSGo 酱",
+  "width": 200,
+  "height": 200,
+  "body": {
+    "left": 31,
+    "top": 13,
+    "width": 38,
+    "height": 84
+  },
+  "eventSeconds": 40,
+  "clips": {
+    "greeting": "greeting",
+    "exit": "exit",
+    "drag": "drag",
+    "idle": "idle",
+    "daily": "daily-night",
+    "dailyHour": 22
+  },
+  "source": "https://github.com/nsgo-dev/nsgo-pet",
+  "license": "MIT, Copyright (c) 2026 nsgo-dev"
+}

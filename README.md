@@ -40,6 +40,7 @@ Right-click the pet, or use the tray icon, to play an event, move it back to the
 
 | Pet | ID | Clips | Source | License |
 | --- | --- | --- | --- | --- |
+| NSGo 酱 NSGo-chan | `nsgo-chan` | 15 | Drawn for nsgo-pet, with her Gopher, from the sheets in [docs/nsgo-chan](docs/nsgo-chan) | MIT, Copyright (c) 2026 nsgo-dev ([NOTICE](resources/pets/nsgo-chan/NOTICE.md)) |
 | 大蓝鱼 Big Blue Fish | `bigbluefish` | 106 | [PC2005-cloud/dsh-pet](https://github.com/PC2005-cloud/dsh-pet), via [Bai-Cute/big-blue-fish-desktop-pet](https://github.com/Bai-Cute/big-blue-fish-desktop-pet) | Character [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/): **no commercial use** ([NOTICE](resources/pets/bigbluefish/NOTICE.md)) |
 | Clover | `playpets-clover` | 35 | [gaerae/playpets](https://github.com/gaerae/playpets), with its summer and winter outfits | MIT, gaerae ([NOTICE](resources/pets/playpets-clover/NOTICE.md)) |
 | Daisy | `playpets-daisy` | 35 | [gaerae/playpets](https://github.com/gaerae/playpets), with its summer and winter outfits | MIT, gaerae ([NOTICE](resources/pets/playpets-daisy/NOTICE.md)) |
