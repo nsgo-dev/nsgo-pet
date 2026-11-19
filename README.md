@@ -30,6 +30,8 @@ Right-click the pet, or use the tray icon, to play an event, move it back to the
 
 ## Platforms
 
+The pet is desktop only; it is not built for iOS, Android or the web.
+
 | Platform | State |
 | --- | --- |
 | macOS | Runs. Plays the HEVC-with-alpha clips in `mov/`. |

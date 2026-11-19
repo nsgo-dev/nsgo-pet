@@ -116,11 +116,11 @@ func fill() core.Style {
 	return core.Style{Position: core.Absolute, Top: core.Pt(0), Right: core.Pt(0), Bottom: core.Pt(0), Left: core.Pt(0)}
 }
 
-// clipSource is where this platform's clips are: HEVC with alpha on Apple platforms, whose player opens no WebM, VP9 with alpha in WebM elsewhere.
+// clipSource is where this platform's clips are: HEVC with alpha on macOS, whose player opens no WebM, VP9 with alpha in WebM elsewhere.
 func clipSource(cx *core.Scope, pack *Pack, r Rule) string {
 	name := strings.TrimSuffix(r.File, ".webm")
 	switch cx.Env().OS() {
-	case core.OSMacOS, core.OSIOS:
+	case core.OSMacOS:
 		return "asset:pets/" + pack.ID + "/mov/" + name + ".mov"
 	}
 	return "asset:pets/" + pack.ID + "/webm/" + name + ".webm"
