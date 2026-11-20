@@ -9,6 +9,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/nsgo-dev/nsgo-pet/pet"
 	"github.com/nsgo-dev/nsgo/core"
 	"github.com/nsgo-dev/nsgo/nsgotest"
 )
@@ -18,7 +19,7 @@ func TestMain(m *testing.M) { nsgotest.Main(m) }
 
 var macOS = nsgotest.Environment(core.Environment{OS: core.OSMacOS, Idiom: core.IdiomDesktop})
 
-func packs(t *testing.T) []*Pack {
+func packs(t *testing.T) []*pet.Pack {
 	t.Helper()
 	ps, err := LoadPacks()
 	if err != nil {
@@ -27,7 +28,7 @@ func packs(t *testing.T) []*Pack {
 	return ps
 }
 
-func fish(t *testing.T) *Pack {
+func fish(t *testing.T) *pet.Pack {
 	t.Helper()
 	for _, p := range packs(t) {
 		if p.ID == "bigbluefish" {
@@ -88,7 +89,7 @@ func TestEveryClipShips(t *testing.T) {
 func TestPackNamesOnlyItsClips(t *testing.T) {
 	p := *fish(t)
 	p.Clips.Drag = "nothing"
-	if err := p.check(); err == nil {
+	if err := p.Check(); err == nil {
 		t.Fatal("a manifest naming a missing drag clip passed")
 	}
 }
@@ -106,20 +107,20 @@ func TestWeights(t *testing.T) {
 	for _, c := range []struct {
 		name string
 		id   string
-		ctx  Context
+		ctx  pet.Context
 		want float64
 	}{
-		{"sleeping only at night", "原地小憩沉眠", Context{Now: at("2026-11-17 12:00")}, 0},
-		{"sleeping at night", "原地小憩沉眠", Context{Now: at("2026-11-17 23:30")}, 40},
-		{"disabled", "余额-分文不剩", Context{Now: at("2026-11-17 12:00")}, 0},
-		{"running on odd hours", "原地左转奔跑", Context{Now: at("2026-11-17 13:30")}, 200},
-		{"no running on even hours", "原地左转奔跑", Context{Now: at("2026-11-17 14:30")}, 0},
-		{"no running at the hour's edge", "原地左转奔跑", Context{Now: at("2026-11-17 13:57")}, 0},
-		{"dinner near six", "吃午餐", Context{Now: at("2026-11-17 18:30")}, 1000},
-		{"no dinner boost at three", "吃午餐", Context{Now: at("2026-11-17 15:00")}, 100},
-		{"ice cream only in summer", "吃冰淇淋融化", Context{Now: at("2026-11-17 15:00")}, 0},
-		{"coding", "写代码", Context{Now: at("2026-11-17 15:00"), Coding: true}, 1000},
-		{"not coding", "写代码", Context{Now: at("2026-11-17 15:00")}, 100},
+		{"sleeping only at night", "原地小憩沉眠", pet.Context{Now: at("2026-11-17 12:00")}, 0},
+		{"sleeping at night", "原地小憩沉眠", pet.Context{Now: at("2026-11-17 23:30")}, 40},
+		{"disabled", "余额-分文不剩", pet.Context{Now: at("2026-11-17 12:00")}, 0},
+		{"running on odd hours", "原地左转奔跑", pet.Context{Now: at("2026-11-17 13:30")}, 200},
+		{"no running on even hours", "原地左转奔跑", pet.Context{Now: at("2026-11-17 14:30")}, 0},
+		{"no running at the hour's edge", "原地左转奔跑", pet.Context{Now: at("2026-11-17 13:57")}, 0},
+		{"dinner near six", "吃午餐", pet.Context{Now: at("2026-11-17 18:30")}, 1000},
+		{"no dinner boost at three", "吃午餐", pet.Context{Now: at("2026-11-17 15:00")}, 100},
+		{"ice cream only in summer", "吃冰淇淋融化", pet.Context{Now: at("2026-11-17 15:00")}, 0},
+		{"coding", "写代码", pet.Context{Now: at("2026-11-17 15:00"), Coding: true}, 1000},
+		{"not coding", "写代码", pet.Context{Now: at("2026-11-17 15:00")}, 100},
 	} {
 		if got := p.Weight(p.Find(c.id), c.ctx); got != c.want {
 			t.Errorf("%s: weight of %s = %v, want %v", c.name, c.id, got, c.want)
@@ -130,7 +131,7 @@ func TestWeights(t *testing.T) {
 // A clip of a Gregorian festival grows toward its festival weight as the day nears.
 func TestFestivalWeightPeaksOnTheDay(t *testing.T) {
 	p := fish(t).Policy
-	var rule Rule
+	var rule pet.Rule
 	for _, r := range p.Rules {
 		if r.Festival == "Christmas" {
 			rule = r
@@ -140,9 +141,9 @@ func TestFestivalWeightPeaksOnTheDay(t *testing.T) {
 	if rule.ID == "" {
 		t.Fatal("no Christmas clip in the catalog")
 	}
-	far := p.Weight(rule, Context{Now: at("2026-07-01 15:00")})
-	near := p.Weight(rule, Context{Now: at("2026-12-22 15:00")})
-	day := p.Weight(rule, Context{Now: at("2026-12-25 15:00")})
+	far := p.Weight(rule, pet.Context{Now: at("2026-07-01 15:00")})
+	near := p.Weight(rule, pet.Context{Now: at("2026-12-22 15:00")})
+	day := p.Weight(rule, pet.Context{Now: at("2026-12-25 15:00")})
 	if !(far < near && near < day) || day != rule.FestivalWeight {
 		t.Fatalf("weights far %v, near %v, on the day %v (festival weight %v)", far, near, day, rule.FestivalWeight)
 	}
@@ -151,7 +152,7 @@ func TestFestivalWeightPeaksOnTheDay(t *testing.T) {
 func TestChooseKeepsToItsPool(t *testing.T) {
 	p := fish(t).Policy
 	rnd := rand.New(rand.NewPCG(1, 2))
-	ctx := Context{Now: at("2026-11-17 15:00")}
+	ctx := pet.Context{Now: at("2026-11-17 15:00")}
 	for range 200 {
 		r, ok := p.Choose("Click", ctx, rnd)
 		if !ok || r.Pool != "Click" {
@@ -160,17 +161,6 @@ func TestChooseKeepsToItsPool(t *testing.T) {
 	}
 	if _, ok := p.Choose("Nothing", ctx, rnd); ok {
 		t.Fatal("an empty pool chose a clip")
-	}
-}
-
-func TestCodingApps(t *testing.T) {
-	for id, want := range map[string]bool{
-		"com.microsoft.VSCode": true, "com.jetbrains.goland": true, "com.mitchellh.ghostty": true,
-		`C:\Program Files\Microsoft VS Code\Code.exe`: true, "com.apple.Safari": false, "": false,
-	} {
-		if got := isCodingApp(id); got != want {
-			t.Errorf("isCodingApp(%q) = %v", id, got)
-		}
 	}
 }
 
@@ -190,7 +180,7 @@ func TestPressPlaysAClickReaction(t *testing.T) {
 
 // Pets of a group are listed in a submenu after the ungrouped ones.
 func TestPetMenuGroups(t *testing.T) {
-	ps := []*Pack{{ID: "a", Name: "A"}, {ID: "b", Name: "B", Group: "G"}, {ID: "c", Name: "C"}, {ID: "d", Name: "D", Group: "G"}}
+	ps := []*pet.Pack{{ID: "a", Name: "A"}, {ID: "b", Name: "B", Group: "G"}, {ID: "c", Name: "C"}, {ID: "d", Name: "D", Group: "G"}}
 	m := petMenu(ps, "d", func(string) {})
 	if len(m) != 3 || m[0].Label != "A" || m[1].Label != "C" || m[2].Label != "G" || len(m[2].Items) != 2 || !m[2].Items[1].Checked {
 		t.Fatalf("menu = %+v", m)
@@ -215,7 +205,7 @@ func TestMenuChecksForUpdates(t *testing.T) {
 
 // A pet with outfits idles in the summer outfit in summer and in the base one in spring.
 func TestOutfitsFollowTheSeason(t *testing.T) {
-	var pk *Pack
+	var pk *pet.Pack
 	for _, p := range packs(t) {
 		if p.ID == "playpets-clover" {
 			pk = p
@@ -230,7 +220,7 @@ func TestOutfitsFollowTheSeason(t *testing.T) {
 	}{{"2026-07-10 15:00", "idle-summer.webm"}, {"2026-04-10 15:00", "idle.webm"}, {"2026-01-10 15:00", "idle-winter.webm"}} {
 		seen := map[string]bool{}
 		for range 200 {
-			r, ok := pk.Policy.Choose("Idle", Context{Now: at(c.when)}, rnd)
+			r, ok := pk.Policy.Choose("Idle", pet.Context{Now: at(c.when)}, rnd)
 			if !ok {
 				t.Fatalf("%s: no idle", c.when)
 			}

@@ -25,9 +25,33 @@ Needs Go 1.27.3 or later. On macOS:
 ```sh
 go tool nsgo dev       # build and open the pet
 go tool nsgo test .    # the headless tests
+(cd pet && go test ./...)  # the engine's tests
 ```
 
 Right-click the pet, or use the tray icon, to play an event, move it back to the corner, switch pets, check for updates or quit.
+
+## Embedding the pet engine
+
+The engine is the Go module `github.com/nsgo-dev/nsgo-pet/pet`, in [pet/](pet): the pack format, the clip rules and the two-player view, for any NSGo app to show a pet. It ships no pets and no assets; the host brings its own packs, each under its own license. This app is one host, whose pets are in `resources/pets`.
+
+```go
+packs, err := pet.LoadDir(dir) // or pet.Load(fsys, "asset:pets") for packs in the app's resources
+// err names each pack that failed; the others load.
+
+// In a view of the host's:
+p := pet.New(cx, packs[0], pet.Options{Menu: menu, Context: func() pet.Context { return pet.Context{Working: busy.Get()} }})
+cx.Post(p.Start)
+return p.View()
+
+// Or in a window of its own, which walks and drags move:
+desktop.OpenWindow(cx, pet.WindowOptions(pack), func(cx *core.Scope) core.Node {
+	p := pet.New(cx, pack, pet.Options{Window: true, Menu: menu})
+	cx.Post(p.Start)
+	return p.View()
+})
+```
+
+The host owns the windows, menus and lifecycle: the engine opens no tray, checks for no updates, stores nothing and never quits the app. `Act` plays an event, `Play` a clip by its ID, which a host maps its own states to, `PlaceAtCorner` moves the pet's window to the bottom right, and `Leave` plays the exit clip and then calls the host back. `Options.Context` tells the clips' `WorkKind` weights what the user is doing; without it the pet looks at the app in front.
 
 ## Release
 
