@@ -1,49 +1,83 @@
-# nsgo-pet
+<p align="center">
+  <img src="assets/Icon.png" alt="nsgo-pet" width="128">
+</p>
 
-A desktop pet built with [NSGo](https://github.com/nsgo-dev/nsgo), with pets to switch between from the tray icon or the pet's right-click menu. Pets are folders of clips and rules, so adding one needs no code.
+<h1 align="center">nsgo-pet</h1>
 
-<img src="docs/nsgo-chan.png" alt="NSGo 酱 and her Gopher greeting, coding, spawning goroutines, high-fiving, snacking and sleeping" width="768">
+<p align="center">
+  <strong>English</strong> |
+  <a href="README.zh-CN.md">简体中文</a>
+</p>
 
-<img src="docs/nsgo-chan/nsgo-chan-turnaround.png" alt="NSGo 酱 from the front, side and back" width="380"> <img src="docs/nsgo-chan/gopher-turnaround.png" alt="Her Gopher from the front, side and back" width="380">
+<p align="center">
+  <a href="https://github.com/oneo-me"><img alt="GitHub" src="https://img.shields.io/badge/GitHub-oneo--me-181717?logo=github&logoColor=white"></a>
+  <a href="https://oneo.me"><img alt="Blog" src="https://img.shields.io/badge/Blog-oneo.me-0969da"></a>
+  <a href="https://x.com/oneo666"><img alt="X" src="https://img.shields.io/badge/X-%40oneo666-000000?logo=x&logoColor=white"></a>
+  <a href="https://github.com/sponsors/oneo-me"><img alt="GitHub Sponsors" src="https://img.shields.io/badge/GitHub%20Sponsors-ea4aaa?logo=githubsponsors&logoColor=white"></a>
+</p>
 
-## What it does
+<p align="center">
+  A desktop pet for macOS and Linux built with <a href="https://github.com/nsgo-dev/nsgo">NSGo</a>, and the pet engine behind it, which other NSGo apps can embed.
+</p>
 
-- Lives in a transparent, borderless window without a shadow, floating above other windows on every Space and over full-screen apps.
-- Stays off the Dock and the taskbar; a tray icon holds its menu.
-- Takes the pointer only on the pet's body: clicks anywhere else in the window reach the window below.
-- Greets you, idles, and plays an event every 40 seconds, chosen by each clip's weight and conditions: time of day, season, meals, Gregorian festivals, and whether an editor or a terminal is the app in front.
-- Reacts to clicks, dangles while dragged, and walks along the bottom of the screen.
-- Starts with NSGo 酱 and remembers the pet you choose; pets from one source share a submenu, and outfits change with the season.
-- Updates itself from this repository's releases, checking daily and when you choose 检查更新… in its menu: Sparkle installs the update on macOS, and on Linux the Debian package installs through dpkg. An install from the Arch package or the AppImage opens the release's page instead.
+<p align="center">
+  <img src="docs/nsgo-chan.png" alt="NSGo 酱 and her Gopher greeting, coding, spawning goroutines, high-fiving, snacking and sleeping">
+</p>
 
-Clips play in two players, the next one loading out of sight, so the pet never blinks out between clips.
+## Features
 
-## Run
+- Floats in a transparent window above other windows, on every Space and over full-screen apps, and stays off the Dock and the taskbar.
+- Takes the pointer only on the pet's body, so clicks elsewhere reach the window below.
+- Greets you, idles and plays events chosen by time of day, season, meals, festivals and whether an editor or a terminal is in front.
+- Reacts to clicks, dangles while dragged and walks along the bottom of the screen.
+- Switches between eleven pets from the tray icon or its right-click menu, and remembers your choice.
+- Updates itself from this repository's releases.
 
-Needs Go 1.27.3 or later. On macOS:
+## Install
 
-```sh
-go tool nsgo dev       # build and open the pet
-go tool nsgo test .    # the headless tests
-(cd pet && go test ./...)  # the engine's tests
-```
+Download the disk image for macOS, or the Debian package, Arch package or AppImage for Linux, from the [releases](https://github.com/nsgo-dev/nsgo-pet/releases). Until the first release, build them from the repository root with `go tool nsgo build`, which writes them to `dist/`.
 
-Right-click the pet, or use the tray icon, to play an event, move it back to the corner, switch pets, check for updates or quit.
+Linux needs GStreamer's bad plugins (`gstreamer1.0-plugins-bad`) to play clips with alpha; the Debian and Arch packages depend on them.
+
+## Getting started
+
+1. Open nsgo-pet. NSGo 酱 greets you in the bottom right corner of the screen.
+2. Drag her anywhere, or click her for a reaction.
+3. Right-click her, or use the 🐾 tray icon, to switch pets, play an event, move her back to the corner, check for updates or quit.
 
 ## Embedding the pet engine
 
-The engine is the Go module `github.com/nsgo-dev/nsgo-pet/pet`, in [pet/](pet): the pack format, the clip rules and the two-player view, for any NSGo app to show a pet. It ships no pets and no assets; the host brings its own packs, each under its own license. This app is one host, whose pets are in `resources/pets`.
+The engine is the Go module `github.com/nsgo-dev/nsgo-pet/pet`: the pack format, the clip rules and the view that plays them. It ships no pets and no assets; your app brings its own packs, each under its own license.
+
+```sh
+go get github.com/nsgo-dev/nsgo-pet/pet@main
+```
+
+Load packs from a directory, or from your app's resources with `pet.Load(fsys, "asset:pets")`. A pack that fails to load is left out and named in the error:
 
 ```go
-packs, err := pet.LoadDir(dir) // or pet.Load(fsys, "asset:pets") for packs in the app's resources
-// err names each pack that failed; the others load.
+packs, err := pet.LoadDir(dir)
+if len(packs) == 0 {
+	return err
+}
+```
 
-// In a view of the host's:
-p := pet.New(cx, packs[0], pet.Options{Menu: menu, Context: func() pet.Context { return pet.Context{Working: busy.Get()} }})
-cx.Post(p.Start)
-return p.View()
+Show a pet as a view in your own layout:
 
-// Or in a window of its own, which walks and drags move:
+```go
+func Sidebar(cx *core.Scope) core.Node {
+	p := pet.New(cx, packs[0], pet.Options{
+		Menu:    menu,
+		Context: func() pet.Context { return pet.Context{Working: busy.Get()} },
+	})
+	cx.Post(p.Start)
+	return p.View()
+}
+```
+
+Or in a window of its own, which its walks and drags move:
+
+```go
 desktop.OpenWindow(cx, pet.WindowOptions(pack), func(cx *core.Scope) core.Node {
 	p := pet.New(cx, pack, pet.Options{Window: true, Menu: menu})
 	cx.Post(p.Start)
@@ -51,24 +85,16 @@ desktop.OpenWindow(cx, pet.WindowOptions(pack), func(cx *core.Scope) core.Node {
 })
 ```
 
-The host owns the windows, menus and lifecycle: the engine opens no tray, checks for no updates, stores nothing and never quits the app. `Act` plays an event, `Play` a clip by its ID, which a host maps its own states to, `PlaceAtCorner` moves the pet's window to the bottom right, and `Leave` plays the exit clip and then calls the host back. `Options.Context` tells the clips' `WorkKind` weights what the user is doing; without it the pet looks at the app in front.
+Your app owns the windows, menus and lifecycle. The engine opens no tray, checks for no updates, stores nothing and never quits the app.
 
-## Release
-
-1. Move `CHANGELOG.md`'s `Unreleased` bullets under `## [<version>] - <date>` and set `version` in `nsgo.yaml` to the same version.
-2. Push a tag `v<version>`.
-
-[The release workflow](.github/workflows/release.yml) then builds, signs and notarizes the installers, signs them for updates with the `NSGO_UPDATES_KEY` secret, and publishes them with that version's changelog section as the notes. The secret is the one `go tool nsgo keygen` printed beside `updates.key` in `nsgo.yaml`; losing it means installed pets can no longer update.
-
-## Platforms
-
-The pet is desktop only; it is not built for iOS, Android or the web.
-
-| Platform | State |
+| Call | Does |
 | --- | --- |
-| macOS | Runs. Plays the HEVC-with-alpha clips in `mov/`. |
-| Linux | Plays the WebM clips; needs GStreamer's `gstreamer1.0-plugins-bad` (codecalpha). The window floats on X11; on Wayland it cannot float or move itself. |
-| Windows | Not yet. NSGo's Windows player refuses clips with alpha, so the clips need the app's own decoder feeding `ImageSource.Pixels`. |
+| `Act` | Plays an event now |
+| `Play(id)` | Plays a clip by ID, such as one for your app's running, waiting or done state |
+| `PlaceAtCorner` | Moves the pet's own window to the bottom right of the screen |
+| `Leave(done)` | Plays the exit clip, then calls `done`, where you close the pet's window or view |
+
+`Options.Context` tells the clips' `Working` and `Coding` weights what the user is doing; without it the pet looks at the app in front. The [pack format](docs/architecture/packs.md) describes how to make packs.
 
 ## Pets
 
@@ -86,92 +112,30 @@ The pet is desktop only; it is not built for iOS, Android or the web.
 | OpenPets | `openpets` | 35 | [OpenPetsHQ/openpets](https://github.com/OpenPetsHQ/openpets), with its summer and holidays outfits | MIT, Copyright (c) 2026 OpenPets ([NOTICE](resources/pets/openpets/NOTICE.md)) |
 | OpenPets (Halloween) | `openpets-halloween` | 10 | [OpenPetsHQ/openpets](https://github.com/OpenPetsHQ/openpets), its Halloween outfit | MIT, Copyright (c) 2026 OpenPets ([NOTICE](resources/pets/openpets-halloween/NOTICE.md)) |
 
-### Adding a pet
+## Platforms
 
-A pet is a folder `resources/pets/<id>/`:
-
-| Path | What it is |
+| Platform | State |
 | --- | --- |
-| `pet.json` | The pet's name, window size, body and the clips it plays by name |
-| `animations.json` | Every clip and when it plays |
-| `webm/<clip>.webm` | Each clip as VP9 with alpha, for Linux |
-| `mov/<clip>.mov` | The same clip as HEVC with alpha, for macOS, whose player opens no WebM |
-| `NOTICE.md` | Where the pet comes from, its authors and its license |
+| macOS | Runs, playing the HEVC-with-alpha clips. |
+| Linux | Plays the WebM clips. The window floats on X11; on Wayland it cannot float or move itself. |
+| Windows | Not yet: NSGo's Windows player refuses clips with alpha. |
 
-`pet.json`:
+Lunar festivals, hit testing by the clip's alpha ([nsgo#599](https://github.com/nsgo-dev/nsgo/issues/599)), speech bubbles and weather are not done yet.
 
-```json
-{
-  "name": "大蓝鱼",
-  "width": 320,
-  "height": 180,
-  "body": { "left": 33, "top": 15, "width": 34, "height": 80 },
-  "eventSeconds": 40,
-  "clips": {
-    "greeting": "女仆屈膝礼仪",
-    "exit": "女仆屈膝礼仪",
-    "drag": "被鼠标拖拽悬空反馈",
-    "idle": "待机呼吸休闲",
-    "daily": "晨间刷牙",
-    "dailyHour": 23
-  },
-  "source": "https://github.com/PC2005-cloud/dsh-pet",
-  "license": "Character CC BY-NC-SA 4.0 (non-commercial); see NOTICE.md"
-}
-```
+## Development
 
-| Field | Meaning |
-| --- | --- |
-| `width`, `height` | The window in points; clips are fitted into it |
-| `body` | Where the pet's body is in the frame, in percent; only there does the window take the pointer |
-| `eventSeconds` | Time between events, 40 when left out |
-| `clips` | Clip IDs from `animations.json` played by name: on start, on quit, while dragged, as the fallback idle, and once a day at `dailyHour` |
-
-`animations.json` is a list of clips in [Big Blue Fish's format](https://github.com/Bai-Cute/big-blue-fish-desktop-pet/blob/75cd217568e713a7de8812f65dad7072798a8b70/code/BigBlueFish.Windows/assets/fish/animations.json):
-
-| Field | Meaning |
-| --- | --- |
-| `Id`, `File` | The clip's ID and its WebM file name; the MOV file has the same name |
-| `Pool` | `Idle` between events, `Event` every `eventSeconds`, `Click` on a click, `Greeting`, `Daily`, `Drag`, or `Disabled` |
-| `Weight` | How likely it is against the others of its pool; 0 never plays unless a condition raises it |
-| `NightOnly` | Only from 23:00 to 8:00 |
-| `SeasonOnly`, `SummerWeight`, `WinterWeight`, `MorningWeight` | Only in a season, or another weight in summer, in winter or from 8:00 to 11:00 |
-| `Meal`, `MealBoost` | `Breakfast`, `Lunch`, `Dinner` or `Any`: the boost is added within an hour of 8:00, 12:00 or 18:00 |
-| `Festival`, `RadiusDays`, `FestivalMode`, `FestivalWeight` | Near a festival the weight moves toward `FestivalWeight` (`Triangle`), or is it within `RadiusDays` |
-| `WorkKind`, `WorkWeight` | `Coding`: `WorkWeight` while an editor or a terminal is in front |
-| `MoveKind`, `HourParity` | `Run` or `Crab`: the pet walks 70 points and back, in the hours whose parity matches, away from the hour's edges |
-
-Clips need a transparent background. From PNG frames with alpha, make both forms with ffmpeg:
+Needs Go 1.27.3 or later. From the repository root:
 
 ```sh
-ffmpeg -framerate 24 -i frames/%04d.png -c:v libvpx-vp9 -pix_fmt yuva420p -b:v 0 -crf 32 webm/idle.webm
-ffmpeg -c:v libvpx-vp9 -i webm/idle.webm -an -c:v hevc_videotoolbox -alpha_quality 0.75 -q:v 60 -tag:v hvc1 -pix_fmt bgra mov/idle.mov
+go tool nsgo dev           # build and open the pet
+go tool nsgo test .        # the app's headless tests, which check every pet in resources/pets
+(cd pet && go test ./...)  # the engine's tests
 ```
 
-A pet drawn as a Codex sprite sheet (eight columns of 192×208 cells: idle, running, waving, jumping, failed, waiting, working, done) converts in one step: `go run ./tools/codexpet -sheet spritesheet.png -out resources/pets/<id> -name <name> -license <license>` cuts each row into a clip in both forms and writes `pet.json` and `animations.json`; `-summer` and `-winter` add outfits that play in those seasons, and `-group` lists the pet in a submenu.
+To release, move `CHANGELOG.md`'s `Unreleased` bullets under `## [<version>] - <date>`, set `version` in `nsgo.yaml` to the same version and push the tag `v<version>`. [The release workflow](.github/workflows/release.yml) builds, signs and publishes the installers with that section as the notes.
 
-Each source has a script in `tools/` that fetches its pets again from a pinned commit and converts them:
-
-| Script | Pets |
-| --- | --- |
-| `tools/fetch-bigbluefish.sh` | Big Blue Fish's 106 clips, transcoding the MOV files |
-| `tools/fetch-playpets.sh` | PlayPets' four pets with their summer and winter outfits |
-| `tools/fetch-pip-mascot.sh` | Pip, built from its PNG frames |
-| `tools/fetch-mochi.sh` | Mochi, built from its PNG frames |
-| `tools/fetch-shimeji.sh` | Shimeji, built from its PNG frames |
-| `tools/fetch-openpets.sh` | OpenPets' default pet with its outfits |
-
-A pet drawn as PNG frames builds from a JSON spec: `go run ./tools/framepet -spec tools/framepet/pets/<id>.json -frames <dir> -out resources/pets/<id>` plays each clip's frames in order at its frame rate (`"frame.png*4"` holds a frame for four ticks, `"sheet.png#3"` takes the fourth cell of a one-row sheet), crops every clip to the art, writes both forms, and writes `pet.json` and `animations.json` from the spec's rules; `-list` prints the frames a spec uses, which the fetch script downloads before building.
-
-`go tool nsgo test .` checks every pet: its `pet.json` names only clips its `animations.json` has, and every clip ships in both forms.
-
-## Not yet
-
-- Windows playback.
-- Lunar festivals (Spring Festival, Lantern, Dragon Boat, Qixi, Mid-Autumn, Laba): their clips keep their plain weight.
-- Taking the pointer by the clip's alpha instead of a body rectangle ([nsgo#599](https://github.com/nsgo-dev/nsgo/issues/599)).
-- Speech bubbles, weather and the AI agent of the original Big Blue Fish.
+Read [ARCHITECTURE.md](ARCHITECTURE.md) before changing code, and [AGENTS.md](AGENTS.md) for how Agents work here. Changes are listed in [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 
-The code is MIT, Copyright (c) 2026 nsgo-dev: see [LICENSE](LICENSE). Each pet keeps its own license, listed under [Pets](#pets) and in its `NOTICE.md`: Big Blue Fish's character is CC BY-NC-SA 4.0, so a build that includes it may not be used commercially.
+The code, the app and the engine, is MIT, Copyright (c) 2026 nsgo-dev: see [LICENSE](LICENSE). Each pet keeps its own license, listed under [Pets](#pets) and in its `NOTICE.md`. Big Blue Fish's character is CC BY-NC-SA 4.0, so a build that includes it may not be used commercially.
