@@ -1,0 +1,8 @@
+[
+  { "Id": "wave", "File": "wave.webm", "Pool": "Greeting", "Weight": 0 },
+  { "Id": "idle", "File": "idle.webm", "Pool": "Idle", "Weight": 100 },
+  { "Id": "dangle", "File": "dangle.webm", "Pool": "Drag", "Weight": 0 },
+  { "Id": "purr", "File": "purr.webm", "Pool": "Click", "Weight": 100 },
+  { "Id": "work", "File": "work.webm", "Pool": "Event", "Weight": 0, "WorkKind": "Working", "WorkWeight": 100 },
+  { "Id": "done", "File": "done.webm", "Pool": "Disabled", "Weight": 0 }
+]

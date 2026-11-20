@@ -1,0 +1,1 @@
+{ "name": "Broken", "width": 120, "height": 100, "clips": { "greeting": "wave", "exit": "wave", "drag": "dangle", "idle": "idle" } }

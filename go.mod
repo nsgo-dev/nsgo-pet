@@ -3,6 +3,11 @@ module nsgo-pet
 go 1.27.3
 
 require (
+	github.com/nsgo-dev/nsgo v0.1.1-0.20261117115553-09ec9a909738
+	github.com/nsgo-dev/nsgo-pet/pet v0.0.0
+)
+
+require (
 	github.com/andybalholm/brotli v1.3.0 // indirect
 	github.com/dop251/goja v0.0.0-20261027234916-5f913d1693d9 // indirect
 	github.com/ebitengine/purego v0.11.3 // indirect
@@ -10,7 +15,6 @@ require (
 	github.com/go-sourcemap/sourcemap v2.1.4+incompatible // indirect
 	github.com/google/jsonschema-go v0.4.3 // indirect
 	github.com/modelcontextprotocol/go-sdk v1.8.0 // indirect
-	github.com/nsgo-dev/nsgo v0.1.1-0.20261117115553-09ec9a909738 // indirect
 	github.com/segmentio/asm v1.1.3 // indirect
 	github.com/segmentio/encoding v0.5.4 // indirect
 	github.com/yosida95/uritemplate/v3 v3.0.2 // indirect
@@ -26,3 +30,5 @@ require (
 )
 
 tool github.com/nsgo-dev/nsgo/cmd/nsgo
+
+replace github.com/nsgo-dev/nsgo-pet/pet => ./pet
