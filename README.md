@@ -21,7 +21,7 @@
 </p>
 
 <p align="center">
-  <img src="docs/nsgo-chan.png" alt="NSGo 酱 and her Gopher greeting, coding, spawning goroutines, high-fiving, snacking and sleeping">
+  <img src="docs/nsgo-chan.png" alt="NSGo 酱 greeting, coding, knocking on the screen, playing with her Gopher plush, sulking and sleeping">
 </p>
 
 ## Features
@@ -100,7 +100,7 @@ Your app owns the windows, menus and lifecycle. The engine opens no tray, checks
 
 | Pet | ID | Clips | Source | License |
 | --- | --- | --- | --- | --- |
-| NSGo 酱 NSGo-chan | `nsgo-chan` | 15 | Drawn for nsgo-pet, with her Gopher, from the sheets in [docs/nsgo-chan](docs/nsgo-chan) | [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/), Copyright (c) 2026 nsgo-dev: **no commercial use** ([NOTICE](resources/pets/nsgo-chan/NOTICE.md)) |
+| NSGo 酱 NSGo-chan | `nsgo-chan` | 23 | Drawn for nsgo-pet, with her Gopher plush, from the sheets in [docs/nsgo-chan](docs/nsgo-chan) | [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/), Copyright (c) 2026 nsgo-dev: **no commercial use** ([NOTICE](resources/pets/nsgo-chan/NOTICE.md)) |
 | 大蓝鱼 Big Blue Fish | `bigbluefish` | 106 | [PC2005-cloud/dsh-pet](https://github.com/PC2005-cloud/dsh-pet), via [Bai-Cute/big-blue-fish-desktop-pet](https://github.com/Bai-Cute/big-blue-fish-desktop-pet) | Character [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/): **no commercial use** ([NOTICE](resources/pets/bigbluefish/NOTICE.md)) |
 | Clover | `playpets-clover` | 35 | [gaerae/playpets](https://github.com/gaerae/playpets), with its summer and winter outfits | MIT, gaerae ([NOTICE](resources/pets/playpets-clover/NOTICE.md)) |
 | Daisy | `playpets-daisy` | 35 | [gaerae/playpets](https://github.com/gaerae/playpets), with its summer and winter outfits | MIT, gaerae ([NOTICE](resources/pets/playpets-daisy/NOTICE.md)) |

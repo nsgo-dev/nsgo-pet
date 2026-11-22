@@ -21,7 +21,7 @@
 </p>
 
 <p align="center">
-  <img src="docs/nsgo-chan.png" alt="NSGo 酱和她的 Gopher：打招呼、写代码、开 goroutine、击掌、吃零食、睡觉">
+  <img src="docs/nsgo-chan.png" alt="NSGo 酱：打招呼、写代码、敲屏幕、和 Gopher 玩偶玩、生闷气、睡觉">
 </p>
 
 ## 功能
@@ -100,7 +100,7 @@ desktop.OpenWindow(cx, pet.WindowOptions(pack), func(cx *core.Scope) core.Node {
 
 | 宠物 | ID | 动画数 | 来源 | 许可 |
 | --- | --- | --- | --- | --- |
-| NSGo 酱 NSGo-chan | `nsgo-chan` | 15 | 为 nsgo-pet 绘制，连同她的 Gopher，设定图见 [docs/nsgo-chan](docs/nsgo-chan) | [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/), Copyright (c) 2026 nsgo-dev：**不得商用**（[NOTICE](resources/pets/nsgo-chan/NOTICE.md)） |
+| NSGo 酱 NSGo-chan | `nsgo-chan` | 23 | 为 nsgo-pet 绘制，连同她的 Gopher 玩偶，设定图见 [docs/nsgo-chan](docs/nsgo-chan) | [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/), Copyright (c) 2026 nsgo-dev：**不得商用**（[NOTICE](resources/pets/nsgo-chan/NOTICE.md)） |
 | 大蓝鱼 Big Blue Fish | `bigbluefish` | 106 | [PC2005-cloud/dsh-pet](https://github.com/PC2005-cloud/dsh-pet)，经由 [Bai-Cute/big-blue-fish-desktop-pet](https://github.com/Bai-Cute/big-blue-fish-desktop-pet) | 角色 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)：**不得商用**（[NOTICE](resources/pets/bigbluefish/NOTICE.md)） |
 | Clover | `playpets-clover` | 35 | [gaerae/playpets](https://github.com/gaerae/playpets)，含夏装和冬装 | MIT, gaerae（[NOTICE](resources/pets/playpets-clover/NOTICE.md)） |
 | Daisy | `playpets-daisy` | 35 | [gaerae/playpets](https://github.com/gaerae/playpets)，含夏装和冬装 | MIT, gaerae（[NOTICE](resources/pets/playpets-daisy/NOTICE.md)） |
