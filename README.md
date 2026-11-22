@@ -35,7 +35,7 @@
 
 ## Install
 
-Download the disk image for macOS, or the Debian package, Arch package or AppImage for Linux, from the [releases](https://github.com/nsgo-dev/nsgo-pet/releases). Until the first release, build them from the repository root with `go tool nsgo build`, which writes them to `dist/`.
+Download the disk image for macOS, or the Debian package, Arch package or AppImage for Linux, from the [releases](https://github.com/nsgo-dev/nsgo-pet/releases).
 
 Linux needs GStreamer's bad plugins (`gstreamer1.0-plugins-bad`) to play clips with alpha; the Debian and Arch packages depend on them.
 

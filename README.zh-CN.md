@@ -35,7 +35,7 @@
 
 ## 安装
 
-从 [发布页](https://github.com/nsgo-dev/nsgo-pet/releases) 下载 macOS 的磁盘映像，或 Linux 的 Debian 包、Arch 包或 AppImage。首个版本发布前，在仓库根目录用 `go tool nsgo build` 构建，产物写到 `dist/`。
+从 [发布页](https://github.com/nsgo-dev/nsgo-pet/releases) 下载 macOS 的磁盘映像，或 Linux 的 Debian 包、Arch 包或 AppImage。
 
 Linux 播放带透明通道的动画需要 GStreamer 的 bad 插件（`gstreamer1.0-plugins-bad`），Debian 包和 Arch 包已依赖它。
 
