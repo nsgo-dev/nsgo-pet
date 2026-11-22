@@ -64,7 +64,7 @@ type webmFile struct {
 // trackVideo is Matroska's TrackType of a video track.
 const trackVideo = 1
 
-// alphaAddID is the BlockAddID of the additions that hold a frame's alpha picture, as Matroska's AlphaMode 1 says.
+// alphaAddID is the BlockAddID of the additions that hold a frame's alpha picture, as Matroska's AlphaMode 1 says. It is also BlockAddID's default, which a muxer may leave out; ebml-go fills in no defaults, so an absent BlockAddID reads as 0, which no BlockMore may have.
 const alphaAddID = 1
 
 // demuxClip reads the VP9 video track of a WebM file.
@@ -114,7 +114,7 @@ func demuxClip(data []byte) (*clip, error) {
 		for _, g := range cl.BlockGroup {
 			var alpha []byte
 			for _, m := range g.BlockAdditions.BlockMore {
-				if m.BlockAddID == alphaAddID {
+				if m.BlockAddID == alphaAddID || m.BlockAddID == 0 {
 					alpha = m.BlockAdditional
 				}
 			}
