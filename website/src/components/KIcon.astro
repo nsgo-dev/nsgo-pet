@@ -1,0 +1,21 @@
+---
+// A Kubai icon, rendered on the server. src/scripts/kubai.ts animates it in
+// the browser: it moves when the closest [data-kubai-trigger] around it, or
+// else the icon itself, is hovered, focused or tapped.
+import { toSvg } from 'kubai-icons';
+import { icons, type IconName } from '../icons';
+
+interface Props {
+	name: IconName;
+	size?: number;
+	/** Accent color the icon's shades derive from; defaults to the text color. */
+	color?: string;
+	/** Accessible name; without it the icon is hidden from assistive technology. */
+	title?: string;
+	class?: string;
+}
+const { name, size = 24, color, title, class: className } = Astro.props;
+const svg = toSvg(icons[name], { size, color, title, className, attrs: { 'data-kubai': name } });
+---
+
+<Fragment set:html={svg} />

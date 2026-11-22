@@ -1,0 +1,35 @@
+---
+// The footer every page shares, home and docs alike: one line, the
+// copyright and the code's license on the left, the key links on the
+// right.
+import { Icon } from '@astrojs/starlight/components';
+import { copy } from '../../copy';
+import { langOf } from '../../lang';
+import { url } from '../../url';
+
+const lang = langOf(Astro.locals.starlightRoute.lang);
+const f = copy[lang].footer;
+const external = (href: string) => /^https?:/.test(href);
+---
+
+<footer class="site-footer">
+	<div class="container footer-row">
+		<p class="footer-copyright">
+			{f.copyright}
+			<span aria-hidden="true">·</span>
+			<a href={f.license.href} target="_blank" rel="noopener noreferrer">{f.license.label}</a>
+		</p>
+		<ul class="footer-links">
+			{
+				f.links.map((link) => (
+					<li>
+						<a href={external(link.href) ? link.href : url(link.href)} {...(external(link.href) ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
+							{link.label}
+							{external(link.href) && <Icon name="external" size="0.7rem" class="external" />}
+						</a>
+					</li>
+				))
+			}
+		</ul>
+	</div>
+</footer>

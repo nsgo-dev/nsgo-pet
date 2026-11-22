@@ -1,0 +1,16 @@
+{
+  "name": "website",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "clips": "bun scripts/clips.ts",
+    "dev": "bun scripts/clips.ts && astro dev",
+    "build": "bun scripts/clips.ts && astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "^0.43.1",
+    "astro": "^7.4.13",
+    "kubai-icons": "^0.12.0"
+  }
+}

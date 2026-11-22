@@ -1,0 +1,166 @@
+---
+// The home page shows the app; the pet engine, for developers, is in the
+// docs. Its links are the hero's buttons, the pets' licenses and NSGo's.
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import { Icon } from '@astrojs/starlight/components';
+import KIcon from './KIcon.astro';
+import type { IconName } from '../icons';
+import '../styles/home.css';
+import PetBuddy from './PetBuddy.astro';
+import PetClip from './PetClip.astro';
+import AsciiField from './AsciiField.astro';
+import PetGallery from './PetGallery.astro';
+import { copy, docsHome } from '../copy';
+import { project, type Lang } from '../site';
+import { url } from '../url';
+import nsgoLogo from '../assets/nsgo.svg?url';
+
+interface Props {
+	lang: Lang;
+}
+const { lang } = Astro.props;
+const t = copy[lang];
+const nsgo = { site: 'https://nsgo.dev', repo: 'https://github.com/nsgo-dev/nsgo' };
+
+// Splits a heading after each Chinese comma, so each part wraps as a whole.
+const phrases = (text: string) => text.split(/(?<=，)/);
+
+// Each highlight's icon in a color of its own.
+const featureColors = ['#3b82f6', '#6366f1', '#f59e0b', '#22a45d', '#ec4899', '#0ea5e9'];
+// The hero's grid: NSGo-chan's events and moments around her live self in
+// the middle, who takes clicks and drags.
+const gridClips = ['greeting', 'coding', 'goroutine', 'snack', null, 'high-five', 'idle-clip', 'daily-night', 'idle-sleep'];
+const platformIcons: Record<string, IconName> = { macos: 'laptop', linux: 'terminal', windows: 'app-window' };
+const platformColors: Record<string, string> = { macos: '#3b82f6', linux: '#d97706', windows: '#0ea5e9' };
+---
+
+<StarlightPage
+	frontmatter={{ title: t.title, description: t.description, template: 'splash', home: true, tableOfContents: false, pagefind: false }}
+	hasSidebar={false}
+	lang={t.htmlLang}
+>
+	<div class="home">
+	<section class="hero">
+		<div class="container hero-row">
+			<div class="hero-copy">
+				<h1 id="_top" class="headline rise" style="--i: 0">
+					<span>{t.headline[0]}</span>
+					<span class="accent">{t.headline[1]}</span>
+				</h1>
+				<p class="lead rise" style="--i: 1">{t.lead}</p>
+				<div class="cta rise" style="--i: 2">
+					<a class="button primary" href={project.releases} data-kubai-trigger>
+						<KIcon name="download" size={18} color="#22a45d" />
+						{t.cta.download}
+					</a>
+					<a class="button secondary" href={url(docsHome[lang])}>
+						{t.cta.start}
+						<Icon name="right-arrow" size="1rem" />
+					</a>
+				</div>
+				<ul class="hero-meta rise" style="--i: 3">
+					{t.meta.map((m) => <li>{m}</li>)}
+				</ul>
+			</div>
+			<div class="hero-stage rise" style="--i: 1">
+				<div class="pet-grid" data-bounds>
+					{
+						gridClips.map((clip) =>
+							clip ? (
+								<div class="pet-tile">
+									<PetClip id="nsgo-chan" clip={clip} width={200} height={200} />
+								</div>
+							) : (
+								<div class="pet-tile is-live">
+									<PetBuddy label={t.buddy} />
+								</div>
+							),
+						)
+					}
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section class="section" id="pets">
+		<div class="container">
+			<header class="section-head">
+				<p class="eyebrow">{t.pets.eyebrow}</p>
+				<h2>{phrases(t.pets.title).map((p) => <span class="phrase">{p}</span>)}</h2>
+				<p>{t.pets.text}</p>
+			</header>
+			<PetGallery names={t.pets.names} clips={t.pets.clips} nonCommercial={t.pets.nonCommercial} licenses={`${docsHome[lang]}pets/`} />
+		</div>
+	</section>
+
+	<section class="section">
+		<div class="container">
+			<header class="section-head">
+				<p class="eyebrow">{t.features.eyebrow}</p>
+				<h2>{phrases(t.features.title).map((p) => <span class="phrase">{p}</span>)}</h2>
+			</header>
+			<ul class="features">
+				{
+					t.features.items.map((f, i) => (
+						<li class="feature" data-kubai-trigger>
+							<span class="feature-icon">
+								<KIcon name={f.icon as IconName} size={28} color={featureColors[i]} />
+							</span>
+							<h3>{f.title}</h3>
+							<p>{f.text}</p>
+						</li>
+					))
+				}
+			</ul>
+		</div>
+	</section>
+
+	<section class="section">
+		<div class="container">
+			<header class="section-head">
+				<p class="eyebrow">{t.platforms.eyebrow}</p>
+				<h2>{phrases(t.platforms.title).map((p) => <span class="phrase">{p}</span>)}</h2>
+			</header>
+			<ul class="platforms">
+				{
+					t.platforms.items.map((p) => (
+						<li class="platform" data-status={p.status} data-kubai-trigger>
+							<span class="platform-icon">
+								<KIcon name={platformIcons[p.id]} size={30} color={platformColors[p.id]} />
+							</span>
+							<div>
+								<h3>
+									{p.name}
+									<span class="status">{t.platforms.status[p.status]}</span>
+								</h3>
+								<p>{p.text}</p>
+							</div>
+						</li>
+					))
+				}
+			</ul>
+		</div>
+	</section>
+
+	<section class="section end">
+		<div class="container">
+			<div class="end-card">
+				<AsciiField />
+				<img class="end-logo" src={nsgoLogo} alt="" width="64" height="64" />
+				<h2>{phrases(t.end.title).map((p) => <span class="phrase">{p}</span>)}</h2>
+				<p>{t.end.text}</p>
+				<div class="cta center">
+					<a class="button primary" href={nsgo.site} target="_blank" rel="noopener noreferrer">
+						{t.end.site}
+						<Icon name="external" size="0.9rem" />
+					</a>
+					<a class="button secondary" href={nsgo.repo} target="_blank" rel="noopener noreferrer">
+						<Icon name="github" size="1rem" />
+						GitHub
+					</a>
+				</div>
+			</div>
+		</div>
+	</section>
+	</div>
+</StarlightPage>

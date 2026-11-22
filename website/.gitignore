@@ -1,0 +1,5 @@
+node_modules/
+dist/
+.astro/
+# Copied from ../resources/pets by scripts/clips.ts.
+public/clips/

@@ -132,6 +132,8 @@ go tool nsgo test .        # the app's headless tests, which check every pet in 
 (cd pet && go test ./...)  # the engine's tests
 ```
 
+The website and its docs are in `website/`; with [Bun](https://bun.sh), `bun install && bun run dev` there serves them and `bun run build` builds them.
+
 To release, move `CHANGELOG.md`'s `Unreleased` bullets under `## [<version>] - <date>`, set `version` in `nsgo.yaml` to the same version and push the tag `v<version>`. [The release workflow](.github/workflows/release.yml) builds, signs and publishes the installers with that section as the notes.
 
 Read [ARCHITECTURE.md](ARCHITECTURE.md) before changing code, and [AGENTS.md](AGENTS.md) for how Agents work here. Changes are listed in [CHANGELOG.md](CHANGELOG.md).

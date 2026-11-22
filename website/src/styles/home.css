@@ -1,0 +1,454 @@
+/* The home page's sections. The header, footer and page base are in
+   shell.css, which every page shares. */
+
+.home {
+	font-size: 1rem;
+	line-height: 1.6;
+}
+.home a {
+	color: inherit;
+}
+.home img {
+	display: block;
+	max-width: 100%;
+	height: auto;
+}
+/* Shared pieces */
+.button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	height: 2.75rem;
+	padding: 0 1.125rem;
+	border: 1px solid transparent;
+	border-radius: var(--radius);
+	font-size: 0.9375rem;
+	font-weight: 600;
+	text-decoration: none;
+	white-space: nowrap;
+	transition:
+		transform 0.3s var(--ease),
+		background-color 0.15s,
+		border-color 0.15s,
+		box-shadow 0.3s var(--ease);
+}
+.button:active {
+	transform: translateY(1px) scale(0.98);
+}
+.button.primary {
+	background-color: var(--button);
+	color: var(--on-button);
+	box-shadow: var(--shadow);
+}
+.button.primary:hover {
+	transform: translateY(-1px);
+}
+.button.primary :is(svg) {
+	transition: transform 0.3s var(--ease);
+}
+.button.primary:hover :is(svg) {
+	transform: translateX(2px);
+}
+.button.secondary {
+	border-color: var(--border);
+	background-color: var(--bg);
+	color: var(--text);
+	box-shadow: var(--shadow);
+}
+.button.secondary:hover {
+	border-color: var(--border-strong);
+}
+
+.eyebrow {
+	margin: 0 0 0.75rem;
+	color: var(--accent);
+	font-size: 0.8125rem;
+	font-weight: 650;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+
+/* Hero */
+.hero {
+	display: flex;
+	align-items: center;
+	min-height: min(calc(100svh - 3.75rem), 56rem);
+	padding-block: 3rem 4rem;
+}
+.hero-row {
+	display: grid;
+	gap: 3rem;
+	align-items: center;
+}
+@media (min-width: 64rem) {
+	.hero-row {
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		gap: 4.5rem;
+	}
+}
+.hero-copy {
+	min-width: 0;
+	max-width: 34rem;
+}
+.hero .button {
+	height: 3.25rem;
+	padding: 0 1.5rem;
+	font-size: 1rem;
+}
+.hero .button.primary {
+	min-width: 12rem;
+}
+
+/* NSGo-chan in a grid of her moments, the middle one alive. */
+.pet-grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: clamp(0.5rem, 1.2vw, 0.875rem);
+	width: min(100%, 34rem);
+	margin-inline: auto;
+}
+.pet-tile {
+	position: relative;
+	display: grid;
+	place-items: end center;
+	aspect-ratio: 1;
+	overflow: hidden;
+	border: 1px solid var(--border);
+	border-radius: var(--radius-lg);
+	background:
+		radial-gradient(70% 55% at 50% 75%, var(--accent-soft), transparent 70%),
+		var(--surface);
+	transition:
+		transform 0.4s var(--ease),
+		border-color 0.2s;
+}
+.pet-tile:not(.is-live):hover {
+	transform: translateY(-2px);
+	border-color: var(--border-strong);
+}
+.pet-tile video {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	object-position: bottom;
+}
+/* The live one: ringed in the accent, and free to be dragged out over
+   her neighbours. */
+.pet-tile.is-live {
+	z-index: 1;
+	overflow: visible;
+	border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+	background:
+		radial-gradient(70% 60% at 50% 70%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 75%),
+		var(--bg);
+	box-shadow:
+		0 0 0 4px var(--accent-soft),
+		var(--shadow);
+}
+@media (prefers-reduced-motion: reduce) {
+	.pet-tile {
+		transition: none;
+	}
+}
+.headline {
+	display: flex;
+	flex-direction: column;
+	margin: 0 0 1.25rem;
+	font-size: clamp(2.5rem, 1.6rem + 3.6vw, 4.25rem);
+	font-weight: 700;
+	letter-spacing: -0.035em;
+	line-height: 1.05;
+	text-wrap: balance;
+}
+:lang(zh-CN) .headline {
+	letter-spacing: -0.01em;
+	line-height: 1.15;
+}
+.headline .accent {
+	background: linear-gradient(100deg, var(--accent) 10%, #8b5cf6 90%);
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+}
+.lead {
+	max-width: 34rem;
+	margin: 0;
+	color: var(--muted);
+	font-size: clamp(1.0625rem, 1rem + 0.3vw, 1.1875rem);
+	line-height: 1.6;
+	text-wrap: pretty;
+}
+.cta {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem;
+	margin: 2.25rem 0 1.5rem;
+}
+.cta.center {
+	justify-content: center;
+	margin: 0;
+}
+
+.hero-meta {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+.hero-meta li {
+	padding: 0.25rem 0.75rem;
+	border: 1px solid var(--border);
+	border-radius: 999px;
+	color: var(--muted);
+	font-size: 0.8125rem;
+}
+
+.rise {
+	animation: rise 0.8s var(--ease) both;
+	animation-delay: calc(var(--i, 0) * 70ms);
+}
+@keyframes rise {
+	from {
+		opacity: 0;
+		transform: translateY(12px);
+	}
+}
+
+/* Sections */
+.section {
+	padding-block: 4rem;
+}
+@media (min-width: 64rem) {
+	.section {
+		padding-block: 7rem;
+	}
+}
+.section-head {
+	max-width: 40rem;
+	margin: 0 auto 3rem;
+	text-align: center;
+}
+.section-head.left {
+	margin: 0;
+	text-align: left;
+}
+.section-head h2 {
+	margin: 0;
+	font-size: clamp(1.75rem, 1.3rem + 1.8vw, 2.5rem);
+	font-weight: 700;
+	letter-spacing: -0.025em;
+	line-height: 1.15;
+	text-wrap: balance;
+}
+.section-head p:not(.eyebrow) {
+	margin: 1rem 0 0;
+	color: var(--muted);
+	font-size: 1.0625rem;
+	text-wrap: pretty;
+}
+
+/* Features */
+.features {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: 1px;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	border: 1px solid var(--border);
+	border-radius: var(--radius-lg);
+	background-color: var(--border);
+	list-style: none;
+}
+@media (min-width: 36rem) {
+	.features {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+@media (min-width: 64rem) {
+	.features {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+}
+.feature {
+	padding: 1.75rem 1.5rem;
+	background-color: var(--bg);
+	transition: background-color 0.2s;
+}
+.feature:hover {
+	background-color: var(--surface);
+}
+.feature-icon {
+	display: inline-grid;
+	place-items: center;
+	width: 2.25rem;
+	height: 2.25rem;
+	margin-bottom: 1rem;
+	color: var(--accent);
+}
+@media (max-width: 35.99rem) {
+	.feature {
+		display: grid;
+		grid-template-columns: auto minmax(0, 1fr);
+		column-gap: 1rem;
+		padding: 1.25rem;
+	}
+	.feature-icon {
+		grid-row: span 2;
+		margin-bottom: 0;
+	}
+}
+.feature h3 {
+	margin: 0 0 0.375rem;
+	font-size: 1rem;
+	font-weight: 650;
+	letter-spacing: -0.01em;
+}
+.feature p {
+	margin: 0;
+	color: var(--muted);
+	font-size: 0.9375rem;
+	line-height: 1.55;
+}
+
+/* Pets */
+.hero-stage {
+	min-width: 0;
+}
+
+/* Platforms: one strip, as the highlights are. */
+.platforms {
+	display: grid;
+	gap: 1px;
+	max-width: 64rem;
+	margin: 0 auto;
+	padding: 0;
+	overflow: hidden;
+	border: 1px solid var(--border);
+	border-radius: var(--radius-lg);
+	background-color: var(--border);
+	list-style: none;
+}
+@media (min-width: 48rem) {
+	.platforms {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+}
+.platform {
+	display: grid;
+	align-content: start;
+	gap: 0.75rem;
+	padding: 1.75rem 1.5rem;
+	background-color: var(--bg);
+	transition: background-color 0.2s;
+}
+.platform:hover {
+	background-color: var(--surface);
+}
+.platform[data-status='later'] .platform-icon {
+	filter: grayscale(1);
+	opacity: 0.55;
+}
+.platform-icon {
+	display: grid;
+	place-items: center;
+	width: 2.25rem;
+	height: 2.25rem;
+}
+.platform h3 {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.5rem;
+	margin: 0 0 0.375rem;
+	font-size: 1rem;
+	font-weight: 650;
+}
+.platform .status {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.375rem;
+	padding: 0.0625rem 0.5rem;
+	border-radius: 999px;
+	background-color: rgb(34 197 94 / 0.12);
+	color: #16a34a;
+	font-size: 0.75rem;
+	font-weight: 600;
+}
+[data-theme='dark'] .platform .status {
+	color: #4ade80;
+}
+.platform[data-status='later'] .status {
+	background-color: var(--surface-2);
+	color: var(--muted);
+}
+.platform p {
+	margin: 0;
+	color: var(--muted);
+	font-size: 0.9375rem;
+	line-height: 1.55;
+}
+
+/* End */
+.end {
+	padding-top: 2rem;
+	padding-bottom: 5rem;
+}
+@media (min-width: 64rem) {
+	.end {
+		padding-top: 3rem;
+		padding-bottom: 7rem;
+	}
+}
+.end-card {
+	position: relative;
+	overflow: hidden;
+	padding: clamp(3.5rem, 8vw, 6.5rem) 1.5rem;
+	border: 1px solid var(--border);
+	border-radius: calc(var(--radius-lg) * 1.4);
+	background:
+		radial-gradient(60% 120% at 50% 0%, var(--accent-soft), transparent 70%),
+		var(--end-bg, var(--surface));
+	text-align: center;
+}
+[data-theme='light'] .end-card {
+	--end-bg: #ffffff;
+	box-shadow: var(--shadow);
+}
+.end-card > :not(ascii-field) {
+	position: relative;
+	z-index: 1;
+}
+.end-logo {
+	display: block;
+	width: 4rem;
+	height: 4rem;
+	margin: 0 auto 1.25rem;
+}
+.end-card h2 {
+	margin: 0;
+	font-size: clamp(1.75rem, 1.3rem + 1.8vw, 2.5rem);
+	font-weight: 700;
+	letter-spacing: -0.025em;
+	line-height: 1.15;
+	text-wrap: balance;
+}
+.end-card p {
+	max-width: 32rem;
+	margin: 1rem auto 2rem;
+	color: var(--muted);
+	text-wrap: pretty;
+}
+
+/* A phrase of a heading that wraps as a whole, so Chinese lines break
+   between phrases and not inside words. */
+.phrase {
+	display: inline-block;
+}
+

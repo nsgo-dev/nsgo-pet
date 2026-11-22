@@ -1,0 +1,72 @@
+---
+// The menu: on phones, a popover with the site's links and, in the docs,
+// the sidebar; on wider screens the docs show it beside the content.
+import { Icon } from '@astrojs/starlight/components';
+import { copy, docsHome, feedback, homePath } from '../../copy';
+import { langOf } from '../../lang';
+import { project } from '../../site';
+import { url } from '../../url';
+
+interface Props {
+	/** Whether wide screens show the pane in place, as the docs' sidebar. */
+	docked: boolean;
+}
+const { docked } = Astro.props;
+const lang = langOf(Astro.locals.starlightRoute.lang);
+const t = copy[lang];
+---
+
+<sl-sidebar-pane popover="auto" id="starlight__sidebar" class="menu-pane" data-docked={docked ? '' : undefined}>
+	<div class="menu-content">
+		<nav class="menu-links" aria-label={t.nav.label}>
+			<a href={`${url(homePath[lang])}#pets`}>{t.nav.pets}</a>
+			<a href={url(docsHome[lang])}>{t.nav.docs}</a>
+			{
+				[
+					{ label: t.nav.feedback, href: feedback },
+					{ label: 'GitHub', href: project.repo },
+				].map((link) => (
+					<a href={link.href} target="_blank" rel="noopener noreferrer">
+						{link.label}
+						<Icon name="external" size="0.8rem" class="external" />
+					</a>
+				))
+			}
+			<p class="menu-group">{t.nav.community}</p>
+			{
+				t.community.map((link) => (
+					<a href={link.href} target="_blank" rel="noopener noreferrer">
+						{link.label}
+						<Icon name="external" size="0.8rem" class="external" />
+					</a>
+				))
+			}
+		</nav>
+		{
+			docked && (
+				<nav class="sidebar-content" aria-label={Astro.locals.t('sidebarNav.accessibleLabel')}>
+					<slot name="sidebar" />
+				</nav>
+			)
+		}
+	</div>
+</sl-sidebar-pane>
+
+<script>
+	class SidebarPane extends HTMLElement {
+		connectedCallback() {
+			const wide = matchMedia('(min-width: 50rem)');
+			const update = () => {
+				this.popover = wide.matches && this.hasAttribute('data-docked') ? null : 'auto';
+			};
+			update();
+			wide.addEventListener('change', update);
+			// Keep the keyboard in the menu while it is open.
+			this.addEventListener('toggle', (e) => {
+				const open = (e as ToggleEvent).newState === 'open';
+				document.querySelectorAll<HTMLElement>('.main-frame, .site-footer').forEach((el) => el.toggleAttribute('inert', open));
+			});
+		}
+	}
+	customElements.define('sl-sidebar-pane', SidebarPane);
+</script>

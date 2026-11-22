@@ -1,0 +1,129 @@
+---
+// The header every page shares, home and docs alike. Starlight renders it in
+// place of its own header.
+import { Icon } from '@astrojs/starlight/components';
+import Search from '@astrojs/starlight/components/Search.astro';
+import { Image } from 'astro:assets';
+import logo from '../../assets/logo.png';
+import KIcon from '../KIcon.astro';
+import HeaderMenu from './HeaderMenu.astro';
+import NavMenu from './NavMenu.astro';
+import { copy, docsHome, feedback, homePath } from '../../copy';
+import { langOf, otherLanguagePath } from '../../lang';
+import { project } from '../../site';
+import { url } from '../../url';
+
+const lang = langOf(Astro.locals.starlightRoute.lang);
+const t = copy[lang];
+const home = url(homePath[lang]);
+const docs = url(docsHome[lang]);
+const inDocs = Astro.url.pathname.startsWith(docs);
+// The same page in each language. The 404 page has no address of its own,
+// so its menu goes to the home pages.
+const is404 = Astro.locals.starlightRoute.entry.id === '404';
+const here = is404 ? home : Astro.url.pathname;
+const there = is404 ? url(lang === 'zh' ? '' : 'zh/') : otherLanguagePath(Astro.url.pathname);
+const paths = { en: lang === 'en' ? here : there, zh: lang === 'zh' ? here : there };
+const languages = [
+	{ label: t.language.auto, value: 'auto' },
+	{ label: 'English', value: 'en' },
+	{ label: '简体中文', value: 'zh' },
+];
+const themes = (['auto', 'light', 'dark'] as const).map((value) => ({ label: t.theme[value], value }));
+
+// Each choice's icon, in a color of its own.
+const colors = { languages: '#8b5cf6', globe: '#14b8a6', sun: '#f59e0b', moon: '#6366f1', monitor: '#0ea5e9' };
+---
+
+<div class="container header-row">
+	<a class="brand" href={home}>
+		<Image class="logo" src={logo} alt="" width={28} height={28} densities={[1, 2]} />
+		<span>{project.name}</span>
+	</a>
+	<nav class="nav" aria-label={t.nav.label}>
+		<a href={`${home}#pets`}>{t.nav.pets}</a>
+		<a href={docs} aria-current={inDocs ? 'page' : undefined}>{t.nav.docs}</a>
+		<NavMenu label={t.nav.community} links={t.community} />
+		<a href={feedback} target="_blank" rel="noopener noreferrer">{t.nav.feedback}<Icon name="external" size="0.75rem" class="external" /></a>
+	</nav>
+	<div class="actions" data-path-en={paths.en} data-path-zh={paths.zh}>
+		<Search />
+		<HeaderMenu name="language" label={t.language.name} items={languages}>
+			<KIcon slot="icon" name="languages" size={18} color={colors.languages} />
+			<KIcon slot="icon-auto" name="globe" size={16} color={colors.globe} />
+			<span slot="icon-en" class="lang-tag" style="--tag: #3b82f6">EN</span>
+			<span slot="icon-zh" class="lang-tag" style="--tag: #ef4444">中</span>
+		</HeaderMenu>
+		<HeaderMenu name="theme" label={t.theme.name} items={themes}>
+			<span slot="icon" class="theme-icon">
+				<span class="when-light"><KIcon name="sun" size={18} color={colors.sun} /></span>
+				<span class="when-dark"><KIcon name="moon" size={18} color={colors.moon} /></span>
+				<span class="when-auto"><KIcon name="monitor" size={18} color={colors.monitor} /></span>
+			</span>
+			<KIcon slot="icon-light" name="sun" size={16} color={colors.sun} />
+			<KIcon slot="icon-dark" name="moon" size={16} color={colors.moon} />
+			<KIcon slot="icon-auto" name="monitor" size={16} color={colors.monitor} />
+		</HeaderMenu>
+		<a class="icon-button github hide-sm" href={project.repo} target="_blank" rel="noopener noreferrer" aria-label={t.nav.github}>
+			<Icon name="github" size="1.05rem" />
+			<span>GitHub</span>
+		</a>
+		<button class="icon-button menu-button" type="button" popovertarget="starlight__sidebar" aria-label={t.nav.menu}>
+			<Icon name="bars" size="1.15rem" class="open" />
+			<Icon name="close" size="1.15rem" class="close" />
+		</button>
+	</div>
+</div>
+
+<script>
+	import '../../scripts/kubai';
+
+	// The theme: light, dark or the system's, kept with the docs' key, where
+	// an empty value means the system's.
+	type Choice = 'light' | 'dark' | 'auto';
+	const system = matchMedia('(prefers-color-scheme: light)');
+	const stored = (): Choice => {
+		const value = localStorage.getItem('starlight-theme');
+		return value === 'light' || value === 'dark' ? value : 'auto';
+	};
+	const apply = (choice: Choice) => {
+		document.documentElement.dataset.theme = choice === 'auto' ? (system.matches ? 'light' : 'dark') : choice;
+		document.documentElement.dataset.themeChoice = choice;
+		for (const menu of document.querySelectorAll<HTMLElement & { select?(v: string): void }>('header-menu[data-name="theme"]')) {
+			menu.select?.(choice);
+		}
+	};
+	apply(stored());
+
+	// The language: automatic, following the browser, or the one chosen.
+	// Head.astro moves to the browser's language while it is automatic.
+	type Language = 'auto' | 'en' | 'zh';
+	const actions = document.querySelector<HTMLElement>('.actions');
+	const browserLanguage = () =>
+		((navigator.languages || [navigator.language]).find((tag) => /^(en|zh)\b/i.test(tag)) || 'en').toLowerCase().startsWith('zh') ? 'zh' : 'en';
+	const pageLanguage = document.documentElement.lang.startsWith('zh') ? 'zh' : 'en';
+	for (const menu of document.querySelectorAll<HTMLElement & { select?(v: string): void }>('header-menu[data-name="language"]')) {
+		menu.select?.(localStorage.getItem('site-language') || 'auto');
+		menu.addEventListener('choose', (e) => {
+			const choice = (e as CustomEvent<Language>).detail;
+			localStorage.setItem('site-language', choice);
+			document.documentElement.dataset.languageChoice = choice;
+			menu.select?.(choice);
+			const want = choice === 'auto' ? browserLanguage() : choice;
+			if (want !== pageLanguage) location.href = actions?.dataset[want === 'zh' ? 'pathZh' : 'pathEn'] ?? '';
+		});
+	}
+
+	const header = document.querySelector('.site-header');
+	const onScroll = () => header?.toggleAttribute('data-scrolled', scrollY > 0);
+	onScroll();
+	addEventListener('scroll', onScroll, { passive: true });
+	system.addEventListener('change', () => stored() === 'auto' && apply('auto'));
+	for (const menu of document.querySelectorAll('header-menu[data-name="theme"]')) {
+		menu.addEventListener('choose', (e) => {
+			const choice = (e as CustomEvent<Choice>).detail;
+			localStorage.setItem('starlight-theme', choice === 'auto' ? '' : choice);
+			apply(choice);
+		});
+	}
+</script>

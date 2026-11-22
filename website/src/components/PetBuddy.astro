@@ -1,0 +1,252 @@
+---
+// The hero's pet, loose on the page as on a desktop. She plays as the app
+// plays her: two players take turns, so she never blinks out between
+// clips; she idles and now and then plays an event, chosen by her
+// animations.json; clicking her plays a click clip, and dragging her
+// dangles her until she is let go. Only her body takes the pointer.
+import { heroPet, loadPets, rules } from '../pets';
+import { url } from '../url';
+
+interface Props {
+	label: string;
+}
+const { label } = Astro.props;
+const pet = loadPets().find((p) => p.id === heroPet)!;
+// Walking moves a pet's own window; on a page she has none.
+const clips = rules(heroPet).filter((r) => !r.moves && r.pool !== 'Disabled');
+const body = pet.body;
+---
+
+<pet-buddy class="buddy-area" data-base={url(`clips/${heroPet}/`)} data-rules={JSON.stringify(clips)}>
+	<div class="buddy">
+		<div class="shadow" aria-hidden="true"></div>
+		<video muted playsinline preload="auto" class="is-front" aria-hidden="true"></video>
+		<video muted playsinline preload="none" aria-hidden="true"></video>
+		<button
+			type="button"
+			class="hit"
+			aria-label={label}
+			style={`left: ${body.left}%; top: ${body.top}%; width: ${body.width}%; height: ${body.height}%`}
+		></button>
+	</div>
+</pet-buddy>
+
+<script>
+	type Rule = { id: string; pool: string; weight: number; nightOnly: boolean; mealBoost: number };
+
+	// Safari plays the HEVC clips with alpha; others play the WebM ones.
+	const ext = document.createElement('video').canPlayType('video/quicktime; codecs="hvc1"') ? 'mov' : 'webm';
+	// How often an event interrupts the idles, shorter than the app's as a
+	// visit is short.
+	const eventEvery = 16000;
+
+	// The app's own conditions: night from 23:00 to 8:00, meals within an
+	// hour of 8:00, 12:00 and 18:00.
+	const weightOf = (r: Rule, now: Date) => {
+		const hour = now.getHours();
+		if (r.nightOnly && hour >= 8 && hour < 23) return 0;
+		const minutes = hour * 60 + now.getMinutes();
+		const atMeal = [8, 12, 18].some((h) => Math.abs(minutes - h * 60) <= 60);
+		return r.weight + (atMeal ? r.mealBoost : 0);
+	};
+
+	class PetBuddy extends HTMLElement {
+		connectedCallback() {
+			const base = this.dataset.base ?? '';
+			const rules: Rule[] = JSON.parse(this.dataset.rules ?? '[]');
+			const buddy = this.querySelector<HTMLElement>('.buddy')!;
+			const hit = this.querySelector<HTMLButtonElement>('.hit')!;
+			const players = [...this.querySelectorAll<HTMLVideoElement>('video')];
+			const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+			let front = 0;
+			let turn = 0;
+			let current = '';
+			let lastEvent = performance.now();
+
+			const pick = (pool: string, not = '') => {
+				const now = new Date();
+				const choices = rules.filter((r) => r.pool === pool && r.id !== not).map((r) => [r, weightOf(r, now)] as const);
+				let n = Math.random() * choices.reduce((sum, [, w]) => sum + w, 0);
+				for (const [r, w] of choices) if ((n -= w) < 0) return r.id;
+				return 'idle';
+			};
+
+			const play = (clip: string, { loop = false, autoplay = true } = {}) => {
+				const back = players[1 - front];
+				const mine = ++turn;
+				current = clip;
+				back.loop = loop;
+				back.src = `${base}${clip}.${ext}`;
+				back.preload = 'auto';
+				const show = () => {
+					if (mine !== turn) return;
+					players[front].classList.remove('is-front');
+					players[front].pause();
+					back.classList.add('is-front');
+					front = 1 - front;
+				};
+				if (!autoplay) {
+					back.addEventListener('loadeddata', show, { once: true });
+					back.load();
+					return;
+				}
+				back.addEventListener('playing', show, { once: true });
+				back.play().catch(() => {});
+			};
+
+			// What follows a clip: an event once one is due, or else an idle.
+			const next = () => {
+				if (performance.now() - lastEvent > eventEvery) {
+					lastEvent = performance.now();
+					play(pick('Event'));
+				} else {
+					play(pick('Idle'));
+				}
+			};
+			for (const player of players) {
+				player.addEventListener('ended', () => player === players[front] && next());
+			}
+			const react = () => {
+				lastEvent = performance.now();
+				play(pick('Click', current));
+			};
+
+			// Dragging: past a few pixels a press becomes a drag, which moves
+			// her within her bounds and dangles her until she is let go, when
+			// she goes back to her place.
+			let x = 0;
+			let y = 0;
+			let press: { x: number; y: number; fromX: number; fromY: number; dragging: boolean } | null = null;
+			const place = () => (buddy.style.translate = `${x}px ${y}px`);
+			hit.addEventListener('pointerdown', (e) => {
+				if (e.button !== 0) return;
+				hit.setPointerCapture(e.pointerId);
+				press = { x: e.clientX, y: e.clientY, fromX: x, fromY: y, dragging: false };
+			});
+			hit.addEventListener('pointermove', (e) => {
+				if (!press) return;
+				const dx = e.clientX - press.x;
+				const dy = e.clientY - press.y;
+				if (!press.dragging && Math.hypot(dx, dy) < 5) return;
+				if (!press.dragging) {
+					press.dragging = true;
+					this.classList.add('is-dragging');
+					play('drag', { loop: true });
+				}
+				// Keep her within her bounds, the closest [data-bounds] or else
+				// the section, measured from where she started.
+				const area = (this.closest('[data-bounds]') ?? this.closest('section')!).getBoundingClientRect();
+				const home = buddy.getBoundingClientRect();
+				const left = home.left - x;
+				const top = home.top - y;
+				x = Math.min(Math.max(press.fromX + dx, area.left - left - home.width * 0.3), area.right - left - home.width * 0.7);
+				y = Math.min(Math.max(press.fromY + dy, area.top - top - home.height * 0.1), area.bottom - top - home.height * 0.95);
+				place();
+			});
+			const release = () => {
+				if (!press) return;
+				const dragged = press.dragging;
+				press = null;
+				this.classList.remove('is-dragging');
+				if (dragged) {
+					// Back to her place once let go.
+					buddy.classList.add('is-returning');
+					x = 0;
+					y = 0;
+					place();
+					setTimeout(() => buddy.classList.remove('is-returning'), 600);
+					next();
+				} else react();
+			};
+			hit.addEventListener('pointerup', release);
+			hit.addEventListener('pointercancel', release);
+			// The keyboard presses her as a click does.
+			hit.addEventListener('click', (e) => e.detail === 0 && react());
+
+			// She greets the reader first, as the app does on start, unless
+			// the reader asks for less motion.
+			if (still) play('idle', { autoplay: false });
+			else play(pick('Greeting'));
+		}
+	}
+	customElements.define('pet-buddy', PetBuddy);
+</script>
+
+<style>
+	.buddy-area {
+		display: grid;
+		place-items: center;
+		width: 100%;
+		height: 100%;
+	}
+	.buddy {
+		position: relative;
+		z-index: 2;
+		width: 100%;
+		aspect-ratio: 1;
+		touch-action: none;
+		transition: scale 0.3s var(--ease);
+	}
+	video {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: contain;
+		opacity: 0;
+		pointer-events: none;
+	}
+	video.is-front {
+		opacity: 1;
+	}
+	.shadow {
+		position: absolute;
+		left: 34%;
+		bottom: 1.5%;
+		width: 32%;
+		height: 4%;
+		border-radius: 50%;
+		background: radial-gradient(closest-side, rgb(0 0 0 / 0.22), transparent);
+		transition:
+			opacity 0.3s,
+			scale 0.3s var(--ease);
+	}
+	:global([data-theme='dark']) .shadow {
+		background: radial-gradient(closest-side, rgb(0 0 0 / 0.6), transparent);
+	}
+	.hit {
+		position: absolute;
+		padding: 0;
+		border: 0;
+		border-radius: 40% 40% 20% 20%;
+		background: none;
+		cursor: grab;
+		-webkit-tap-highlight-color: transparent;
+	}
+	.hit:focus-visible {
+		outline: 2px solid var(--accent);
+		outline-offset: 4px;
+	}
+	.is-dragging .hit {
+		cursor: grabbing;
+	}
+	.is-dragging .buddy {
+		scale: 1.03;
+	}
+	.buddy.is-returning {
+		transition:
+			scale 0.3s var(--ease),
+			translate 0.6s var(--ease);
+	}
+	.is-dragging .shadow {
+		opacity: 0.4;
+		scale: 0.7;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.buddy,
+		.buddy.is-returning,
+		.shadow {
+			transition: none;
+		}
+	}
+</style>
