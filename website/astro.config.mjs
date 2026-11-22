@@ -37,17 +37,25 @@ export default defineConfig({
 			// Starlight's Markdown features are turned on there too.
 			markdown: { processedDirs: ['../docs/public'] },
 			routeMiddleware: './src/share.ts',
-			// Code as the home page shows it: the same themes in a soft frame.
-			// Its colors are set in docs.css, from the site's own.
+			// Code as the home page shows it: the same themes in a soft frame,
+			// without a title bar, even for shell commands. Its colors are set
+			// in docs.css, from the site's own.
 			expressiveCode: {
 				themes: ['github-dark-dimmed', 'github-light'],
+				defaultProps: { frame: 'code' },
 				styleOverrides: {
 					borderRadius: '1rem',
 					codeFontSize: '0.8125rem',
 					codeLineHeight: '1.7',
 					codePaddingBlock: '1rem',
 					codePaddingInline: '1.25rem',
-					frames: { shadowColor: 'transparent' },
+					frames: {
+						shadowColor: 'transparent',
+						inlineButtonBorderOpacity: '0',
+						inlineButtonBackgroundIdleOpacity: '0',
+						inlineButtonBackgroundHoverOrFocusOpacity: '0.12',
+						inlineButtonBackgroundActiveOpacity: '0.2',
+					},
 				},
 			},
 			customCss: ['./src/styles/tokens.css', './src/styles/shell.css', './src/styles/docs.css'],

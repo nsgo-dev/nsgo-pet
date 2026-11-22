@@ -268,6 +268,189 @@ body {
 	}
 }
 
+/* The search dialog, as a command palette: a bare field over a list of
+   rows, the one under the pointer or focus picked out by a gray ground. */
+site-search dialog {
+	outline: none;
+	border: 1px solid var(--border);
+	background-color: var(--bg);
+	box-shadow: 0 24px 64px -16px rgb(0 0 0 / 0.5);
+	color: var(--text);
+}
+site-search dialog::backdrop {
+	background-color: rgb(0 0 0 / 0.4);
+	-webkit-backdrop-filter: none;
+	backdrop-filter: none;
+}
+:root[data-theme='light'] site-search dialog::backdrop {
+	background-color: rgb(16 24 40 / 0.12);
+}
+:root[data-theme='light'] site-search dialog {
+	box-shadow: 0 24px 64px -16px rgb(16 24 40 / 0.25);
+}
+site-search .dialog-frame {
+	gap: 0;
+	padding: 0;
+	overflow: hidden;
+}
+@media (min-width: 50rem) {
+	site-search dialog {
+		margin-top: 6rem;
+		max-width: 40rem;
+		min-height: 0;
+		border-radius: 1rem;
+	}
+	site-search .dialog-frame {
+		padding: 0;
+	}
+}
+site-search button[data-close-modal] {
+	height: 3.5rem;
+	padding-inline: 1rem;
+	color: var(--muted);
+	font-size: 0.875rem;
+}
+#starlight__search {
+	--pagefind-ui-scale: 0.75;
+	--pagefind-ui-primary: var(--text);
+	--pagefind-ui-text: var(--muted);
+	--pagefind-ui-font: var(--font-sans);
+	--pagefind-ui-background: transparent;
+	--pagefind-ui-border: transparent;
+	--pagefind-ui-border-radius: 0;
+	--pagefind-ui-tag: var(--surface-2);
+	--sl-search-cancel-space: 4.5rem;
+}
+@media (min-width: 50rem) {
+	#starlight__search {
+		--sl-search-cancel-space: 0px;
+	}
+}
+#starlight__search .pagefind-ui__form::before {
+	--pagefind-ui-text: var(--faint);
+	top: 1.25rem;
+	left: 1.25rem;
+	width: 1rem;
+	height: 1rem;
+}
+#starlight__search .pagefind-ui__search-input {
+	height: 3.5rem;
+	padding: 0 3.5rem 0 3rem;
+	color: var(--text);
+	font-size: 1rem;
+}
+#starlight__search .pagefind-ui__search-input::placeholder {
+	color: var(--faint);
+}
+#starlight__search input:focus {
+	--pagefind-ui-border: transparent;
+	outline: none;
+}
+#starlight__search .pagefind-ui__search-clear {
+	top: 0;
+	inset-inline-end: calc(var(--sl-search-cancel-space) + 0.5rem);
+	width: 2.5rem;
+	height: 3.5rem;
+}
+#starlight__search .pagefind-ui__search-clear::before {
+	background-color: var(--faint);
+}
+#starlight__search .pagefind-ui__drawer {
+	max-height: min(60vh, 28rem);
+	overflow-y: auto;
+	border-top: 1px solid var(--border);
+	overscroll-behavior: contain;
+}
+@media (max-width: 49.99rem) {
+	#starlight__search .pagefind-ui__drawer {
+		max-height: calc(100dvh - 3.5rem);
+	}
+}
+#starlight__search .pagefind-ui__results-area {
+	margin: 0;
+	padding: 0.5rem;
+}
+#starlight__search .pagefind-ui__message {
+	height: auto;
+	padding: 0.5rem 0.75rem 0.375rem;
+	color: var(--faint);
+	font-size: 0.75rem;
+	font-weight: 500;
+}
+/* The count above the results says nothing the list does not. */
+#starlight__search .pagefind-ui__message:has(+ .pagefind-ui__results > *) {
+	display: none;
+}
+#starlight__search .pagefind-ui__results > * + * {
+	margin-top: 0.375rem;
+}
+#starlight__search .pagefind-ui__result-inner {
+	gap: 0;
+}
+#starlight__search .pagefind-ui__result-title:not(:where(.pagefind-ui__result-nested *)),
+#starlight__search .pagefind-ui__result-nested,
+#starlight__search .pagefind-ui__result-tags {
+	border-radius: 0.625rem;
+	background-color: transparent;
+}
+#starlight__search .pagefind-ui__result-inner > .pagefind-ui__result-title {
+	padding: 0.5rem 0.75rem 0.5rem 2.5rem;
+}
+#starlight__search .pagefind-ui__result-nested {
+	padding: 0.4375rem 0.75rem 0.4375rem 2.5rem;
+}
+#starlight__search .pagefind-ui__result-title:not(:where(.pagefind-ui__result-nested *)):is(:hover, :focus-within),
+#starlight__search .pagefind-ui__result-nested:is(:hover, :focus-within) {
+	outline: none;
+}
+#starlight__search [data-picked] {
+	background-color: var(--surface-2);
+}
+#starlight__search .pagefind-ui__result-inner > .pagefind-ui__result-title::before {
+	inset-inline-start: 0.75rem;
+	width: 1rem;
+	background: var(--faint);
+}
+#starlight__search .pagefind-ui__result-nested::before {
+	content: none;
+}
+#starlight__search .pagefind-ui__result-link {
+	color: var(--text);
+	font-size: 0.875rem;
+	font-weight: 600;
+}
+#starlight__search .pagefind-ui__result-nested .pagefind-ui__result-link {
+	font-weight: 500;
+}
+#starlight__search .pagefind-ui__result-excerpt {
+	min-width: 0;
+	margin-top: 0.125rem;
+	overflow: hidden;
+	color: var(--muted);
+	font-size: 0.8125rem;
+	line-height: 1.5;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+#starlight__search mark {
+	color: var(--accent);
+	font-weight: 500;
+}
+#starlight__search .pagefind-ui__button {
+	height: 2.5rem;
+	margin-top: 0.5rem;
+	border: 0;
+	border-radius: 0.625rem;
+	background-color: transparent;
+	color: var(--muted);
+	font-size: 0.8125rem;
+	font-weight: 500;
+}
+#starlight__search .pagefind-ui__button:hover {
+	background-color: var(--surface-2);
+	color: var(--text);
+}
+
 /* The menu */
 .menu-pane {
 	position: fixed;
@@ -461,7 +644,6 @@ body:has(.menu-pane:popover-open) {
 .site-footer {
 	margin-top: auto;
 	padding-block: 1.5rem;
-	border-top: 1px solid var(--border);
 	color: var(--muted);
 	font-size: 0.8125rem;
 	line-height: 1.5;

@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Make the docs' search a command palette driven by the arrow keys, mark the reader's place in the table of contents and drop the code blocks' title bars.
+
 ## [0.1.0] - 2026-11-22
 
 nsgo-pet is a desktop pet for macOS and Linux built with NSGo, and the pet engine behind it, which other NSGo apps can embed.

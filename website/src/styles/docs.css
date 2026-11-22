@@ -31,6 +31,11 @@
 .sidebar-content details {
 	margin-top: 1.25rem;
 }
+/* The first group's label starts level with the page's title and the
+   table of contents' heading, its padding above taken back. */
+.sidebar-content .top-level > li:first-child > details {
+	margin-top: -0.25rem;
+}
 .sidebar-content summary {
 	padding: 0.25rem var(--sl-sidebar-item-padding-inline);
 }
@@ -74,7 +79,13 @@
 	font-size: 0.8125rem;
 	font-weight: 650;
 }
+/* A rail beside the headings, marked where the reader is. */
+.toc starlight-toc nav > ul {
+	border-inline-start: 1px solid var(--border);
+}
 .toc starlight-toc a {
+	--pad-inline: 0.875rem;
+	position: relative;
 	padding-block: 0.1875rem;
 	color: var(--muted);
 	font-size: 0.75rem;
@@ -82,9 +93,24 @@
 	text-decoration: none;
 	transition: color 0.15s;
 }
-.toc starlight-toc a:hover,
-.toc starlight-toc a[aria-current='true'] {
+.toc starlight-toc a::before {
+	content: '';
+	position: absolute;
+	inset-block: 0;
+	inset-inline-start: -1px;
+	width: 2px;
+	border-radius: 1px;
+	background-color: transparent;
+	transition: background-color 0.15s;
+}
+.toc starlight-toc a:hover {
 	color: var(--text);
+}
+.toc starlight-toc a[aria-current='true'] {
+	color: var(--accent);
+}
+.toc starlight-toc a[aria-current='true']::before {
+	background-color: var(--accent);
 }
 .toc mobile-starlight-toc summary {
 	font-size: 0.8125rem;
@@ -213,8 +239,13 @@
 .sl-container footer .meta a:hover {
 	color: var(--text);
 }
+/* Each neighbour keeps its own side, even alone. */
 .pagination-links {
+	grid-template-columns: repeat(2, minmax(0, 1fr));
 	gap: 0.75rem;
+}
+.pagination-links [rel='next'] {
+	grid-column: 2;
 }
 .pagination-links a {
 	padding: 0.875rem 1rem;
@@ -236,9 +267,7 @@
 	font-weight: 600;
 }
 .pagination-links svg {
-	width: 1rem;
-	height: 1rem;
-	color: var(--faint);
+	display: none;
 }
 
 /* Code: the home page's code windows, on the site's surface. */
@@ -258,4 +287,13 @@
 }
 .sl-markdown-content .expressive-code .frame {
 	box-shadow: none;
+}
+/* Copy: a small bare icon in the corner. */
+.sl-markdown-content .expressive-code .copy button {
+	width: 1.75rem;
+	height: 1.75rem;
+	border-radius: 0.5rem;
+}
+.sl-markdown-content .expressive-code .copy button::after {
+	margin: 0.375rem;
 }
