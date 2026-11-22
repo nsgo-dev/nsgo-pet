@@ -16,18 +16,6 @@ All of them are on the [releases page](https://github.com/nsgo-dev/nsgo-pet/rele
 
 On Linux, clips play through GStreamer's bad plugins (`gstreamer1.0-plugins-bad`). The Debian and Arch packages install them for you; with the AppImage, install them from your distribution.
 
-:::note[No release yet]
-Until the first release is out, the installers have to be built from source. With [Go](https://go.dev/dl/) 1.27.3 or later:
-
-```sh
-git clone https://github.com/nsgo-dev/nsgo-pet
-cd nsgo-pet
-go tool nsgo build
-```
-
-The installers are written to `dist/`.
-:::
-
 ## Meet your pet
 
 1. Open nsgo-pet. NSGo-chan greets you in the bottom right corner of the screen, and her icon appears in the menu bar or the tray.

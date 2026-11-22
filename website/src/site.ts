@@ -4,7 +4,7 @@
 export const project = {
 	name: 'nsgo-pet',
 	repo: 'https://github.com/nsgo-dev/nsgo-pet',
-	releases: 'https://github.com/nsgo-dev/nsgo-pet/releases',
+	releases: 'https://github.com/nsgo-dev/nsgo-pet/releases/latest',
 	nsgo: 'https://github.com/nsgo-dev/nsgo',
 };
 

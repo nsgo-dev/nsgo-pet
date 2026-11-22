@@ -39,7 +39,7 @@ const en = {
 	pets: {
 		eyebrow: 'Pets',
 		title: 'Eleven pets, one click apart',
-		text: 'Switch pets from the tray icon or the pet’s menu, and nsgo-pet remembers your choice. Each pet keeps its own license.',
+		text: 'Switch pets in the settings the tray icon opens, and nsgo-pet remembers your choice. Each pet keeps its own license.',
 		names: { 'nsgo-chan': 'NSGo-chan', bigbluefish: 'Big Blue Fish' } as Record<string, string>,
 		clips: (n: number) => `${n} clips`,
 		nonCommercial: 'Non-commercial',
@@ -53,7 +53,7 @@ const en = {
 			{ icon: 'calendar-clock', title: 'Knows what time it is', text: 'Plays events chosen by time of day, season, meals, festivals and whether an editor or a terminal is in front.' },
 			{ icon: 'footprints', title: 'Alive under the pointer', text: 'Reacts to clicks, dangles while dragged and walks along the bottom of the screen.' },
 			{ icon: 'paw', title: 'Eleven pets', text: 'Switch between them in the settings the tray icon opens; your choice is remembered.' },
-			{ icon: 'package-down', title: 'Updates itself', text: 'Installs updates from the repository’s releases, checked daily and from the pet’s menu.' },
+			{ icon: 'package-down', title: 'Updates itself', text: 'Installs updates from the repository’s releases, checked daily and from the settings.' },
 		],
 	},
 	platforms: {
@@ -99,7 +99,7 @@ const zh: typeof en = {
 	pets: {
 		eyebrow: '宠物',
 		title: '十一只宠物，一键切换',
-		text: '从托盘图标或宠物的菜单里切换宠物，nsgo-pet 会记住你的选择。每只宠物都保留自己的许可证。',
+		text: '在托盘图标打开的设置里切换宠物，nsgo-pet 会记住你的选择。每只宠物都保留自己的许可证。',
 		names: { 'nsgo-chan': 'NSGo 酱', bigbluefish: '大蓝鱼', 'openpets-halloween': 'OpenPets（万圣节）' },
 		clips: (n: number) => `${n} 段动画`,
 		nonCommercial: '禁止商用',
@@ -113,7 +113,7 @@ const zh: typeof en = {
 			{ icon: 'calendar-clock', title: '知道现在几点', text: '按时段、季节、饭点、节日，以及前台是不是编辑器或终端来挑选要播放的事件。' },
 			{ icon: 'footprints', title: '指针下活灵活现', text: '点击有反应，拖动时悬空晃动，还会沿着屏幕底部走动。' },
 			{ icon: 'paw', title: '十一只宠物', text: '在托盘图标打开的设置里切换，并记住你的选择。' },
-			{ icon: 'package-down', title: '自动更新', text: '从存储库的发行版安装更新，每天检查一次，也可从宠物的菜单检查。' },
+			{ icon: 'package-down', title: '自动更新', text: '从存储库的发行版安装更新，每天检查一次，也可在设置里检查。' },
 		],
 	},
 	platforms: {

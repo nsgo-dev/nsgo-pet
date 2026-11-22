@@ -16,18 +16,6 @@ nsgo-pet 会在你的桌面上放一只会动的小宠物。它浮在其他窗�
 
 在 Linux 上，动画通过 GStreamer 的 bad 插件（`gstreamer1.0-plugins-bad`）播放。Debian 包和 Arch 包会替你装好；用 AppImage 时，请从你的发行版安装它们。
 
-:::note[尚未发布]
-首个版本发布之前，安装包需要从源码构建。装好 [Go](https://go.dev/dl/) 1.27.3 或更高版本后：
-
-```sh
-git clone https://github.com/nsgo-dev/nsgo-pet
-cd nsgo-pet
-go tool nsgo build
-```
-
-安装包会写到 `dist/`。
-:::
-
 ## 认识你的宠物
 
 1. 打开 nsgo-pet。NSGo 酱会在屏幕右下角向你打招呼，菜单栏或托盘里会出现她的图标。
