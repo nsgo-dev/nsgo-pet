@@ -44,10 +44,17 @@
 .button.primary:hover {
 	transform: translateY(-1px);
 }
-.button.primary :is(svg) {
+.button > svg:last-child:not(:first-child) {
 	transition: transform 0.3s var(--ease);
 }
-.button.primary:hover :is(svg) {
+/* A trailing arrow leans the way the link goes; the download arrow dips. */
+.button.download > svg {
+	transition: transform 0.3s var(--ease);
+}
+.button.download:hover > svg {
+	transform: translateY(2px);
+}
+.button:hover > svg:last-child:not(:first-child) {
 	transform: translateX(2px);
 }
 .button.secondary {
@@ -94,11 +101,8 @@
 }
 .hero .button {
 	height: 3.25rem;
-	padding: 0 1.5rem;
+	padding: 0 1.375rem;
 	font-size: 1rem;
-}
-.hero .button.primary {
-	min-width: 12rem;
 }
 
 /* NSGo-chan in a grid of her moments, the middle one alive. */

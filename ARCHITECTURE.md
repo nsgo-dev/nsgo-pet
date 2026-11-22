@@ -11,7 +11,8 @@ nsgo-pet is two things in one repository: the pet engine, a Go module any NSGo a
 | `app.go`, `pets.go` | The app: the main window, tray, menus, saved choice and the embedded manifests |
 | `resources/pets/` | The app's pets, their clips and notices; never part of the engine |
 | `tools/` | Converters and fetch scripts that build packs, and the release notes script |
-| `website/` | The website and its docs, which read the pets' manifests and copy their clips at build time |
+| `website/` | The website, which reads the pets' manifests and copies their clips at build time |
+| `docs/public/` | The website's docs, one folder per language, for the app's users and the engine's |
 | `.github/workflows/release.yml` | Builds, signs and publishes the app's installers on a tag |
 
 ## Boundaries

@@ -1,10 +1,11 @@
 ---
-// The docs are the site's own pages, under website/src/content/docs.
+// The docs live in docs/public/; filePath is relative to website/.
+import { posix } from 'node:path';
 import { Icon } from '@astrojs/starlight/components';
 import { project } from '../../site';
 
 const { entry, isFallback } = Astro.locals.starlightRoute;
-const href = `${project.repo}/edit/main/website/${entry.filePath}`;
+const href = `${project.repo}/edit/main/${posix.normalize(`website/${entry.filePath}`)}`;
 ---
 
 {!isFallback && entry.id !== '404' && (

@@ -132,7 +132,7 @@ go tool nsgo test .        # the app's headless tests, which check every pet in 
 (cd pet && go test ./...)  # the engine's tests
 ```
 
-网站和文档在 `website/`；装好 [Bun](https://bun.sh) 后，在那里运行 `bun install && bun run dev` 启动预览，`bun run build` 构建。
+网站在 `website/`，文档在 `docs/public/`；装好 [Bun](https://bun.sh) 后，在那里运行 `bun install && bun run dev` 启动预览，`bun run build` 构建。
 
 发布时，把 `CHANGELOG.md` 里 `Unreleased` 下的条目移到 `## [<版本>] - <日期>` 下，把 `nsgo.yaml` 的 `version` 设为同一版本，然后推送标签 `v<版本>`。[发布工作流](.github/workflows/release.yml) 会构建、签名并发布安装包，以该节作为发布说明。
 

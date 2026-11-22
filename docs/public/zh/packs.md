@@ -1,12 +1,9 @@
 ---
 title: 宠物包
 description: 构成一只宠物的动画和规则文件夹，不需要写代码。
-group: 开发者
-sidebar:
-  order: 4
 ---
 
-宠物包是一个文件夹，装着动画和挑选它们的规则，所以新增一只宠物不需要写代码。引擎读取宠物包，但自己不带任何宠物包。nsgo-pet 的宠物包在 [`resources/pets/<id>/`](https://github.com/nsgo-dev/nsgo-pet/tree/main/resources/pets)，宿主应用的宠物包则放在它的 `fs.FS` 或目录指向的位置。
+宠物包是一个文件夹，装着动画和挑选它们的规则，所以给你的应用新增一只宠物不需要写代码。每个宠物包放在以其 ID 命名的文件夹里，位于应用的 `resources/pets/` 或你加载的目录下。[nsgo-pet 自己的宠物包](https://github.com/nsgo-dev/nsgo-pet/tree/main/resources/pets)就是完整的示例。
 
 ## 结构
 
@@ -53,10 +50,10 @@ sidebar:
 | `NightOnly`、`SeasonOnly`、`SummerWeight`、`WinterWeight`、`MorningWeight` | 时段和季节 |
 | `Meal`、`MealBoost` | 在 8:00、12:00 或 18:00 前后一小时内提高权重 |
 | `Festival`、`RadiusDays`、`FestivalMode`、`FestivalWeight` | 公历节日前后的权重；农历节日保持普通权重 |
-| `WorkKind`、`WorkWeight` | `Coding` 或 `Working`：宿主的 `Context` 所说的用户正在做的事 |
+| `WorkKind`、`WorkWeight` | `Coding` 或 `Working`：你的应用的 `Context` 所说的用户正在做的事 |
 | `MoveKind`、`HourParity` | `Run` 或 `Crab`：宠物走出 70 点再走回来，仅在它自己的窗口里 |
 
-`Disabled` 动画不会被随机播放，但宿主仍可以按 ID 播放它们，宿主就是这样把自己的状态对应到动画上的。
+`Disabled` 动画不会被随机播放，但你的应用仍可以按 ID 播放它们，应用就是这样把自己的状态对应到动画上的。
 
 ## 制作动画
 
@@ -67,14 +64,13 @@ ffmpeg -framerate 24 -i frames/%04d.png -c:v libvpx-vp9 -pix_fmt yuva420p -b:v 0
 ffmpeg -c:v libvpx-vp9 -i webm/idle.webm -an -c:v hevc_videotoolbox -alpha_quality 0.75 -q:v 60 -tag:v hvc1 -pix_fmt bgra mov/idle.mov
 ```
 
-[`tools/`](https://github.com/nsgo-dev/nsgo-pet/tree/main/tools) 里的转换器会写出整个宠物包，包括两种格式的动画和两个 JSON 文件。各自的参数见 `-h`。
+nsgo-pet 在 [`tools/`](https://github.com/nsgo-dev/nsgo-pet/tree/main/tools) 里的转换器会写出整个宠物包，包括两种格式的动画和两个 JSON 文件；在 nsgo-pet 的克隆里运行它们，参数见 `go run ./tools/<工具> -h`。
 
 | 工具 | 输入 |
 | --- | --- |
 | `tools/codexpet` | 八行 192×208 的 Codex 精灵图，可带季节服装 |
 | `tools/framepet` | PNG 帧，以及 `tools/framepet/pets/` 下的 JSON 描述 |
-| `tools/fetch-*.sh` | 从固定提交重新获取并转换某个来源的宠物 |
 
 ## 许可
 
-每个宠物包都在 `NOTICE.md` 和 `pet.json` 的 `license` 里带着自己的许可证。引擎的 MIT 许可不覆盖任何宠物包。宿主分发宠物包时要连同它们的许可证一起分发；包含非商用许可宠物包（例如大蓝鱼）的构建也只能非商用。
+在 `NOTICE.md` 和 `pet.json` 的 `license` 里写明每个宠物包的许可证；引擎的 MIT 许可不覆盖任何宠物包。应用分发宠物包时要连同它们的许可证一起分发；包含非商用许可宠物包（例如 NSGo 酱或大蓝鱼）的构建也只能非商用。nsgo-pet 每只宠物及其许可见 [宠物许可](../pets/)。

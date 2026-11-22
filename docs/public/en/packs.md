@@ -1,12 +1,9 @@
 ---
 title: Pet packs
 description: The folder of clips and rules that makes a pet, with no code.
-group: Developers
-sidebar:
-  order: 4
 ---
 
-A pack is a folder of clips and the rules that choose them, so a new pet needs no code. The engine reads packs; it ships none. nsgo-pet's packs are in [`resources/pets/<id>/`](https://github.com/nsgo-dev/nsgo-pet/tree/main/resources/pets), and a host's live wherever its `fs.FS` or directory points.
+A pack is a folder of clips and the rules that choose them, so a new pet for your app needs no code. Put each pack in a folder named after its ID, under your app's `resources/pets/` or the directory you load. [nsgo-pet's own packs](https://github.com/nsgo-dev/nsgo-pet/tree/main/resources/pets) are complete examples.
 
 ## Layout
 
@@ -53,10 +50,10 @@ Both clip forms exist because no single format with alpha plays on every platfor
 | `NightOnly`, `SeasonOnly`, `SummerWeight`, `WinterWeight`, `MorningWeight` | Time of day and season |
 | `Meal`, `MealBoost` | A boost within an hour of 8:00, 12:00 or 18:00 |
 | `Festival`, `RadiusDays`, `FestivalMode`, `FestivalWeight` | Weight near a Gregorian festival; lunar festivals keep their plain weight |
-| `WorkKind`, `WorkWeight` | `Coding` or `Working`: what the host's `Context` says the user is doing |
+| `WorkKind`, `WorkWeight` | `Coding` or `Working`: what your app's `Context` says the user is doing |
 | `MoveKind`, `HourParity` | `Run` or `Crab`: the pet walks 70 points and back, in a window of its own only |
 
-`Disabled` clips never play by chance, but a host can still play them by ID, which is how a host maps its own states onto clips.
+`Disabled` clips never play by chance, but your app can still play them by ID, which is how it maps its own states onto clips.
 
 ## Making clips
 
@@ -67,14 +64,13 @@ ffmpeg -framerate 24 -i frames/%04d.png -c:v libvpx-vp9 -pix_fmt yuva420p -b:v 0
 ffmpeg -c:v libvpx-vp9 -i webm/idle.webm -an -c:v hevc_videotoolbox -alpha_quality 0.75 -q:v 60 -tag:v hvc1 -pix_fmt bgra mov/idle.mov
 ```
 
-The converters in [`tools/`](https://github.com/nsgo-dev/nsgo-pet/tree/main/tools) write a whole pack, both clip forms and both JSON files. Their flags are in each one's `-h`.
+nsgo-pet's converters in [`tools/`](https://github.com/nsgo-dev/nsgo-pet/tree/main/tools) write a whole pack, both clip forms and both JSON files; run them from a clone of nsgo-pet, with `go run ./tools/<tool> -h` for their flags.
 
 | Tool | Input |
 | --- | --- |
 | `tools/codexpet` | A Codex sprite sheet of eight 192×208 rows, with optional seasonal outfits |
 | `tools/framepet` | PNG frames and a JSON spec under `tools/framepet/pets/` |
-| `tools/fetch-*.sh` | One source's pets, fetched again from a pinned commit and converted |
 
 ## Licensing
 
-Each pack carries its own license in `NOTICE.md` and `pet.json`'s `license`. The engine's MIT license covers no pack. A host that ships packs ships their licenses with them, and a pack under a non-commercial license, such as Big Blue Fish's, makes the build that includes it non-commercial.
+Give each pack its license in `NOTICE.md` and `pet.json`'s `license`; the engine's MIT license covers no pack. An app that ships packs ships their licenses with them, and a pack under a non-commercial license, such as NSGo-chan's or Big Blue Fish's, makes the build that includes it non-commercial. Each of nsgo-pet's pets and its license is listed in [Pet licenses](../pets/).

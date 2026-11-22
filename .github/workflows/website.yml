@@ -1,12 +1,12 @@
 name: Website
 
-# Builds website/ with Bun and publishes it on GitHub Pages whenever main changes the site or the pets it reads (resources/pets, whose manifests and clips the build copies). A pull request that touches them only builds, so a broken page fails before it lands; a run by hand (Actions › Website › Run workflow) redeploys main.
+# Builds website/ with Bun and publishes it on GitHub Pages whenever main changes the site, its docs in docs/public or the pets it reads (resources/pets, whose manifests and clips the build copies). A pull request that touches them only builds, so a broken page fails before it lands; a run by hand (Actions › Website › Run workflow) redeploys main.
 on:
   push:
     branches: [main]
-    paths: [website/**, resources/pets/**, .github/workflows/website.yml]
+    paths: [website/**, docs/public/**, resources/pets/**, .github/workflows/website.yml]
   pull_request:
-    paths: [website/**, resources/pets/**, .github/workflows/website.yml]
+    paths: [website/**, docs/public/**, resources/pets/**, .github/workflows/website.yml]
   workflow_dispatch:
 
 permissions:

@@ -49,8 +49,8 @@ const platformColors: Record<string, string> = { macos: '#3b82f6', linux: '#d977
 				</h1>
 				<p class="lead rise" style="--i: 1">{t.lead}</p>
 				<div class="cta rise" style="--i: 2">
-					<a class="button primary" href={project.releases} data-kubai-trigger>
-						<KIcon name="download" size={18} color="#22a45d" />
+					<a class="button primary download" href={project.releases}>
+						<Icon name="download" size="1.125rem" />
 						{t.cta.download}
 					</a>
 					<a class="button secondary" href={url(docsHome[lang])}>

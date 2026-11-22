@@ -33,7 +33,7 @@ const en = {
 	language: { name: 'Language', auto: 'Auto' },
 	headline: ['A pet that lives', 'on your desktop.'],
 	lead: 'nsgo-pet floats above your windows on macOS and Linux. It greets you, reacts to your clicks, walks along the bottom of the screen and naps at night.',
-	cta: { download: 'Download', start: 'Get started' },
+	cta: { download: 'Download for free', start: 'Get started' },
 	meta: ['macOS', 'Linux', '11 pets'],
 	buddy: 'NSGo-chan: click her, or drag her around',
 	pets: {
@@ -93,7 +93,7 @@ const zh: typeof en = {
 	language: { name: '语言', auto: '自动' },
 	headline: ['住在你桌面上的', '小宠物。'],
 	lead: 'nsgo-pet 浮在 macOS 和 Linux 的窗口之上。它会向你打招呼、回应你的点击、沿着屏幕底部走动，夜里还会打盹。',
-	cta: { download: '下载', start: '快速开始' },
+	cta: { download: '免费下载', start: '入门指南' },
 	meta: ['macOS', 'Linux', '11 只宠物'],
 	buddy: 'NSGo 酱：点点她，或者拖着她走',
 	pets: {

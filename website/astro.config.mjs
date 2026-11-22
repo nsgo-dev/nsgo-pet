@@ -26,10 +26,17 @@ export default defineConfig({
 			social: [
 				{ icon: 'github', label: 'GitHub', href: 'https://github.com/nsgo-dev/nsgo-pet' },
 			],
-			// Every docs page in its order; src/routeData.ts groups them by
-			// their front matter as each page renders.
-			sidebar: [{ autogenerate: { directory: 'docs' } }],
-			routeMiddleware: ['./src/routeData.ts', './src/share.ts'],
+			// Every docs page, by its English slug; Chinese pages take the same
+			// places. Starlight cannot list docs/public/ by itself, so a new
+			// page is added here.
+			sidebar: [
+				{ label: 'Start', translations: { 'zh-CN': '开始' }, items: ['docs', 'docs/using', 'docs/pets'] },
+				{ label: 'Developers', translations: { 'zh-CN': '开发者' }, items: ['docs/embedding', 'docs/packs'] },
+			],
+			// The docs live in docs/public/, outside src/content/docs, so
+			// Starlight's Markdown features are turned on there too.
+			markdown: { processedDirs: ['../docs/public'] },
+			routeMiddleware: './src/share.ts',
 			// Code as the home page shows it: the same themes in a soft frame.
 			// Its colors are set in docs.css, from the site's own.
 			expressiveCode: {
