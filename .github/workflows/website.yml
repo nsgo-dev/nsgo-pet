@@ -12,10 +12,10 @@ on:
 permissions:
   contents: read
 
-# One deploy at a time; a pull request's newer commit cancels its older build.
+# One run at a time; a newer commit cancels the older run, whose site it replaces.
 concurrency:
   group: website-${{ github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  cancel-in-progress: true
 
 jobs:
   build:
