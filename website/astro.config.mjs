@@ -29,7 +29,7 @@ export default defineConfig({
 			// Every docs page in its order; src/routeData.ts groups them by
 			// their front matter as each page renders.
 			sidebar: [{ autogenerate: { directory: 'docs' } }],
-			routeMiddleware: './src/routeData.ts',
+			routeMiddleware: ['./src/routeData.ts', './src/share.ts'],
 			// Code as the home page shows it: the same themes in a soft frame.
 			// Its colors are set in docs.css, from the site's own.
 			expressiveCode: {
