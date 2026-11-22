@@ -2,7 +2,9 @@
 // The menu: on phones, a popover with the site's links and, in the docs,
 // the sidebar; on wider screens the docs show it beside the content.
 import { Icon } from '@astrojs/starlight/components';
+import { Image } from 'astro:assets';
 import { copy, docsHome, feedback, homePath } from '../../copy';
+import { xAccounts } from '../../accounts';
 import { langOf } from '../../lang';
 import { project } from '../../site';
 import { url } from '../../url';
@@ -28,6 +30,17 @@ const t = copy[lang];
 				].map((link) => (
 					<a href={link.href} target="_blank" rel="noopener noreferrer">
 						{link.label}
+						<Icon name="external" size="0.8rem" class="external" />
+					</a>
+				))
+			}
+			<p class="menu-group">X</p>
+			{
+				xAccounts.map((link) => (
+					<a href={link.href} target="_blank" rel="noopener noreferrer">
+						{link.avatar && <Image class="menu-avatar" src={link.avatar} alt="" width={20} height={20} densities={[1, 2]} />}
+						{link.label}
+						<span class="menu-note">{link.note}</span>
 						<Icon name="external" size="0.8rem" class="external" />
 					</a>
 				))

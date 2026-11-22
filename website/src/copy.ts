@@ -5,7 +5,7 @@ import type { StarlightIcon } from '@astrojs/starlight/types';
 import type { Lang } from './site';
 
 /** A link that leaves the site, with a Starlight icon or 'nsgo' for NSGo's logo. */
-export type Link = { label: string; href: string; icon: StarlightIcon | 'nsgo'; note?: string };
+export type Link = { label: string; href: string; icon: StarlightIcon | 'nsgo'; note?: string; avatar?: ImageMetadata };
 
 export type Platform = {
 	id: 'macos' | 'linux' | 'windows';

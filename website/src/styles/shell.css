@@ -317,6 +317,17 @@ body {
 	font-weight: 650;
 }
 /* A link that leaves the site carries a small arrow. */
+.menu-avatar {
+	width: 1.25rem;
+	height: 1.25rem;
+	margin-right: 0.125rem;
+	border-radius: 50%;
+	object-fit: cover;
+}
+.menu-note {
+	color: var(--muted);
+	font-size: 0.8125rem;
+}
 .nav .external,
 .menu-links .external {
 	color: var(--faint);

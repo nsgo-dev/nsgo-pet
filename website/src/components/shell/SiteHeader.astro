@@ -9,6 +9,7 @@ import KIcon from '../KIcon.astro';
 import HeaderMenu from './HeaderMenu.astro';
 import NavMenu from './NavMenu.astro';
 import { copy, docsHome, feedback, homePath } from '../../copy';
+import { xAccounts } from '../../accounts';
 import { langOf, otherLanguagePath } from '../../lang';
 import { project } from '../../site';
 import { url } from '../../url';
@@ -64,6 +65,7 @@ const colors = { languages: '#8b5cf6', globe: '#14b8a6', sun: '#f59e0b', moon: '
 			<KIcon slot="icon-dark" name="moon" size={16} color={colors.moon} />
 			<KIcon slot="icon-auto" name="monitor" size={16} color={colors.monitor} />
 		</HeaderMenu>
+		<NavMenu label="X" links={xAccounts} icon="x.com" class="x-menu hide-sm" />
 		<a class="icon-button github hide-sm" href={project.repo} target="_blank" rel="noopener noreferrer" aria-label={t.nav.github}>
 			<Icon name="github" size="1.05rem" />
 			<span>GitHub</span>
