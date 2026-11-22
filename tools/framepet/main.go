@@ -411,7 +411,7 @@ func makeClip(s *spec, c clip, files map[string]string, width, height int, out, 
 		return err
 	}
 	mov := filepath.Join(out, "mov", c.Name+".mov")
-	return ffmpeg("-c:v", "libvpx-vp9", "-i", webm, "-an", "-c:v", "hevc_videotoolbox", "-alpha_quality", "0.75", "-q:v", "65", "-tag:v", "hvc1", "-pix_fmt", "bgra", mov)
+	return ffmpeg("-c:v", "libvpx-vp9", "-i", webm, "-an", "-vf", "format=rgba,premultiply=inplace=1", "-c:v", "hevc_videotoolbox", "-alpha_quality", "0.75", "-q:v", "65", "-tag:v", "hvc1", "-pix_fmt", "bgra", mov)
 }
 
 func ffmpeg(args ...string) error {

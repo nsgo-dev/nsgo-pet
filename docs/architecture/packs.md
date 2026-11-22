@@ -58,8 +58,10 @@ Clips need a transparent background. From PNG frames with alpha:
 
 ```sh
 ffmpeg -framerate 24 -i frames/%04d.png -c:v libvpx-vp9 -pix_fmt yuva420p -b:v 0 -crf 32 webm/idle.webm
-ffmpeg -c:v libvpx-vp9 -i webm/idle.webm -an -c:v hevc_videotoolbox -alpha_quality 0.75 -q:v 60 -tag:v hvc1 -pix_fmt bgra mov/idle.mov
+ffmpeg -c:v libvpx-vp9 -i webm/idle.webm -an -vf format=rgba,premultiply=inplace=1 -c:v hevc_videotoolbox -alpha_quality 0.75 -q:v 60 -tag:v hvc1 -pix_fmt bgra mov/idle.mov
 ```
+
+VideoToolbox marks HEVC with alpha as premultiplied, and the player composites it so; WebM's alpha is straight. The MOV step premultiplies, or semi-transparent pixels show too bright, up to white.
 
 The converters in `tools/` write a whole pack, both clip forms and both JSON files. Their flags are in each one's `-h`.
 

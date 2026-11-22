@@ -231,7 +231,7 @@ func makeClip(sheet string, c clip, file, out, tmp string) error {
 		return err
 	}
 	mov := filepath.Join(out, "mov", file+".mov")
-	return ffmpeg("-c:v", "libvpx-vp9", "-i", webm, "-an", "-c:v", "hevc_videotoolbox", "-alpha_quality", "0.75", "-q:v", "65", "-tag:v", "hvc1", "-pix_fmt", "bgra", mov)
+	return ffmpeg("-c:v", "libvpx-vp9", "-i", webm, "-an", "-vf", "format=rgba,premultiply=inplace=1", "-c:v", "hevc_videotoolbox", "-alpha_quality", "0.75", "-q:v", "65", "-tag:v", "hvc1", "-pix_fmt", "bgra", mov)
 }
 
 func ffmpeg(args ...string) error {

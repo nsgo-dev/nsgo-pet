@@ -23,7 +23,7 @@ transcode() {
 	mov="$2/$(basename "${in%.webm}").mov"
 	[ -s "$mov" ] && return 0
 	# libvpx decodes the alpha the WebM carries; VideoToolbox encodes it as HEVC's alpha layer.
-	timeout 300 ffmpeg -v error -y -c:v libvpx-vp9 -i "$in" -an -c:v hevc_videotoolbox -alpha_quality 0.75 -q:v 60 -tag:v hvc1 -pix_fmt bgra "$mov"
+	timeout 300 ffmpeg -v error -y -c:v libvpx-vp9 -i "$in" -an -vf format=rgba,premultiply=inplace=1 -c:v hevc_videotoolbox -alpha_quality 0.75 -q:v 60 -tag:v hvc1 -pix_fmt bgra "$mov"
 }
 export -f transcode
 find "$out/webm" -name '*.webm' -print0 | xargs -0 -P 4 -I{} bash -c 'transcode "$1" "$2"' _ {} "$out/mov"
