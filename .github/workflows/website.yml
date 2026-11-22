@@ -1,0 +1,66 @@
+name: Website
+
+# Builds website/ with Bun and publishes it on GitHub Pages whenever main changes the site or the pets it reads (resources/pets, whose manifests and clips the build copies). A pull request that touches them only builds, so a broken page fails before it lands; a run by hand (Actions › Website › Run workflow) redeploys main.
+on:
+  push:
+    branches: [main]
+    paths: [website/**, resources/pets/**, .github/workflows/website.yml]
+  pull_request:
+    paths: [website/**, resources/pets/**, .github/workflows/website.yml]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# One deploy at a time; a pull request's newer commit cancels its older build.
+concurrency:
+  group: website-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+      # The address Pages serves the site at, which astro.config.mjs reads as SITE and BASE.
+      - name: Configure Pages
+        id: pages
+        if: github.event_name != 'pull_request'
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
+      - name: Install
+        working-directory: website
+        run: bun install --frozen-lockfile
+      - name: Build
+        working-directory: website
+        env:
+          SITE: ${{ steps.pages.outputs.origin }}
+          BASE: ${{ steps.pages.outputs.base_path }}
+        run: |
+          # Empty on a pull request, where astro.config.mjs keeps its own address.
+          [ -n "$SITE" ] || unset SITE BASE
+          bun run build
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        if: github.event_name != 'pull_request'
+        with:
+          path: website/dist
+
+  deploy:
+    name: Deploy
+    needs: build
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
