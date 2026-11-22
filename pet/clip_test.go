@@ -1,12 +1,14 @@
 package pet
 
 import (
+	"bytes"
 	"image"
 	"os"
 	"path/filepath"
 	"testing"
 	"time"
 
+	"github.com/at-wat/ebml-go"
 	"github.com/nsgo-dev/nsgo/core"
 	"github.com/nsgo-dev/nsgo/nsgotest"
 )
@@ -79,6 +81,56 @@ func TestDemuxEveryClip(t *testing.T) {
 				}
 			}
 		}
+	}
+}
+
+// A BlockMore without a BlockAddID holds the alpha picture, as BlockAddID's default is 1: muxers that leave out elements at their default write it so.
+func TestDemuxAlphaWithoutBlockAddID(t *testing.T) {
+	type blockMore struct {
+		BlockAdditional []byte `ebml:"BlockAdditional"`
+	}
+	type blockGroup struct {
+		Block          ebml.Block `ebml:"Block"`
+		BlockAdditions struct {
+			BlockMore []blockMore `ebml:"BlockMore"`
+		} `ebml:"BlockAdditions"`
+	}
+	type video struct {
+		PixelWidth  uint64 `ebml:"PixelWidth"`
+		PixelHeight uint64 `ebml:"PixelHeight"`
+	}
+	type trackEntry struct {
+		TrackNumber uint64 `ebml:"TrackNumber"`
+		TrackType   uint64 `ebml:"TrackType"`
+		CodecID     string `ebml:"CodecID"`
+		Video       video  `ebml:"Video"`
+	}
+	type cluster struct {
+		Timecode   uint64       `ebml:"Timecode"`
+		BlockGroup []blockGroup `ebml:"BlockGroup"`
+	}
+	var f struct {
+		Segment struct {
+			Tracks struct {
+				TrackEntry []trackEntry `ebml:"TrackEntry"`
+			} `ebml:"Tracks"`
+			Cluster []cluster `ebml:"Cluster"`
+		} `ebml:"Segment"`
+	}
+	f.Segment.Tracks.TrackEntry = []trackEntry{{TrackNumber: 1, TrackType: trackVideo, CodecID: "V_VP9", Video: video{PixelWidth: 2, PixelHeight: 2}}}
+	g := blockGroup{Block: ebml.Block{TrackNumber: 1, Keyframe: true, Data: [][]byte{{0xc0}}}}
+	g.BlockAdditions.BlockMore = []blockMore{{BlockAdditional: []byte{0xa0}}}
+	f.Segment.Cluster = []cluster{{BlockGroup: []blockGroup{g}}}
+	var buf bytes.Buffer
+	if err := ebml.Marshal(&f, &buf); err != nil {
+		t.Fatal(err)
+	}
+	c, err := demuxClip(buf.Bytes())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(c.frames) != 1 || !bytes.Equal(c.frames[0].alpha, []byte{0xa0}) {
+		t.Fatalf("frames %+v, want one with its alpha", c.frames)
 	}
 }
 
@@ -284,4 +336,34 @@ func TestWindowsSwitchesPets(t *testing.T) {
 		v := app.FindMounted("id:slot1")
 		return v.Props.Label == fish.Name && showing(app, "slot1") && v.Image.Source.Pixels.Rect.Dx() == 640
 	})
+}
+
+// A clip chosen again while the hidden slot still holds it shows only once Windows' player has decoded it anew, not with the frame the slot last showed.
+func TestWindowsReplaysAClipFromItsStart(t *testing.T) {
+	if err := loadVPX(); err != nil {
+		t.Skip(err)
+	}
+	pack := appPack(t, "nsgo-chan")
+	var p *Pet
+	app := nsgotest.Start(t, func(cx *core.Scope) core.Node {
+		p = New(cx, pack, Options{})
+		cx.Post(p.Start)
+		return p.View()
+	}, windows)
+	app.WaitUntil(10*time.Second, func() bool { return showing(app, "slot1") })
+	app.Post(func() { p.Play("idle") })
+	app.WaitUntil(10*time.Second, func() bool { return showing(app, "slot0") && !showing(app, "slot1") })
+	stale := app.FindMounted("id:slot1").Image.Source.Version
+	app.Post(func() { p.Play(pack.Clips.Greeting) })
+	app.Settle()
+	if v := app.FindMounted("id:slot1"); v.Style.Opacity == 1 && v.Image.Source.Version == stale {
+		t.Fatal("the slot shows the greeting's old frame")
+	}
+	app.WaitUntil(10*time.Second, func() bool {
+		v := app.FindMounted("id:slot1")
+		return showing(app, "slot1") && v.Image.Source.Version > stale
+	})
+	if showing(app, "slot0") {
+		t.Fatal("both slots show")
+	}
 }

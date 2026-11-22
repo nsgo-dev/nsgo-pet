@@ -190,13 +190,14 @@ func (s *slot) view(p *Pet, i int) core.Node {
 	}
 }
 
-// rewind plays the slot's clip again from the start.
-func (s *slot) rewind() {
+// rewind plays the slot's clip again from the start and says whether the slot may show at once. A video seeks in the player it has open; Windows' player reads and decodes the clip again, and until its first frame is up shows the frame it last showed, so the slot waits for the load as for a new clip.
+func (s *slot) rewind() (now bool) {
 	if s.player != nil {
 		s.player.restart()
-		return
+		return false
 	}
 	s.ref.Seek(0)
+	return true
 }
 
 // slotIDs name the two players for tests.
@@ -256,9 +257,12 @@ func (p *Pet) play(r Rule, phase string, mirrored bool) {
 	s.mirrored.Set(mirrored)
 	if s.src.GetUntracked() == src {
 		// The hidden player has this clip already: play it again from the start and show it.
-		s.rewind()
-		p.pending.Set(-1)
-		p.front.Set(back)
+		if s.rewind() {
+			p.pending.Set(-1)
+			p.front.Set(back)
+		} else {
+			p.pending.Set(back)
+		}
 		return
 	}
 	s.src.Set(src)
