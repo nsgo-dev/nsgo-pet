@@ -57,9 +57,12 @@ func App(packs []*pet.Pack) func(cx *core.Scope) core.Node {
 			}
 			return items
 		}
+		report := statsReporter(cx)
 		desktop.NewTray(cx, desktop.TrayOptions{Title: "🐾", Tooltip: "nsgo-pet", Menu: menu})
 		return core.Dynamic(func(cx *core.Scope) core.Node {
-			p := pet.New(cx, find(chosen.Get()), pet.Options{Window: true, Menu: menu})
+			pack := find(chosen.Get())
+			report(pack)
+			p := pet.New(cx, pack, pet.Options{Window: true, Menu: menu})
 			current = p
 			cx.Post(p.Start)
 			return p.View()

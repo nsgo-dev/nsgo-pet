@@ -8,7 +8,7 @@ nsgo-pet is two things in one repository: the pet engine, a Go module any NSGo a
 | --- | --- |
 | `pet/` | The engine, module `github.com/nsgo-dev/nsgo-pet/pet`: loading packs, choosing clips, the view and the pet's window behavior |
 | `pet/testdata/pets/` | Fixture packs of JSON alone, so the engine tests without clips |
-| `app.go`, `pets.go` | The app: the main window, tray, menus, saved choice and the embedded manifests |
+| `app.go`, `pets.go`, `stats.go` | The app: the main window, tray, menus, saved choice, the embedded manifests and the usage statistics |
 | `resources/pets/` | The app's pets, their clips and notices; never part of the engine |
 | `tools/` | Converters and fetch scripts that build packs, and the release notes script |
 | `website/` | The website, which reads the pets' manifests and copies their clips at build time |
@@ -34,7 +34,7 @@ nsgo-pet is two things in one repository: the pet engine, a Go module any NSGo a
 
 ## Data and state
 
-The engine keeps no state beyond the pet it plays. The app stores the ID of the chosen pet under the storage key `pet`, and reads packs from the manifests embedded in its binary, playing their clips from its bundled resources.
+The engine keeps no state beyond the pet it plays. The app stores the ID of the chosen pet under the storage key `pet`, and the random ID its usage statistics count an install by under `installID`. It reads packs from the manifests embedded in its binary, playing their clips from its bundled resources.
 
 ## Verification
 

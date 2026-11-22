@@ -39,6 +39,8 @@ Download the disk image for macOS, or the Debian package, Arch package or AppIma
 
 Linux needs GStreamer's bad plugins (`gstreamer1.0-plugins-bad`) to play clips with alpha; the Debian and Arch packages depend on them.
 
+Released builds send an anonymous pageview to [Umami](https://umami.is) as they start and when you switch pets: the pet, the system language and a random install ID, nothing else.
+
 ## Getting started
 
 1. Open nsgo-pet. NSGo 酱 greets you in the bottom right corner of the screen.

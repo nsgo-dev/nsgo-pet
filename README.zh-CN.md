@@ -39,6 +39,8 @@
 
 Linux 播放带透明通道的动画需要 GStreamer 的 bad 插件（`gstreamer1.0-plugins-bad`），Debian 包和 Arch 包已依赖它。
 
+发布版在启动和切换宠物时向 [Umami](https://umami.is) 发送一次匿名访问记录：只有宠物、系统语言和一个随机的安装 ID。
+
 ## 快速开始
 
 1. 打开 nsgo-pet，NSGo 酱会在屏幕右下角跟你打招呼。

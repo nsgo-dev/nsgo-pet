@@ -236,3 +236,19 @@ func TestOutfitsFollowTheSeason(t *testing.T) {
 		}
 	}
 }
+
+func TestTestsReportNoStats(t *testing.T) {
+	app := nsgotest.Start(t, App(packs(t)), macOS)
+	if _, ok := app.Storage().GetItem(installKey); ok {
+		t.Error("a test build made an install ID, so it would report its use")
+	}
+}
+
+func TestStatsAgentNamesThePlatform(t *testing.T) {
+	if a := statsAgent(core.OSMacOS); !strings.Contains(a, "Macintosh") {
+		t.Errorf("macOS agent = %q", a)
+	}
+	if a := statsAgent(core.OSWeb); a != "" {
+		t.Errorf("web agent = %q, want none", a)
+	}
+}
