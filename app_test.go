@@ -218,6 +218,15 @@ func prefs(t *testing.T, cx *core.Scope, chosen *core.Signal[string], stats *cor
 	return Prefs{Packs: packs(t), Chosen: chosen.Get, Choose: chosen.Set, Stats: stats.Get, SetStats: stats.Set}
 }
 
+// idleClip is pk's idle clip in this platform's form, as the engine plays it: HEVC with alpha on macOS, WebM elsewhere.
+func idleClip(pk *pet.Pack, os core.OS) string {
+	name := strings.TrimSuffix(pk.Policy.Find(pk.Clips.Idle).File, ".webm")
+	if os == core.OSMacOS {
+		return pk.Base + "/mov/" + name + ".mov"
+	}
+	return pk.Base + "/webm/" + name + ".webm"
+}
+
 // The settings' first page shows every pet idling, and a press on one chooses it.
 func TestSettingsGridChoosesAPet(t *testing.T) {
 	var chosen *core.Signal[string]
@@ -354,6 +363,12 @@ func TestWindowsSettingsSwitchPets(t *testing.T) {
 	}
 	if !player(find("nsgo-chan").Name) {
 		t.Fatalf("NSGo-chan plays in a %s labeled %q, want the engine's image", app.FindMounted("id:slot1").Kind, app.FindMounted("id:slot1").Props.Label)
+	}
+	// The grid's previews play in the engine's image too, as NSGo's video refuses the clips there.
+	for _, pk := range ps {
+		if v := app.FindMounted("id:clip-" + pk.ID); v.Kind.String() != "image" || v.Props.Label != pk.Name {
+			t.Errorf("%s's preview is a %s labeled %q, want the engine's image", pk.ID, v.Kind, v.Props.Label)
+		}
 	}
 	app.Press("id:pet-bigbluefish")
 	app.WaitUntil(10*time.Second, func() bool { return player(find("bigbluefish").Name) })

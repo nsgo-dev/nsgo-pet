@@ -1,8 +1,6 @@
 package main
 
 import (
-	"strings"
-
 	"github.com/nsgo-dev/nsgo-pet/pet"
 	"github.com/nsgo-dev/nsgo/base"
 	"github.com/nsgo-dev/nsgo/core"
@@ -86,7 +84,6 @@ func Settings(cx *core.Scope, prefs Prefs) core.Node {
 
 // petGrid shows every pet idling, by group, the chosen one outlined; a press chooses a pet.
 func petGrid(cx *core.Scope, prefs Prefs) core.Node {
-	os := cx.Env().OS()
 	var sections []core.Node
 	for _, s := range petSections(prefs.Packs) {
 		var cards []core.Node
@@ -97,7 +94,7 @@ func petGrid(cx *core.Scope, prefs Prefs) core.Node {
 				Class: "w-[128px] p-2 gap-1 items-center rounded-lg border-2 border-transparent bg-black/[0.04] dark:bg-white/[0.05] " +
 					"hover:bg-black/[0.07] dark:hover:bg-white/[0.08] selected:border-blue-500",
 				Children: []core.Node{
-					core.Video{Source: idleClip(pk, os), Repeat: true, Muted: true, ResizeMode: core.Contain, Label: pk.Name, TestID: "clip-" + pk.ID, Class: "size-24"},
+					pet.ClipView{Pack: pk, Clip: pk.Clips.Idle, TestID: "clip-" + pk.ID, Class: "size-24"},
 					core.Text{Class: "text-sm text-neutral-900 dark:text-neutral-100", Content: pk.Name, MaxLines: 1},
 				}})
 		}
@@ -109,15 +106,6 @@ func petGrid(cx *core.Scope, prefs Prefs) core.Node {
 		sections = append(sections, core.View{Class: "gap-2", Children: children})
 	}
 	return core.Scroll{Class: "flex-1", Children: []core.Node{core.View{Class: "p-4 gap-4", Children: sections}}}
-}
-
-// idleClip is pk's idle clip in this platform's form, as the engine plays it: HEVC with alpha on macOS, WebM elsewhere.
-func idleClip(pk *pet.Pack, os core.OS) string {
-	name := strings.TrimSuffix(pk.Policy.Find(pk.Clips.Idle).File, ".webm")
-	if os == core.OSMacOS {
-		return pk.Base + "/mov/" + name + ".mov"
-	}
-	return pk.Base + "/webm/" + name + ".webm"
 }
 
 // general is checking for updates and the usage statistics.

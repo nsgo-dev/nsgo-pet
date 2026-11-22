@@ -131,6 +131,43 @@ func clipSource(cx *core.Scope, pack *Pack, r Rule) string {
 	return pack.Base + "/webm/" + name + ".webm"
 }
 
+// ClipView plays one of a pack's clips over and over, muted and contained in its box, as a host's list of pets previews each: in a core.Video, or on Windows in the engine's own decoder, as the pet plays its clips there. A clip the pack lacks shows nothing.
+type ClipView struct {
+	Pack *Pack
+	// Clip is the clip's ID, as Play takes, such as Pack.Clips.Idle.
+	Clip   string
+	Class  string
+	Style  core.Style
+	TestID string
+}
+
+// Render implements core.Node.
+func (v ClipView) Render(cx *core.Scope) core.Node {
+	r := v.Pack.Policy.Find(v.Clip)
+	if r.ID == "" {
+		return core.View{Class: v.Class, Style: v.Style, TestID: v.TestID}
+	}
+	src := clipSource(cx, v.Pack, r)
+	if cx.Env().OS() != core.OSWindows {
+		return core.Video{Source: src, Repeat: true, Muted: true, ResizeMode: core.Contain, Class: v.Class, Style: v.Style, Label: v.Pack.Name, TestID: v.TestID}
+	}
+	// The decoder stops with the view, as clipView's cleanup stops its player; at the end the player reads the clip again and keeps its last frame up until the first shows.
+	var pl *clipPlayer
+	return clipView{
+		src:        func() string { return src },
+		paused:     func() bool { return false },
+		style:      func() core.Style { return v.Style },
+		onLoad:     func() {},
+		onProgress: func(time.Duration) {},
+		onEnd:      func() { pl.restart() },
+		onError:    func(err error) { log.Printf("clip %s: %v", src, err) },
+		player:     &pl,
+		class:      v.Class,
+		label:      v.Pack.Name,
+		testID:     v.TestID,
+	}
+}
+
 // slot is one of two players: the next clip loads in the hidden one and shows once it has a picture, so the pet never blinks out between clips.
 type slot struct {
 	src      *core.Signal[string]
