@@ -100,7 +100,7 @@ desktop.OpenWindow(cx, pet.WindowOptions(pack), func(cx *core.Scope) core.Node {
 
 | 宠物 | ID | 动画数 | 来源 | 许可 |
 | --- | --- | --- | --- | --- |
-| NSGo 酱 NSGo-chan | `nsgo-chan` | 15 | 为 nsgo-pet 绘制，连同她的 Gopher，设定图见 [docs/nsgo-chan](docs/nsgo-chan) | MIT, Copyright (c) 2026 nsgo-dev（[NOTICE](resources/pets/nsgo-chan/NOTICE.md)） |
+| NSGo 酱 NSGo-chan | `nsgo-chan` | 15 | 为 nsgo-pet 绘制，连同她的 Gopher，设定图见 [docs/nsgo-chan](docs/nsgo-chan) | [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/), Copyright (c) 2026 nsgo-dev：**不得商用**（[NOTICE](resources/pets/nsgo-chan/NOTICE.md)） |
 | 大蓝鱼 Big Blue Fish | `bigbluefish` | 106 | [PC2005-cloud/dsh-pet](https://github.com/PC2005-cloud/dsh-pet)，经由 [Bai-Cute/big-blue-fish-desktop-pet](https://github.com/Bai-Cute/big-blue-fish-desktop-pet) | 角色 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)：**不得商用**（[NOTICE](resources/pets/bigbluefish/NOTICE.md)） |
 | Clover | `playpets-clover` | 35 | [gaerae/playpets](https://github.com/gaerae/playpets)，含夏装和冬装 | MIT, gaerae（[NOTICE](resources/pets/playpets-clover/NOTICE.md)） |
 | Daisy | `playpets-daisy` | 35 | [gaerae/playpets](https://github.com/gaerae/playpets)，含夏装和冬装 | MIT, gaerae（[NOTICE](resources/pets/playpets-daisy/NOTICE.md)） |
@@ -138,4 +138,4 @@ go tool nsgo test .        # the app's headless tests, which check every pet in 
 
 ## 许可证
 
-代码（应用和引擎）采用 MIT 许可，Copyright (c) 2026 nsgo-dev，见 [LICENSE](LICENSE)。每只宠物保留各自的许可，列在 [宠物](#宠物) 和各自的 `NOTICE.md` 中。大蓝鱼的角色采用 CC BY-NC-SA 4.0，因此包含它的构建不得商用。
+代码（应用和引擎）采用 MIT 许可，Copyright (c) 2026 nsgo-dev，见 [LICENSE](LICENSE)。每只宠物保留各自的许可，列在 [宠物](#宠物) 和各自的 `NOTICE.md` 中。NSGo 酱的美术采用 CC BY-NC 4.0，大蓝鱼的角色采用 CC BY-NC-SA 4.0，因此包含其中任一只的构建都不得商用。

@@ -100,7 +100,7 @@ Your app owns the windows, menus and lifecycle. The engine opens no tray, checks
 
 | Pet | ID | Clips | Source | License |
 | --- | --- | --- | --- | --- |
-| NSGo 酱 NSGo-chan | `nsgo-chan` | 15 | Drawn for nsgo-pet, with her Gopher, from the sheets in [docs/nsgo-chan](docs/nsgo-chan) | MIT, Copyright (c) 2026 nsgo-dev ([NOTICE](resources/pets/nsgo-chan/NOTICE.md)) |
+| NSGo 酱 NSGo-chan | `nsgo-chan` | 15 | Drawn for nsgo-pet, with her Gopher, from the sheets in [docs/nsgo-chan](docs/nsgo-chan) | [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/), Copyright (c) 2026 nsgo-dev: **no commercial use** ([NOTICE](resources/pets/nsgo-chan/NOTICE.md)) |
 | 大蓝鱼 Big Blue Fish | `bigbluefish` | 106 | [PC2005-cloud/dsh-pet](https://github.com/PC2005-cloud/dsh-pet), via [Bai-Cute/big-blue-fish-desktop-pet](https://github.com/Bai-Cute/big-blue-fish-desktop-pet) | Character [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/): **no commercial use** ([NOTICE](resources/pets/bigbluefish/NOTICE.md)) |
 | Clover | `playpets-clover` | 35 | [gaerae/playpets](https://github.com/gaerae/playpets), with its summer and winter outfits | MIT, gaerae ([NOTICE](resources/pets/playpets-clover/NOTICE.md)) |
 | Daisy | `playpets-daisy` | 35 | [gaerae/playpets](https://github.com/gaerae/playpets), with its summer and winter outfits | MIT, gaerae ([NOTICE](resources/pets/playpets-daisy/NOTICE.md)) |
@@ -138,4 +138,4 @@ Read [ARCHITECTURE.md](ARCHITECTURE.md) before changing code, and [AGENTS.md](AG
 
 ## License
 
-The code, the app and the engine, is MIT, Copyright (c) 2026 nsgo-dev: see [LICENSE](LICENSE). Each pet keeps its own license, listed under [Pets](#pets) and in its `NOTICE.md`. Big Blue Fish's character is CC BY-NC-SA 4.0, so a build that includes it may not be used commercially.
+The code, the app and the engine, is MIT, Copyright (c) 2026 nsgo-dev: see [LICENSE](LICENSE). Each pet keeps its own license, listed under [Pets](#pets) and in its `NOTICE.md`. NSGo-chan's art is CC BY-NC 4.0 and Big Blue Fish's character CC BY-NC-SA 4.0, so a build that includes either may not be used commercially.
