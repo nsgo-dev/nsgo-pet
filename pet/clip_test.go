@@ -5,6 +5,8 @@ import (
 	"image"
 	"os"
 	"path/filepath"
+	"runtime/pprof"
+	"strings"
 	"testing"
 	"time"
 
@@ -365,5 +367,73 @@ func TestWindowsReplaysAClipFromItsStart(t *testing.T) {
 	})
 	if showing(app, "slot0") {
 		t.Fatal("both slots show")
+	}
+}
+
+// decoding is whether a Windows player's decoder runs.
+func decoding() bool {
+	var b bytes.Buffer
+	pprof.Lookup("goroutine").WriteTo(&b, 1)
+	return strings.Contains(b.String(), "(*clipPlayer).decode")
+}
+
+// A ClipView on Windows plays its clip in the engine's decoder and starts it over as it ends, showing more frames than the clip has; its decoder stops with the view. It needs libvpx, as TestDecodeClip does.
+func TestWindowsClipViewLoops(t *testing.T) {
+	if err := loadVPX(); err != nil {
+		t.Skip(err)
+	}
+	pack := appPack(t, "nsgo-chan")
+	c := readClip(t, clipPath(pack.Base+"/webm/"+pack.Policy.Find(pack.Clips.Idle).File))
+	var shown *core.Signal[bool]
+	app := nsgotest.Start(t, func(cx *core.Scope) core.Node {
+		shown = core.NewSignal(cx, true)
+		return core.Dynamic(func(cx *core.Scope) core.Node {
+			if !shown.Get() {
+				return core.View{}
+			}
+			return ClipView{Pack: pack, Clip: pack.Clips.Idle, Style: core.Style{Width: core.Pt(96), Height: core.Pt(96)}, TestID: "preview"}
+		})
+	}, windows)
+	app.WaitUntil(10*time.Second, func() bool { return app.FindMounted("id:preview").Image.Source.Pixels != nil })
+	if v := app.FindMounted("id:preview"); v.Kind.String() != "image" || v.Props.Label != pack.Name {
+		t.Fatalf("a %s labeled %q, want the engine's image", v.Kind, v.Props.Label)
+	}
+	// The fake clock moves on while the decoder keeps up in real time.
+	deadline := time.Now().Add(60 * time.Second)
+	for app.FindMounted("id:preview").Image.Source.Version <= uint64(len(c.frames))+1 {
+		if time.Now().After(deadline) {
+			t.Fatalf("%d frames shown of a clip of %d", app.FindMounted("id:preview").Image.Source.Version, len(c.frames))
+		}
+		app.Advance(40 * time.Millisecond)
+	}
+	if !decoding() {
+		t.Fatal("no decoder runs while the clip plays")
+	}
+	app.Post(func() { shown.Set(false) })
+	app.Settle()
+	deadline = time.Now().Add(5 * time.Second)
+	for decoding() {
+		if time.Now().After(deadline) {
+			t.Fatal("the decoder runs after the view is gone")
+		}
+		time.Sleep(10 * time.Millisecond)
+	}
+}
+
+// Elsewhere a ClipView is a repeating, muted video of the clip, and a clip the pack lacks shows nothing.
+func TestClipViewIsAVideoElsewhere(t *testing.T) {
+	pack := appPack(t, "nsgo-chan")
+	app := nsgotest.Start(t, func(cx *core.Scope) core.Node {
+		return core.View{Children: []core.Node{
+			ClipView{Pack: pack, Clip: pack.Clips.Idle, TestID: "preview"},
+			ClipView{Pack: pack, Clip: "no such clip", TestID: "missing"},
+		}}
+	}, linux)
+	v := app.FindMounted("id:preview")
+	if want := pack.Base + "/webm/" + pack.Policy.Find(pack.Clips.Idle).File; v.Video.Source != want || !v.Video.Repeat || !v.Video.Muted {
+		t.Fatalf("a video of %q, repeating %v, muted %v; want %q, repeating and muted", v.Video.Source, v.Video.Repeat, v.Video.Muted, want)
+	}
+	if k := app.FindMounted("id:missing").Kind.String(); k != "view" {
+		t.Fatalf("a missing clip shows a %s", k)
 	}
 }

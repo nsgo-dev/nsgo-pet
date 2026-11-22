@@ -53,6 +53,12 @@ desktop.OpenWindow(cx, pet.WindowOptions(pack), func(cx *core.Scope) core.Node {
 
 视图里的宠物没有可移动的窗口，所以会原地播放走动动画，拖拽时也在原处悬空。
 
+要预览一个宠物包，比如在选择宠物的列表里，用 `pet.ClipView` 循环播放它的某段动画；它在各个平台（包括 Windows）上都按宠物本身的方式播放：
+
+```go
+pet.ClipView{Pack: pack, Clip: pack.Clips.Idle, Class: "size-24"}
+```
+
 ## 让宠物回应你的应用
 
 窗口、菜单和生命周期都归你的应用管：引擎不建托盘、不检查更新、不存任何东西，也不会退出应用。你可以按应用的状态驱动宠物：

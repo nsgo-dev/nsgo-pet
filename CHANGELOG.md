@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-- Run on Windows x64, decoding the WebM clips with libvpx, which NSGo's Windows player cannot play with their alpha. (#13 by @houko)
+- Run on Windows x64, decoding the WebM clips with libvpx, which NSGo's Windows player cannot play with their alpha, in the pet and the settings' previews alike, which hosts get as `pet.ClipView`. (#13, #16 by @houko)
 - Make the docs' search a command palette driven by the arrow keys, mark the reader's place in the table of contents and drop the code blocks' title bars.
 
 ## [0.1.0] - 2026-11-22

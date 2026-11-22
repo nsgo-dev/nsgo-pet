@@ -53,6 +53,12 @@ desktop.OpenWindow(cx, pet.WindowOptions(pack), func(cx *core.Scope) core.Node {
 
 A pet in a view has no window to move, so it plays its walking clips in place and dangles where it is.
 
+To preview a pack, such as in a list to choose a pet from, loop one of its clips with `pet.ClipView`, which plays it as the pet would on each platform, Windows included:
+
+```go
+pet.ClipView{Pack: pack, Clip: pack.Clips.Idle, Class: "size-24"}
+```
+
 ## Make it react to your app
 
 Your app owns the windows, menus and lifecycle: the engine opens no tray, checks for no updates, stores nothing and never quits. Drive the pet from your app's state instead:

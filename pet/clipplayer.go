@@ -57,7 +57,7 @@ const clipBuffers = 3
 // clipProgressInterval is how often a playing clip reports its position, as slot.view asks of core.Video.
 const clipProgressInterval = 33 * time.Millisecond
 
-// clipView is slot.view's player on Windows: an image, sized and styled as the video would be, that plays the clip src names and that the slot restarts through *player.
+// clipView is the player of slot.view and ClipView on Windows: an image, sized and styled as the video would be, that plays the clip src names and that its owner restarts through *player.
 type clipView struct {
 	src        func() string
 	paused     func() bool
@@ -67,6 +67,7 @@ type clipView struct {
 	onEnd      func()
 	onError    func(error)
 	player     **clipPlayer
+	class      string
 	label      string
 	testID     string
 }
@@ -85,7 +86,7 @@ func (v clipView) Render(cx *core.Scope) core.Node {
 		}
 		return core.ImageSource{Pixels: pl.shown, Version: v}
 	}
-	return core.Image{SourceFunc: frame, ResizeMode: core.Contain, StyleFunc: v.style, Label: v.label, TestID: v.testID}
+	return core.Image{SourceFunc: frame, ResizeMode: core.Contain, Class: v.class, StyleFunc: v.style, Label: v.label, TestID: v.testID}
 }
 
 // open starts playing source from its start, keeping the frame on screen until the first of source's shows.
