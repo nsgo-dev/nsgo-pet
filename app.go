@@ -2,13 +2,13 @@
 package main
 
 import (
+	_ "embed"
 	"log"
 
 	"github.com/nsgo-dev/nsgo"
 	"github.com/nsgo-dev/nsgo-pet/pet"
 	"github.com/nsgo-dev/nsgo/core"
 	"github.com/nsgo-dev/nsgo/desktop"
-	"github.com/nsgo-dev/nsgo/updater"
 )
 
 func main() {
@@ -22,7 +22,12 @@ func main() {
 // petKey is the storage key of the pet the user chose last.
 const petKey = "pet"
 
-// App is the pet's window, showing the pet the user chose last, the first of packs at first.
+// trayIcon is NSGo-chan's hooded head in silhouette, a template the menu bar colors; assets/Tray.svg is its source.
+//
+//go:embed assets/Tray.png
+var trayIcon []byte
+
+// App is the pet's window, showing the pet the user chose last, the first of packs at first, with the tray icon whose menu opens the settings and quits.
 func App(packs []*pet.Pack) func(cx *core.Scope) core.Node {
 	return func(cx *core.Scope) core.Node {
 		find := func(id string) *pet.Pack {
@@ -35,34 +40,45 @@ func App(packs []*pet.Pack) func(cx *core.Scope) core.Node {
 		}
 		saved, _ := cx.Storage().GetItem(petKey)
 		chosen := core.NewSignal(cx, find(saved).ID)
+		stats := core.NewSignal(cx, statsOn(cx))
 		var current *pet.Pet
-		choose := func(id string) {
-			if id == chosen.GetUntracked() {
+		prefs := Prefs{
+			Packs:  packs,
+			Chosen: chosen.Get,
+			Choose: func(id string) {
+				if id == chosen.GetUntracked() {
+					return
+				}
+				if err := cx.Storage().SetItem(petKey, id); err != nil {
+					log.Printf("saving the pet: %v", err)
+				}
+				chosen.Set(id)
+			},
+			Stats: stats.Get,
+			SetStats: func(on bool) {
+				setStatsOn(cx, on)
+				stats.Set(on)
+			},
+		}
+		settings := func() {
+			desktop.OpenWindow(cx, desktop.WindowOptions{Title: "设置", Width: 620, Height: 500, Key: "settings",
+				Constraints: desktop.WindowConstraints{NoResize: true, NoMinimize: true}},
+				func(cx *core.Scope) core.Node { return Settings(cx, prefs) })
+		}
+		quit := func() {
+			if current == nil {
+				cx.Quit()
 				return
 			}
-			if err := cx.Storage().SetItem(petKey, id); err != nil {
-				log.Printf("saving the pet: %v", err)
-			}
-			chosen.Set(id)
+			current.Leave(cx.Quit)
 		}
-		menu := func() []core.MenuItem {
-			items := []core.MenuItem{
-				{Label: "切换桌宠", Items: petMenu(packs, chosen.GetUntracked(), choose)},
-				// Sparkle's windows on macOS, an alert that installs the signed package on Linux.
-				{Label: "检查更新…", OnSelect: func() { updater.Check(cx) }},
-				{Separator: true},
-			}
-			if current != nil {
-				items = append(items, petActions(cx, current)...)
-			}
-			return items
-		}
-		report := statsReporter(cx)
-		desktop.NewTray(cx, desktop.TrayOptions{Title: "🐾", Tooltip: "nsgo-pet", Menu: menu})
+		report := statsReporter(cx, stats.GetUntracked)
+		desktop.NewTray(cx, desktop.TrayOptions{Icon: trayIcon, Template: true, Tooltip: "nsgo-pet",
+			Menu: func() []core.MenuItem { return trayMenu(settings, quit) }})
 		return core.Dynamic(func(cx *core.Scope) core.Node {
 			pack := find(chosen.Get())
 			report(pack)
-			p := pet.New(cx, pack, pet.Options{Window: true, Menu: menu})
+			p := pet.New(cx, pack, pet.Options{Window: true})
 			current = p
 			cx.Post(p.Start)
 			return p.View()
@@ -70,34 +86,11 @@ func App(packs []*pet.Pack) func(cx *core.Scope) core.Node {
 	}
 }
 
-// petMenu lists packs to choose from, those of a group in a submenu of its name after the ungrouped ones, each in the order packs has them.
-func petMenu(packs []*pet.Pack, chosen string, choose func(id string)) []core.MenuItem {
-	var top []core.MenuItem
-	groups := map[string]int{}
-	var grouped []core.MenuItem
-	for _, pk := range packs {
-		item := core.MenuItem{Label: pk.Name, Radio: true, Checked: pk.ID == chosen, OnSelect: func() { choose(pk.ID) }}
-		if pk.Group == "" {
-			top = append(top, item)
-			continue
-		}
-		i, ok := groups[pk.Group]
-		if !ok {
-			i = len(grouped)
-			groups[pk.Group] = i
-			grouped = append(grouped, core.MenuItem{Label: pk.Group})
-		}
-		grouped[i].Items = append(grouped[i].Items, item)
-	}
-	return append(top, grouped...)
-}
-
-// petActions are the menu's items for the pet that shows.
-func petActions(cx *core.Scope, p *pet.Pet) []core.MenuItem {
+// trayMenu is the tray icon's menu.
+func trayMenu(settings, quit func()) []core.MenuItem {
 	return []core.MenuItem{
-		{Label: "来点动作", OnSelect: p.Act},
-		{Label: "回到右下角", OnSelect: p.PlaceAtCorner},
+		{Label: "设置", Shortcut: "mod+,", OnSelect: settings},
 		{Separator: true},
-		{Label: "退出", OnSelect: func() { p.Leave(cx.Quit) }},
+		{Label: "退出", Shortcut: "mod+q", OnSelect: quit},
 	}
 }

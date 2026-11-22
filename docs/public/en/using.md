@@ -14,23 +14,22 @@ Your pet takes the pointer only on its body, so it never blocks the window behin
 
 Click it for a reaction, drag it and it dangles from the pointer, and drop it wherever you like.
 
-## The menu
+## The menu and the settings
 
-Right-click the pet, or click the 🐾 icon in the menu bar or the tray. The menu's items are in Chinese:
+Click NSGo-chan's icon in the menu bar or the tray. Its menu has 设置 (Command-comma), which opens the settings, and 退出 (Command-Q), which says goodbye and quits.
 
-| Item | What it does |
+The settings have two pages, in Chinese:
+
+| Page | What it does |
 | --- | --- |
-| 切换桌宠 | Switches to another pet; your choice is remembered next time |
-| 检查更新… | Checks for a new version now |
-| 来点动作 | Plays an event right away |
-| 回到右下角 | Moves the pet back to the bottom right corner of the screen |
-| 退出 | Says goodbye and quits |
+| 宠物 | Shows every pet; click one to switch to it, and your choice is remembered next time |
+| 通用 | Checks for a new version now, and turns the anonymous usage statistics on or off |
 
 Every pet and the license it comes under is listed in [Pet licenses](../pets/).
 
 ## Updates
 
-nsgo-pet checks the [releases](https://github.com/nsgo-dev/nsgo-pet/releases) once a day and whenever you choose 检查更新…. On macOS an update window shows the new version; on Linux an alert offers to install it.
+nsgo-pet checks the [releases](https://github.com/nsgo-dev/nsgo-pet/releases) once a day and whenever you press 检查 on the settings' 通用 page. On macOS an update window shows the new version; on Linux an alert offers to install it.
 
 ## Something's wrong?
 
@@ -38,6 +37,6 @@ nsgo-pet checks the [releases](https://github.com/nsgo-dev/nsgo-pet/releases) on
 | --- | --- |
 | The pet sits behind other windows or stays put on Linux | Wayland doesn't let it float or move; log in to an X11 session. |
 | The pet shows no animation on Linux | Install GStreamer's bad plugins, `gstreamer1.0-plugins-bad`. |
-| The pet is out of sight | Choose 回到右下角 from the 🐾 icon. |
+| The pet is out of sight | Choose a pet in 设置, or restart nsgo-pet: a pet starts in the bottom right corner. |
 
 Anything else, [open an issue](https://github.com/nsgo-dev/nsgo-pet/issues).

@@ -5,6 +5,7 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
+	"log"
 	"net/http"
 	neturl "net/url"
 	"time"
@@ -18,7 +19,7 @@ import (
 // another pet, tagged "app" as the site's own pages are "website". An
 // install carries a random ID kept in the storage, so that one install is
 // one visitor. Only builds of nsgo build report: nsgo dev, nsgo test and
-// plain go builds send nothing.
+// plain go builds send nothing. The user turns it off in the settings.
 const (
 	statsURL     = "https://umami.oneo.me/api/send"
 	statsWebsite = "28bf766f-61e5-4b0a-9dc3-9b5d2d33c8a4"
@@ -29,6 +30,26 @@ const (
 
 // installKey is the storage key of the install's ID.
 const installKey = "installID"
+
+// statsKey is the storage key of whether the app counts its use, "off" once the user turned it off.
+const statsKey = "stats"
+
+// statsOn says whether the user lets the app count its use.
+func statsOn(cx *core.Scope) bool {
+	v, _ := cx.Storage().GetItem(statsKey)
+	return v != "off"
+}
+
+// setStatsOn saves whether the app counts its use.
+func setStatsOn(cx *core.Scope, on bool) {
+	v := "on"
+	if !on {
+		v = "off"
+	}
+	if err := cx.Storage().SetItem(statsKey, v); err != nil {
+		log.Printf("saving the statistics' choice: %v", err)
+	}
+}
 
 // statsPayload is a pageview of Umami's /api/send.
 type statsPayload struct {
@@ -41,10 +62,10 @@ type statsPayload struct {
 	ID       string `json:"id"`
 }
 
-// statsReporter returns the function that counts a pet shown, or one that
-// does nothing outside release builds. Pageviews are sent from another
-// goroutine, oldest first; one that fails is dropped.
-func statsReporter(cx *core.Scope) func(p *pet.Pack) {
+// statsReporter returns the function that counts a pet shown while on
+// says so, or one that does nothing outside release builds. Pageviews are
+// sent from another goroutine, oldest first; one that fails is dropped.
+func statsReporter(cx *core.Scope, on func() bool) func(p *pet.Pack) {
 	if core.App().Development {
 		return func(*pet.Pack) {}
 	}
@@ -53,6 +74,9 @@ func statsReporter(cx *core.Scope) func(p *pet.Pack) {
 	queue := make(chan statsPayload, 8)
 	go sendStats(queue, statsAgent(env.OS()))
 	return func(p *pet.Pack) {
+		if !on() {
+			return
+		}
 		pv := statsPayload{Website: statsWebsite, Hostname: statsHost, URL: statsPath + neturl.PathEscape(p.ID),
 			Title: p.Name, Language: env.Locale(), Tag: statsTag, ID: id}
 		select {

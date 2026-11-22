@@ -178,28 +178,98 @@ func TestPressPlaysAClickReaction(t *testing.T) {
 	}
 }
 
-// Pets of a group are listed in a submenu after the ungrouped ones.
-func TestPetMenuGroups(t *testing.T) {
+// Pets of a group are listed under its name after the ungrouped ones.
+func TestPetSectionsGroup(t *testing.T) {
 	ps := []*pet.Pack{{ID: "a", Name: "A"}, {ID: "b", Name: "B", Group: "G"}, {ID: "c", Name: "C"}, {ID: "d", Name: "D", Group: "G"}}
-	m := petMenu(ps, "d", func(string) {})
-	if len(m) != 3 || m[0].Label != "A" || m[1].Label != "C" || m[2].Label != "G" || len(m[2].Items) != 2 || !m[2].Items[1].Checked {
-		t.Fatalf("menu = %+v", m)
+	s := petSections(ps)
+	if len(s) != 2 || s[0].Group != "" || len(s[0].Packs) != 2 || s[0].Packs[1].ID != "c" || s[1].Group != "G" || len(s[1].Packs) != 2 || s[1].Packs[1].ID != "d" {
+		t.Fatalf("sections = %+v", s)
 	}
 }
 
-// The pet's menu checks for updates now and offers the newer version it finds.
-func TestMenuChecksForUpdates(t *testing.T) {
+// The tray's menu opens the settings with Command-comma and quits with Command-Q.
+func TestTrayMenu(t *testing.T) {
+	var opened, quit bool
+	m := trayMenu(func() { opened = true }, func() { quit = true })
+	var labels []string
+	for _, it := range m {
+		if it.Separator {
+			continue
+		}
+		labels = append(labels, it.Label+" "+it.Shortcut)
+		it.OnSelect()
+	}
+	if !slices.Equal(labels, []string{"设置 mod+,", "退出 mod+q"}) || !opened || !quit {
+		t.Fatalf("menu %v, opened %v, quit %v", labels, opened, quit)
+	}
+}
+
+// A right click on the pet shows no menu.
+func TestPetHasNoMenu(t *testing.T) {
 	app := nsgotest.Start(t, App(packs(t)), macOS)
+	app.RightClick("id:body")
+	if m := app.PopupMenu; m != nil {
+		t.Fatalf("a right click showed %+v", m)
+	}
+}
+
+// prefs are the settings' state over a signal of the chosen pet and one of the statistics.
+func prefs(t *testing.T, cx *core.Scope, chosen *core.Signal[string], stats *core.Signal[bool]) Prefs {
+	return Prefs{Packs: packs(t), Chosen: chosen.Get, Choose: chosen.Set, Stats: stats.Get, SetStats: stats.Set}
+}
+
+// The settings' first page shows every pet idling, and a press on one chooses it.
+func TestSettingsGridChoosesAPet(t *testing.T) {
+	var chosen *core.Signal[string]
+	app := nsgotest.Start(t, func(cx *core.Scope) core.Node {
+		chosen = core.NewSignal(cx, "nsgo-chan")
+		return Settings(cx, prefs(t, cx, chosen, core.NewSignal(cx, true)))
+	}, macOS)
+	for _, pk := range packs(t) {
+		if got := source(app, "clip-"+pk.ID); got != idleClip(pk, core.OSMacOS) {
+			t.Errorf("%s shows %q", pk.ID, got)
+		}
+	}
+	app.Press("id:pet-bigbluefish")
+	if chosen.GetUntracked() != "bigbluefish" {
+		t.Fatalf("chosen %q after pressing Big Blue Fish", chosen.GetUntracked())
+	}
+}
+
+// The settings check for updates now and offer the newer version found.
+func TestSettingsCheckForUpdates(t *testing.T) {
+	app := nsgotest.Start(t, func(cx *core.Scope) core.Node {
+		return Settings(cx, prefs(t, cx, core.NewSignal(cx, "nsgo-chan"), core.NewSignal(cx, true)))
+	}, macOS)
 	app.Update = func(bool) core.UpdateCheck {
 		return core.UpdateCheck{App: "nsgo-pet", Current: "0.1.0", Version: "0.2.0", URL: "https://github.com/nsgo-dev/nsgo-pet/releases/tag/v0.2.0"}
 	}
-	app.RightClick("id:body")
-	app.ChoosePopup("检查更新…")
+	app.Press("id:page-通用")
+	app.Press("id:update")
 	if !slices.Equal(app.UpdateChecks, []bool{false}) {
 		t.Fatalf("checks %v, want one the user asked for", app.UpdateChecks)
 	}
 	if a := app.Alerts(); len(a) != 1 || !strings.Contains(a[0].Message, "0.2.0") {
 		t.Fatalf("alerts %+v, want 0.2.0 offered", a)
+	}
+}
+
+// The settings' switch turns the statistics off, which the storage keeps.
+func TestSettingsTurnStatsOff(t *testing.T) {
+	var stats *core.Signal[bool]
+	app := nsgotest.Start(t, func(cx *core.Scope) core.Node {
+		stats = core.NewSignal(cx, statsOn(cx))
+		p := prefs(t, cx, core.NewSignal(cx, "nsgo-chan"), stats)
+		p.SetStats = func(on bool) { setStatsOn(cx, on); stats.Set(on) }
+		return Settings(cx, p)
+	}, macOS)
+	if !stats.GetUntracked() {
+		t.Fatal("statistics start off")
+	}
+	app.Press("id:page-通用")
+	app.Press("id:stats")
+	if v, _ := app.Storage().GetItem(statsKey); stats.GetUntracked() || v != "off" {
+		t.Fatalf("after the switch: on %v, stored %q", stats.GetUntracked(), v)
 	}
 }
 

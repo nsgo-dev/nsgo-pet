@@ -30,7 +30,7 @@
 - Takes the pointer only on the pet's body, so clicks elsewhere reach the window below.
 - Greets you, idles and plays events chosen by time of day, season, meals, festivals and whether an editor or a terminal is in front.
 - Reacts to clicks, dangles while dragged and walks along the bottom of the screen.
-- Switches between eleven pets from the tray icon or its right-click menu, and remembers your choice.
+- Switches between eleven pets in a settings window opened from the tray icon, and remembers your choice.
 - Updates itself from this repository's releases.
 
 ## Install
@@ -39,13 +39,13 @@ Download the disk image for macOS, or the Debian package, Arch package or AppIma
 
 Linux needs GStreamer's bad plugins (`gstreamer1.0-plugins-bad`) to play clips with alpha; the Debian and Arch packages depend on them.
 
-Released builds send an anonymous pageview to [Umami](https://umami.is) as they start and when you switch pets: the pet, the system language and a random install ID, nothing else.
+Released builds send an anonymous pageview to [Umami](https://umami.is) as they start and when you switch pets: the pet, the system language and a random install ID, nothing else. Turn it off on the settings' 通用 page.
 
 ## Getting started
 
 1. Open nsgo-pet. NSGo 酱 greets you in the bottom right corner of the screen.
 2. Drag her anywhere, or click her for a reaction.
-3. Right-click her, or use the 🐾 tray icon, to switch pets, play an event, move her back to the corner, check for updates or quit.
+3. Open 设置 from her tray icon to switch pets, check for updates or turn the statistics off, or choose 退出 there to quit.
 
 ## Embedding the pet engine
 

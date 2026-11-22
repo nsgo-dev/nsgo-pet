@@ -14,23 +14,22 @@ description: 宠物自己会做什么，以及它的菜单能做什么。
 
 点它会有反应；拖动它时它会悬在指针下晃动，松开就停在那里。
 
-## 菜单
+## 菜单和设置
 
-右键点宠物，或点菜单栏或托盘里的 🐾 图标：
+点菜单栏或托盘里的 NSGo 酱图标，菜单里有“设置”（Command-逗号）打开设置，和“退出”（Command-Q）道别后退出。
 
-| 菜单项 | 作用 |
+设置有两页：
+
+| 页面 | 作用 |
 | --- | --- |
-| 切换桌宠 | 换一只宠物，下次打开时仍是它 |
-| 检查更新… | 立即检查新版本 |
-| 来点动作 | 马上播放一个事件 |
-| 回到右下角 | 把宠物移回屏幕右下角 |
-| 退出 | 道别后退出 |
+| 宠物 | 展示全部宠物，点一只就换成它，下次打开时仍是它 |
+| 通用 | 立即检查新版本，开关匿名使用统计 |
 
 每只宠物及其许可见 [宠物许可](../pets/)。
 
 ## 更新
 
-nsgo-pet 每天检查一次 [Releases](https://github.com/nsgo-dev/nsgo-pet/releases)，选择“检查更新…”时也会检查。在 macOS 上会弹出更新窗口展示新版本；在 Linux 上会弹出提示，询问是否安装。
+nsgo-pet 每天检查一次 [Releases](https://github.com/nsgo-dev/nsgo-pet/releases)，在设置的“通用”页点“检查”时也会检查。在 macOS 上会弹出更新窗口展示新版本；在 Linux 上会弹出提示，询问是否安装。
 
 ## 遇到问题？
 
@@ -38,6 +37,6 @@ nsgo-pet 每天检查一次 [Releases](https://github.com/nsgo-dev/nsgo-pet/rele
 | --- | --- |
 | 在 Linux 上宠物待在其他窗口后面，或者不会走动 | Wayland 不允许它浮于顶层或移动；请登录 X11 会话。 |
 | 在 Linux 上宠物没有动画 | 安装 GStreamer 的 bad 插件 `gstreamer1.0-plugins-bad`。 |
-| 找不到宠物了 | 从 🐾 图标选择“回到右下角”。 |
+| 找不到宠物了 | 在设置里选一只宠物，或重启 nsgo-pet：宠物会从屏幕右下角出现。 |
 
 其他问题请 [提交 Issue](https://github.com/nsgo-dev/nsgo-pet/issues)。

@@ -30,11 +30,11 @@ The installers are written to `dist/`.
 
 ## Meet your pet
 
-1. Open nsgo-pet. NSGo-chan greets you in the bottom right corner of the screen, and a 🐾 icon appears in the menu bar or the tray.
+1. Open nsgo-pet. NSGo-chan greets you in the bottom right corner of the screen, and her icon appears in the menu bar or the tray.
 2. Click her for a reaction, or drag her anywhere on the screen.
 3. Leave her be: she idles, plays something new every little while and now and then walks along the bottom of the screen.
 
-To switch pets, play an action or quit, see [Using nsgo-pet](using/).
+To switch pets, check for updates or quit, see [Using nsgo-pet](using/).
 
 ## Where it runs
 
