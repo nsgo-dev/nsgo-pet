@@ -23,7 +23,7 @@ import (
 const (
 	statsURL     = "https://umami.oneo.me/api/send"
 	statsWebsite = "28bf766f-61e5-4b0a-9dc3-9b5d2d33c8a4"
-	statsHost    = "nsgo-dev.github.io"
+	statsHost    = "pet.nsgo.dev"
 	statsPath    = "/app/"
 	statsTag     = "app"
 )
