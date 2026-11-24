@@ -1,11 +1,10 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 
-// GitHub Pages serves the site under the repository's name; a deploy may
-// pass the address it was given in SITE and BASE, and a local build uses the
-// same path so that links are checked under a subpath too.
-const site = process.env.SITE ?? 'https://nsgo-dev.github.io';
-const base = process.env.BASE ?? '/nsgo-pet';
+// GitHub Pages serves the site at its own domain; a deploy passes the
+// address it was given in SITE and BASE.
+const site = process.env.SITE ?? 'https://pet.nsgo.dev';
+const base = process.env.BASE ?? '/';
 
 export default defineConfig({
 	site,
